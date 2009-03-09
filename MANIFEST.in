@@ -1,0 +1,6 @@
+#global-includes *.po *.mo
+include docs/*
+include AUTHORS CONTRIBUTORS LICENSE CHANGELOG
+include setup.cfg
+recursive-include satchmo/static *
+recursive-include satchmo/apps *.po *.mo *.html *.xml
