@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from fsadmin.core.managers import GenericManager
+from fsadmin.server.model import Server
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'
@@ -19,7 +20,7 @@ class NibbleBill(models.Model):
 
     class Meta:
         #ordering = []
-        db_table = 'nibblrbill'
+        db_table = 'nibblebill'
         verbose_name, verbose_name_plural = _(u"Billing"), _(u"Billings")
 
     def __unicode__(self):
@@ -36,7 +37,7 @@ class TarifPlan(models.Model):
 
     class Meta:
         #ordering = []
-        db_table = 'Tarif'
+        db_table = 'tarif'
         verbose_name, verbose_name_plural = _(u"Tarif Plan"), _(u"Tarif Plans")
 
     def __unicode__(self):
