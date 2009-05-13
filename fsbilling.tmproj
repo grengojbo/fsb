@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/core/models.py</string>
+	<string>fsbilling/tariff/managers.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,131 +21,99 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
-		<key>fsbilling/core/admin.py</key>
+		<key>fsbilling/base/admin.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
-				<key>line</key>
 				<integer>5</integer>
+				<key>line</key>
+				<integer>18</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fsbilling/core/managers.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>48</integer>
-				<key>line</key>
-				<integer>5</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/core/models.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>41</integer>
-				<key>line</key>
-				<integer>29</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/core/templates/nibblebill.conf.xml</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>71</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>71</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-		</dict>
-		<key>fsbilling/core/tests.py</key>
+		<key>fsbilling/base/managers.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>37</integer>
 				<key>line</key>
-				<integer>26</integer>
+				<integer>5</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fsbilling/core/views.py</key>
+		<key>fsbilling/base/models.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>29</integer>
+				<integer>26</integer>
 				<key>line</key>
-				<integer>15</integer>
+				<integer>6</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-			<key>selectFrom</key>
+		</dict>
+		<key>fsbilling/tariff/admin.py</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>23</integer>
+				<integer>32</integer>
 				<key>line</key>
-				<integer>15</integer>
+				<integer>20</integer>
 			</dict>
-			<key>selectTo</key>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fsbilling/tariff/managers.py</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
 				<integer>33</integer>
-				<key>line</key>
-				<integer>15</integer>
 			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>3</integer>
+		</dict>
+		<key>fsbilling/tariff/models.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>84</integer>
+				<key>line</key>
+				<integer>30</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>13</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>fsbilling/core/models.py</string>
-		<string>fsbilling/core/managers.py</string>
-		<string>fsbilling/core/admin.py</string>
-		<string>fsbilling/core/templates/nibblebill.conf.xml</string>
-		<string>fsbilling/core/views.py</string>
-		<string>fsbilling/core/tests.py</string>
+		<string>fsbilling/tariff/admin.py</string>
+		<string>fsbilling/tariff/models.py</string>
+		<string>fsbilling/base/models.py</string>
+		<string>fsbilling/base/admin.py</string>
+		<string>fsbilling/base/managers.py</string>
+		<string>fsbilling/tariff/managers.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -172,20 +140,19 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>core</key>
+						<key>base</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
-							<dict>
-								<key>templates</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
+							<dict/>
+						</dict>
+						<key>tariff</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
 						</dict>
 					</dict>
 				</dict>
@@ -193,6 +160,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{27, 91}, {1068, 702}}</string>
+	<string>{{16, -6}, {1068, 702}}</string>
 </dict>
 </plist>
