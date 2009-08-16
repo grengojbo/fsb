@@ -19,28 +19,24 @@ l = logging.getLogger('fsbilling.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):
-    def add_tariff(self, tf, n, digits):
-        """
-        tf - Тарифный план
-        """
+    def add_tariff(self, gw, n, digits):
         bl = self.model()
-        bl.name = n['name']
-        bl.name_lcr = n['lcr']
+        #bl.name = n['name']
         # TODO проверка на неправильный формат, замена 5,12->5.12
         bl.rate = n['rate']
-        bl.date_start = n['date_start']
+        bbl.date_start = n['date_start']
         bl.date_end = n['date_end']
         #bl.lead_strip = 0
         #bl.trail_strip = 0
         #bl.quality = 0
         #bl.reliability = 0
         #bl.enabled = True
-        bl.tariff_plan = tf
+        #bl.carrier_id = gw
         bl.digits = digits
         bl.save()
         return 1
     
-    def load_tariff(self, tf, base_file):
+    def load_tariff(self, gw, base_file):
         """
         Загрузка данных из csv файла
         для успешной lcr загрузки необходимо в таблице gateway конфигурации
@@ -48,7 +44,7 @@ class TariffManager(models.Manager):
         """
         save_cnt = 0
         try:
-            cd = CsvData(tf.tariff_format)
+            cd = CsvData(gw.lcr_format)
             reader = csv.reader(base_file, delimiter=';', dialect='excel')
             no_base = []
             for row in reader:
@@ -56,7 +52,6 @@ class TariffManager(models.Manager):
                 n = {}
                 row_save = []
                 n['country_code'] = ''
-                n["name"] = False
                 n['special_digits'] = False
                 n['date_start'] = datetime.datetime.now()
                 n['date_end'] = datetime.datetime.max
@@ -66,8 +61,6 @@ class TariffManager(models.Manager):
                         if c != 'zeros' and len(row[index].strip()) > 0:
                             if c == 'name':
                                 n["name"] = row[index].strip()
-                            elif c == 'lcr':
-                                n["lcr"] = row[index].strip()
                             elif c == 'rate':
                                 n['rate'] = cd.set_num(row[index].strip())
                             elif c == 'country_code':
@@ -87,8 +80,6 @@ class TariffManager(models.Manager):
                     except:
                         pass
                 if save_flag:
-                    if not n['name']:
-                        n['name'] = n['lcr']
                     if n['special_digits']:
                         l.debug(n['special_digits'])
                         for dig in n['special_digits'].split(';'):
@@ -97,14 +88,14 @@ class TariffManager(models.Manager):
                                 for digits in range(int(digit[0]), int(digit[1])+1):
                                     d = '%s%s' % (n['country_code'].strip(), digits)
                                     l.debug('digits: %s/%s/' % (d,n["name"]))
-                                    save_cnt += self.add_tariff(tf, n, d)
+                                    save_cnt += self.add_lcr(gw, n, d)
                             elif len(dig) > 0 and dig != '':
                                 d = '%s%s' % (n['country_code'], dig.strip())
                                 l.debug('digits: %s/%s/%s/' % (d,n["name"],dig))
-                                save_cnt += self.add_tariff(tf, n, d)
+                                save_cnt += self.add_lcr(gw, n, d)
                     elif n["digits"] != '':
                         d = '%s%s' % (n['country_code'], n["digits"])
-                        save_cnt += self.add_tariff(tf, n, d)
+                        save_cnt += self.add_lcr(gw, n, d)
                         l.debug('digits: %s/%s/' % (d,n["name"]))
                 n.clear()
         except csv.Error, e:

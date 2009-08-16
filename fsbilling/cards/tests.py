@@ -13,19 +13,16 @@ import unittest
 from django import test
 from django.test.client import Client
 from django.contrib.auth.models import User
-from fsbilling.base.models import Balance
+from fsbilling.core.models import c
 from fsadmin.server.models import Server
 import csv, sys, os
 
-class BaseTestCase(test.TestCase):
+class TariffTestCase(test.TestCase):
     fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency', 'tariffplan']
     def setUp(self):
-        self.user = User.objects.create_user('test', 'test@test.com', 'test')
         # Every test needs a client.
         self.client = Client()
         
-    def testBalance(self):
+    def testCoreConf(self):
         """docstring for billing core"""
-        new_balance = Balance.objects.create_balance(self.user)
-        self.assertEquals(new_balance.accountcode.pk, 1)
-        self.assertEquals(new_balance.tariff.pk, 1)
+        pass

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+ <object pk="1" model="tariff.tariffplan">
+  <field type="CharField" name="name">Старт</field>
+  <field type="FloatField" name="cash_min">0.02</field>
+  <field type="FloatField" name="fee">0.0</field>
+  <field type="SmallIntegerField" name="fee_period">0</field>
+  <field type="FloatField" name="activation">0.0</field>
+  <field type="DateTimeField" name="date_start">2009-08-12 21:32:26</field>
+  <field type="DateTimeField" name="date_end">2099-08-12 21:32:29</field>
+  <field type="BooleanField" name="enabled">True</field>
+  <field type="BooleanField" name="primary">True</field>
+  <field type="CharField" name="tariff_format">delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|name|rate</field>
+  <field type="CharField" name="description"></field>
+ </object>
+ <object pk="2" model="tariff.tariffplan">
+  <field type="CharField" name="name">Бизнес</field>
+  <field type="FloatField" name="cash_min">0.0</field>
+  <field type="FloatField" name="fee">5.0</field>
+  <field type="SmallIntegerField" name="fee_period">2</field>
+  <field type="FloatField" name="activation">0.0</field>
+  <field type="DateTimeField" name="date_start">2009-08-12 21:43:36</field>
+  <field type="DateTimeField" name="date_end">2009-08-12 21:43:37</field>
+  <field type="BooleanField" name="enabled">False</field>
+  <field type="BooleanField" name="primary">False</field>
+  <field type="CharField" name="tariff_format">delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|name|rate</field>
+  <field type="CharField" name="description">неп платы за соеденение, skype</field>
+ </object>
+</django-objects>

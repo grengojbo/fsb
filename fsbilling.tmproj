@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/tariff/managers.py</string>
+	<string>fsbilling/base/models.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,99 +21,24 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
-		<key>fsbilling/base/admin.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>5</integer>
-				<key>line</key>
-				<integer>18</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/base/managers.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>37</integer>
-				<key>line</key>
-				<integer>5</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>fsbilling/base/models.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>26</integer>
+				<integer>41</integer>
 				<key>line</key>
-				<integer>6</integer>
+				<integer>117</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/tariff/admin.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>32</integer>
-				<key>line</key>
-				<integer>20</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/tariff/managers.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>33</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>3</integer>
-		</dict>
-		<key>fsbilling/tariff/models.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>84</integer>
-				<key>line</key>
-				<integer>30</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>13</integer>
+			<integer>72</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>fsbilling/tariff/admin.py</string>
-		<string>fsbilling/tariff/models.py</string>
 		<string>fsbilling/base/models.py</string>
-		<string>fsbilling/base/admin.py</string>
-		<string>fsbilling/base/managers.py</string>
-		<string>fsbilling/tariff/managers.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -126,40 +51,10 @@
 			<key>isExpanded</key>
 			<true/>
 			<key>subItems</key>
-			<dict>
-				<key>doc</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
-				<key>fsbilling</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>base</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-						<key>tariff</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-					</dict>
-				</dict>
-			</dict>
+			<dict/>
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{16, -6}, {1068, 702}}</string>
+	<string>{{0, 300}, {1068, 702}}</string>
 </dict>
 </plist>

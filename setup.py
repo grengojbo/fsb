@@ -12,7 +12,7 @@ DIRNAME = os.path.dirname(__file__)
 
 # Dynamically calculate the version based on django.VERSION.
 ##version = __import__('satchmo_store').__version__
-version = '0.0.1'
+version = '0.0.2'
 
 #packages = find_packages('web/apps')
 #packages.append('web/static')

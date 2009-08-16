@@ -19,10 +19,10 @@ from optparse import make_option
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('--tid', default='', dest='tid',
-        help='Tariff Plan Name'),
+        make_option('--gw', default='', dest='gw',
+        help='Gateway Name'),
     )
-    help = 'Load Tariff data ./manage.py load_tariff --tid=1 /fsbilling/tariff/fixtures/14.csv'
+    help = 'Load Lcr data ./manage.py load_lcr --gw=icall /fsadmin/lcr/fixtures/test-lcr.csv'
     args = '[fixture ...]'
 
     def handle(self, fixture_labels, **options):
@@ -30,9 +30,10 @@ class Command(BaseCommand):
         from django.core import serializers
         from django.db import connection, transaction
         from django.conf import settings
-        from fsbilling.tariff.models import TariffPlan, Tariff
-
-        tid = options.get('tid','')
+        from fsadmin.lcr.models import Lcr
+        from fsadmin.gateway.models import SofiaGateway
+        
+        gw = options.get('gw','')
 
         self.style = no_style()
 
@@ -80,13 +81,24 @@ class Command(BaseCommand):
         if has_bz2:
             compression_types['bz2'] = bz2.BZ2File
             
+        #f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test-lcr.csv'), "rt")
         f = open(fixture_labels, "rt")
-        tf = TariffPlan.objects.get(pk=tid)
+        gateway = SofiaGateway.objects.get(name=gw, enabled=True)
         try:
-            objects_in_fixture = Tariff.objects.load_tariff(tf, f)
+            #reader = csv.reader(open(filename, "rb"), delimiter=';')
+            objects_in_fixture = Lcr.objects.load_lcr(gateway, f)
             label_found = True
         finally:
             f.close()
+        #try:
+        #    for row in reader:
+        #        print row
+        #    except csv.Error, e:
+        #       sys.exit('file %s, line %d: %s' % (filename, reader.line_num, e))
+        #call_command('loaddata', 'alias.xml', 'server.xml', 'sipprofile.xml', 'fsgroup.xml', 'context.xml', interactive=True)
+        
+        # If we found even one object in a fixture, we need to reset the
+        # database sequences.
         if object_count > 0:
             sequence_sql = connection.ops.sequence_reset_sql(self.style, models)
             if sequence_sql:

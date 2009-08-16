@@ -6,7 +6,6 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from fsadmin.core.managers import GenericManager
-from fsbilling.tariff.managers import TariffManager
 from fsadmin.server.models import Server
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 import datetime
@@ -42,12 +41,11 @@ class TariffPlan(models.Model):
     cash_min = models.FloatField(_(u'Плата за соединение'), blank=False, default=0)
     fee = models.FloatField(_(u'Абонплата'), blank=False, default=0)
     fee_period = models.SmallIntegerField(_(u'Период'), choices=FEE_TARIFF_CHOICES, default=0, help_text=_(u'период за который снимается абонентская плата'))
-    activation = models.FloatField(_(u'Активация'), blank=False, default=0, help_text=_(u'стоимость активации тарифного плана'))
     date_start = models.DateTimeField(_(u'Date Start'))
     date_end = models.DateTimeField(_(u'Date End'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     primary = models.BooleanField(_(u'По умолчанию'), default=False)
-    tariff_format = models.CharField(_(u'Tariff Format'), default="delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|name|rate", max_length=250, help_text=_(u'Формат CSV файла для загрузки  тарифного плана'))
+    tariff_format = models.CharField(_(u'Tariff Format'), default="delimiter=';'time_format='%d.%m.%Y 00:00'phone_number|first_name|last_name|zeros|gender|other", max_length=250, help_text=_(u'Формат CSV файла для загрузки  тарифного плана'))
     description = models.CharField(_(u'Description'), blank=True, max_length=240)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
@@ -65,20 +63,18 @@ class TariffPlan(models.Model):
     def get_absolute_url(self):
         return ('Tarif', [self.id])
     
-    
+    @property
     def fee_view(self):
         """docstring for fee_view"""
         if self.fee_period != 0:
             return "%(rate)0.2f %(currency)s/%(fp)s/" % {'rate': self.fee, 'currency': self.currency, 'fp': self.get_fee_period_display()}
         else:
             return self.get_fee_period_display()
-    fee_view.short_description = _(u'Абонплата')
         
-    
+    @property
     def cash_currency(self):
         """docstring for rate_currency"""
         return "%(rate)0.2f %(currency)s" % {'rate': self.cash_min, 'currency': self.currency}
-    cash_currency.short_description = _(u'Плата за соединение.')
 
     @property
     def currency(self):
@@ -91,7 +87,7 @@ class TariffPlan(models.Model):
         if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
             de = ""
         else:
-            de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
+            de = " по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
         return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
         
 class Tariff(models.Model):
@@ -110,7 +106,7 @@ class Tariff(models.Model):
     date_start = models.DateTimeField(_(u'Date Start'))
     date_end = models.DateTimeField(_(u'Date End'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
-    objects =TariffManager()
+    objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
 
@@ -133,14 +129,13 @@ class Tariff(models.Model):
         if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
             de = ""
         else:
-            de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
+            de = " по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
         return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
              
-    
+    @property
     def rate_currency(self):
         """docstring for rate_currency"""
         return "%(rate)0.2f %(currency)s" % {'rate': self.rate, 'currency': self.currency}
-    rate_currency.short_description = _(u'Цена 1 мин.')
     
     @property
     def currency(self):

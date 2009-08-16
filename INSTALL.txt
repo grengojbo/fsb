@@ -1,0 +1,2 @@
+./manage.py dumpdata --format=xml --indent=1 tariff.TariffPlan > tariffplan.xml
+./manage.py dumpdata --format=xml --indent=1 base.Currency > currency.xml

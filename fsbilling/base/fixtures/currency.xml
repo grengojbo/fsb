@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+ <object pk="1" model="base.currency">
+  <field type="CharField" name="name">y.e.</field>
+  <field type="FloatField" name="rate">1.0</field>
+  <field type="DateTimeField" name="date_start">2009-08-12 14:08:33</field>
+  <field type="DateTimeField" name="date_end">2099-08-12 14:08:34</field>
+  <field type="BooleanField" name="enabled">True</field>
+  <field type="BooleanField" name="primary">True</field>
+ </object>
+ <object pk="2" model="base.currency">
+  <field type="CharField" name="name">грн</field>
+  <field type="FloatField" name="rate">8.2</field>
+  <field type="DateTimeField" name="date_start">2009-08-12 14:09:15</field>
+  <field type="DateTimeField" name="date_end">2099-08-12 14:09:17</field>
+  <field type="BooleanField" name="enabled">True</field>
+  <field type="BooleanField" name="primary">False</field>
+ </object>
+</django-objects>
