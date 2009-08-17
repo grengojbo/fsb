@@ -2,7 +2,7 @@
 
 from django.contrib import databrowse, admin
 from django.utils.translation import ugettext_lazy as _
-from fsbilling.base.models import NibbleBill, Currency, Balance
+from fsbilling.base.models import NibbleBill, CurrencyBase, Currency, Balance
 import logging
 l = logging.getLogger('fsbilling.base.admin')
 
@@ -33,7 +33,14 @@ class BalanceAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
     list_per_page = 50
+class CurrencyBaseAdmin(admin.ModelAdmin):
+    list_display = ('name_full', 'name', 'code',)
+    actions = ['delete_selected']
+    save_as = True
+    save_on_top = True
+    list_per_page = 50
 
+admin.site.register(CurrencyBase, CurrencyBaseAdmin)
 admin.site.register(Balance, BalanceAdmin)
 admin.site.register(Currency, CurrencyAdmin)
 admin.site.register(NibbleBill, BillingBaseAdmin)

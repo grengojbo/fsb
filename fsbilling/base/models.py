@@ -76,10 +76,11 @@ class NibbleBill(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('NibbleBill', [self.id])
+        
 class CurrencyBase(models.Model):
     """(CurrencyBase description)"""
-    name_full = models.CharField(_(u'Name'), max_length=200)
-    name = models.CharField(_(u'коротко'), max_length=10)
+    name = models.CharField(_(u'Name'), max_length=200)
+    name_small = models.CharField(_(u'коротко'), max_length=10)
     code = models.CharField(_(u'код'), max_length=3)
     objects = models.Manager()
     
@@ -97,7 +98,7 @@ class CurrencyBase(models.Model):
         
 class Currency(models.Model):
     """docstring for Currency"""
-    name = models.ForeignKey(CurrencyBase)
+    currency_name = models.ForeignKey(CurrencyBase)
     rate = models.FloatField(_("Курс"), default=1)
     date_start = models.DateTimeField(_(u'Date Start'))
     date_end = models.DateTimeField(_(u'Date End'))
@@ -120,7 +121,7 @@ class Currency(models.Model):
     @property
     def rate_currency(self):
         """docstring for rate_currency"""
-        return "%(rate)0.2f %(currency)s." % {'rate': self.rate, 'currency': self.name}
+        return "%(rate)0.2f %(currency)s." % {'rate': self.rate, 'currency': 'y.e.'}
     
     @models.permalink
     def get_absolute_url(self):

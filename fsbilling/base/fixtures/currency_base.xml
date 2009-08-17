@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+ <object pk="1" model="base.currencybase">
+  <field type="CharField" name="name_full">евро</field>
+  <field type="CharField" name="name">евро.</field>
+  <field type="CharField" name="code">EU</field>
+ </object>
+ <object pk="2" model="base.currencybase">
+  <field type="CharField" name="name_full">доллары США</field>
+  <field type="CharField" name="name">$</field>
+  <field type="CharField" name="code">USD</field>
+ </object>
+ <object pk="3" model="base.currencybase">
+  <field type="CharField" name="name_full">гривна</field>
+  <field type="CharField" name="name">грн.</field>
+  <field type="CharField" name="code">GRN</field>
+ </object>
+ <object pk="4" model="base.currencybase">
+  <field type="CharField" name="name_full">рубли</field>
+  <field type="CharField" name="name">руб.</field>
+  <field type="CharField" name="code">RUB</field>
+ </object>
+</django-objects>
