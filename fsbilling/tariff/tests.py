@@ -19,7 +19,7 @@ from fsbilling.tariff.models import TariffPlan, Tariff
 import csv, sys, os
 
 class TariffTestCase(test.TestCase):
-    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency', 'tariffplan']
+    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan']
     def setUp(self):
         # Every test needs a client.
         self.client = Client()

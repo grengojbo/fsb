@@ -34,7 +34,7 @@ class BalanceAdmin(admin.ModelAdmin):
     save_on_top = True
     list_per_page = 50
 class CurrencyBaseAdmin(admin.ModelAdmin):
-    list_display = ('name_full', 'name', 'code',)
+    list_display = ('name', 'name_small', 'code',)
     actions = ['delete_selected']
     save_as = True
     save_on_top = True

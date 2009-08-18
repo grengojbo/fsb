@@ -90,7 +90,7 @@ class CurrencyBase(models.Model):
         verbose_name, verbose_name_plural = _(u"Currency Base"), _(u"Currency Bases")
 
     def __unicode__(self):
-        return self.name_full
+        return self.name
 
     @models.permalink
     def get_absolute_url(self):
@@ -121,15 +121,18 @@ class Currency(models.Model):
     @property
     def rate_currency(self):
         """docstring for rate_currency"""
-        return "%(rate)0.2f %(currency)s." % {'rate': self.rate, 'currency': 'y.e.'}
+        return "%(rate)0.2f %(currency)s" % {'rate': self.rate, 'currency': self.currency_name.name_small}
     
     @models.permalink
     def get_absolute_url(self):
         return ('Currency', [self.id])
+
+    def __unicode__(self):
+        return self.currency_name.name
     
     class Meta:
         ordering = ['-primary']
-        db_table = 'currency_base'
+        db_table = 'currency'
         verbose_name, verbose_name_plural = _(u"Currency"), _(u"Currencys")
     
            

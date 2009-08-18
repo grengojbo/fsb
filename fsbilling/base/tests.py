@@ -18,7 +18,7 @@ from fsadmin.server.models import Server
 import csv, sys, os
 
 class BaseTestCase(test.TestCase):
-    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency', 'tariffplan']
+    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan']
     def setUp(self):
         self.user = User.objects.create_user('test', 'test@test.com', 'test')
         # Every test needs a client.

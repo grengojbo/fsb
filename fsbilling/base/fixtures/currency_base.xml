@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
  <object pk="1" model="base.currencybase">
-  <field type="CharField" name="name_full">евро</field>
-  <field type="CharField" name="name">евро.</field>
+  <field type="CharField" name="name">евро</field>
+  <field type="CharField" name="name_small">евро.</field>
   <field type="CharField" name="code">EU</field>
  </object>
  <object pk="2" model="base.currencybase">
-  <field type="CharField" name="name_full">доллары США</field>
-  <field type="CharField" name="name">$</field>
+  <field type="CharField" name="name">доллары США</field>
+  <field type="CharField" name="name_small">$</field>
   <field type="CharField" name="code">USD</field>
  </object>
  <object pk="3" model="base.currencybase">
-  <field type="CharField" name="name_full">гривна</field>
-  <field type="CharField" name="name">грн.</field>
+  <field type="CharField" name="name">гривна</field>
+  <field type="CharField" name="name_small">грн.</field>
   <field type="CharField" name="code">GRN</field>
  </object>
  <object pk="4" model="base.currencybase">
-  <field type="CharField" name="name_full">рубли</field>
-  <field type="CharField" name="name">руб.</field>
+  <field type="CharField" name="name">рубли</field>
+  <field type="CharField" name="name_small">руб.</field>
   <field type="CharField" name="code">RUB</field>
+ </object>
+ <object pk="5" model="base.currencybase">
+  <field type="CharField" name="name">webmoney доллары</field>
+  <field type="CharField" name="name_small">WMZ</field>
+  <field type="CharField" name="code">WMZ</field>
+ </object>
+ <object pk="6" model="base.currencybase">
+  <field type="CharField" name="name">webmoney гривны</field>
+  <field type="CharField" name="name_small">WMU</field>
+  <field type="CharField" name="code">WMU</field>
+ </object>
+ <object pk="7" model="base.currencybase">
+  <field type="CharField" name="name">webmoney рубли</field>
+  <field type="CharField" name="name_small">WMR</field>
+  <field type="CharField" name="code">WMR</field>
+ </object>
+ <object pk="8" model="base.currencybase">
+  <field type="CharField" name="name">webmoney евро</field>
+  <field type="CharField" name="name_small">WME</field>
+  <field type="CharField" name="code">WME</field>
  </object>
 </django-objects>
