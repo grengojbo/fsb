@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/tariff/models.py</string>
+	<string>fsbilling/base/templates/admin/base_site.html</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,14 +40,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>40</integer>
+				<integer>45</integer>
 				<key>line</key>
-				<integer>123</integer>
+				<integer>21</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>93</integer>
+			<integer>67</integer>
+		</dict>
+		<key>fsbilling/base/templates/admin/base_site.html</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>32</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>fsbilling/tariff/models.py</key>
 		<dict>
@@ -61,12 +75,13 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>61</integer>
+			<integer>25</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>fsbilling/base/models.py</string>
+		<string>fsbilling/base/templates/admin/base_site.html</string>
 		<string>fsbilling/base/management/commands/load_billing.py</string>
 		<string>fsbilling/tariff/models.py</string>
 	</array>
@@ -81,7 +96,39 @@
 			<key>isExpanded</key>
 			<true/>
 			<key>subItems</key>
-			<dict/>
+			<dict>
+				<key>fsbilling</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>base</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict>
+								<key>templates</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict>
+										<key>admin</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
+								</dict>
+							</dict>
+						</dict>
+					</dict>
+				</dict>
+			</dict>
 		</dict>
 	</dict>
 	<key>windowFrame</key>

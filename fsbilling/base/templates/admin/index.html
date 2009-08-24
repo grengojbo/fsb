@@ -1,0 +1,48 @@
+{% extends "admin/home_site.html" %}
+{% load i18n app_plugins satchmo_util %}
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2 class="module-title">{% trans 'Recent Actions' %}</h2>
+		<div class="module-content">
+        <h3>{% trans 'My Actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% trans 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">{% if not entry.is_deletion %}<a href="{{ entry.get_admin_url }}">{% endif %}{{ entry.object_repr|escape }}{% if not entry.is_deletion %}</a>{% endif %}<br /><span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span></li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+		</div>
+    </div>
+
+	{% include "shop/admin/order_sidebar.html" %}
+	<div class="module" id="satchmo-helpers">
+		<h2 class="module-title">{% trans "Admin Tools" %}</h2>
+		<div class="module-content">
+			<ul>
+		    	<li>
+					<a href="{% url satchmo_site_settings %}">{% trans "Edit Site Settings" %}</a><br/>
+				</li>
+				<li>
+		    		<a href="{% url satchmo_admin_edit_inventory %}">{% trans 'Edit Inventory' %}</a><br/>
+				</li>
+				<li>
+		    		<a href="{% url satchmo_admin_product_export %}">{% trans 'Export Product Defs' %}</a><br/>
+				</li>
+				<li>
+		    		<a href="{% url satchmo_admin_variation_list %}">{% trans 'Product Variation Manager' %}</a><br/>
+				</li>
+				<li>
+		    		<a href="{% url keyedcache_stats %}">{% trans 'Cache Status' %}</a><br/>
+				</li>
+				{% plugin_point "admin_tools" %}
+			</ul>
+		</div>
+	</div>	
+</div>
+{% endblock %}

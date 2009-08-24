@@ -16,6 +16,11 @@ from django.utils.encoding import force_unicode
 import os.path, csv, logging
 from pytils.dt import ru_strftime
 
+try:
+    from decimal import Decimal
+except:
+    from django.utils._decimal import Decimal
+
 l = logging.getLogger('fsbilling.base.models')
 
 __author__ = '$Author:$'
