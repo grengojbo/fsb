@@ -21,11 +21,13 @@ class BaseTestCase(test.TestCase):
     fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan']
     def setUp(self):
         self.user = User.objects.create_user('test', 'test@test.com', 'test')
+        self.Contact1 = Contact.objects.create(first_name="Jim", last_name="Tester", 
+            role=ContactRole.objects.get(pk='Customer'), email='test@test.com', user=self.user)
         # Every test needs a client.
         self.client = Client()
         
     def testBalance(self):
         """docstring for billing core"""
-        new_balance = Balance.objects.create_balance(self.user)
+        new_balance = Balance.objects.create_balance(self.Contact1)
         self.assertEquals(new_balance.accountcode.pk, 1)
         self.assertEquals(new_balance.tariff.pk, 1)
