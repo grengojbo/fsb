@@ -15,8 +15,8 @@ from django.utils.dateformat import DateFormat
 from django.utils.encoding import force_unicode
 import os.path, csv, logging
 from pytils.dt import ru_strftime
-#from satchmo_store.contact.models import Contact
-#from satchmo_utils.fields import CurrencyField
+from satchmo_utils.fields import CurrencyField
+from satchmo_store.contact.models import Contact
 
 try:
     from decimal import Decimal
@@ -31,8 +31,9 @@ __revision__ = '$Revision:$'
 # Create your models here.
 class Balance(models.Model):
     """(Balance description)"""
-    #accountcode = models.ForeignKey(Contact)
-    #cash = CurrencyField(_("Баланс"), max_digits=18, decimal_places=10, default=0, display_decimal=4)
+    #accountcode = models.ForeignKey(User)
+    accountcode = models.ForeignKey(Contact)
+    cash = CurrencyField(_("Баланс"), max_digits=18, decimal_places=10, display_decimal=4)
     tariff = models.ForeignKey(TariffPlan, related_name='tariffplangroup')
     objects = models.Manager()
     enabled = models.BooleanField(_(u'Enable'), default=True)
@@ -48,7 +49,7 @@ class Balance(models.Model):
         verbose_name, verbose_name_plural = _(u"Balance"), _(u"Balances")
 
     def __unicode__(self):
-        return self.accountcode.user.name
+        return self.accountcode.name
 
     @models.permalink
     def get_absolute_url(self):
@@ -142,4 +143,4 @@ class Currency(models.Model):
         db_table = 'currency'
         verbose_name, verbose_name_plural = _(u"Currency"), _(u"Currencys")
     
-#import config           
+import config           
