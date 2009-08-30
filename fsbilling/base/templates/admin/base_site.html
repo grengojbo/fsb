@@ -1,6 +1,42 @@
-{% extends "admin/base_fsadmin.html" %}
-{% load i18n %}
+{% extends "admin/base.html" %}
+{% load i18n satchmo_util %}
+
+{% block extrahead %}
+{% blackbird_logging %}
+	<script src="{{media_url}}js/jquery.js" type="text/javascript"></script>
+{{ block.super }}
+	<script type="text/javascript"><!--
+	var satchmo = satchmo || {};
+	satchmo.select_if_one = function(selector, label) {
+		var elt = $(selector);
+		if (elt && elt.length>0 && elt[0].options.length == 2) {
+			try { log.debug('selecting default ' + label); } catch(err) {};
+			elt[0].options[1].selected = true;
+		}
+	}
+    $(function() {
+		satchmo.select_if_one('#id_site', 'site');
+	});
+	-->
+	</script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/base.css" />
+<style type="text/css">
+#content-related { float:right; width:29em; position:relative; margin-right: -30em;}
+#content-related .module h2 { cursor: default; }
+#content-related .module h2 .status { font-style: italic; }
+div.tabular .vCurrencyField { width: 70%; }
+</style>
+{% endblock %}
+
 {% block title %}{{ title|escape }} | {% trans 'FreeSWITCH Site Billing and Administration' %}{% endblock %}
 {% block branding %}
-<h1 id="site-name">{% trans 'FreeSWITCH Site Billing and Administration' %}</h1>
+<h1 id="site-name">{{ shop_name }} {% trans 'FreeSWITCH Site Billing and Administration' %}</h1>
+{% endblock %}
+
+{% block nav-global %}
+
 {% endblock %}

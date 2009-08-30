@@ -1,5 +1,100 @@
-{% extends "admin/home_site.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n app_plugins satchmo_util %}
+
+{% block extrastyle %}<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css"/>{% endblock %}
+
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="{% url admin:jsi18n %}"></script>
+<script type="text/javascript">
+var satchmo = satchmo || {};
+satchmo.module_status = {};
+l10n = {
+	show : '{% trans '(show)' %}',
+	hide : '{% trans '(hide)' %}'
+}
+
+satchmo.setup_toggle = function(elt) {
+	var module = $(elt);
+	module.click(function() { satchmo.toggle_module(this); });
+	module.append(' <span class="status">' + l10n.hide + '</span>');
+	var pid = module.parent().attr('id');
+	satchmo.module_status[pid] = true;
+}
+
+satchmo.toggle_module = function(elt) {
+	//console.log('toggle: ' + elt);
+	var pid = $(elt).parent().attr('id');
+	//console.log('pid: ' + pid);
+	var content = $('#' + pid + ' .module-content');
+	var span = $('#' + pid + ' h2 .status');
+	if (satchmo.module_status[pid]) {
+		content.slideUp('fast');
+		span.text(l10n.show);
+		var status = false;
+	}
+	else {
+		content.slideDown('fast');
+		span.text(l10n.hide);
+		var status = true;
+	}
+	satchmo.module_status[pid] = status;
+};
+
+$(function() {
+	$('#content-related h2.module-title').each(function() { 
+		satchmo.setup_toggle(this);
+	});
+	satchmo.toggle_module($('#recent-actions-module h2'));
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+{% if app_list %}
+    {% for app in app_list %}
+        <div class="module">
+        <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
+        <caption><a href="{{ app.app_url }}" class="section">{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</a></caption>
+        {% for model in app.models %}
+            <tr>
+            {% if model.perms.change %}
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% else %}
+                <th scope="row">{{ model.name }}</th>
+            {% endif %}
+
+            {% if model.perms.add %}
+                <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+
+            {% if model.perms.change %}
+                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+</div>
+{% endblock %}
+
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">

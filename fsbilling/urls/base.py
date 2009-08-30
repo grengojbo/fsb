@@ -7,7 +7,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 from django.conf.urls.defaults import *
 from satchmo_store.shop import get_satchmo_setting
-from satchmo_utils.signals import collect_urls
+from signals_ahoy.signals import collect_urls
 from product.urls.base import adminpatterns as prodpatterns
 from shipping.urls import adminpatterns as shippatterns
 import logging

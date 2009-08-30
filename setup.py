@@ -12,7 +12,7 @@ DIRNAME = os.path.dirname(__file__)
 
 # Dynamically calculate the version based on django.VERSION.
 ##version = __import__('satchmo_store').__version__
-version = '0.0.2'
+version = '0.0.3'
 
 #packages = find_packages('web/apps')
 #packages.append('web/static')
@@ -46,7 +46,7 @@ setup(name='fsbilling',
     install_requires=[
         'Django>=1.1',
         'django-extensions',
-        'django-batchadmin',
+        #'django-batchadmin',
         'BeautifulSoup',
         'userprofile',
         #'pycrypto',
@@ -65,5 +65,5 @@ setup(name='fsbilling',
         'Operating System :: OS Independent', 
         'Topic :: Office/Business',
     ],
-    #scripts=['scripts/server-admin','scripts/fapws2'],
+    scripts=['scripts/fsb'],
 )

@@ -1,0 +1,5 @@
+#!/bin/bash
+easy_install -U django
+easy_install -U userprofile
+easy_install -U fsadmin
+

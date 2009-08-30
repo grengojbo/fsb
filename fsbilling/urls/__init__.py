@@ -28,8 +28,8 @@ else:
         (shopregex, include('satchmo_store.shop.urls')),
     )
 
-urlpatterns += basepatterns + defaultpatterns
+#urlpatterns += basepatterns + defaultpatterns
 # TODO исправить кода будет нормально отображатся payment url
-#urlpatterns += basepatterns + shoppatterns + defaultpatterns
-
-urlhelper.remove_duplicate_urls(urlpatterns, [])
+urlpatterns += basepatterns + shoppatterns + defaultpatterns
+# TODO неправильно удаляет повторы
+#urlhelper.remove_duplicate_urls(urlpatterns, [])

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/base/templates/admin/base_site.html</string>
+	<string>fsbilling/base/__init__.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,14 +21,28 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
-		<key>fsbilling/base/management/commands/load_billing.py</key>
+		<key>INSTALL.txt</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>81</integer>
+				<integer>53</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>11</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fsbilling/base/__init__.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>11</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -40,14 +54,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>45</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>21</integer>
+				<integer>18</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>67</integer>
+			<integer>40</integer>
 		</dict>
 		<key>fsbilling/base/templates/admin/base_site.html</key>
 		<dict>
@@ -77,13 +91,28 @@
 			<key>firstVisibleLine</key>
 			<integer>25</integer>
 		</dict>
+		<key>setup.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>fsbilling/base/models.py</string>
+		<string>INSTALL.txt</string>
+		<string>setup.py</string>
 		<string>fsbilling/base/templates/admin/base_site.html</string>
-		<string>fsbilling/base/management/commands/load_billing.py</string>
-		<string>fsbilling/tariff/models.py</string>
+		<string>fsbilling/base/__init__.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -103,35 +132,33 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>base</key>
+						<key>tariff</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
-							<dict>
-								<key>templates</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>admin</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
-							</dict>
+							<dict/>
+						</dict>
+						<key>urls</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
 						</dict>
 					</dict>
+				</dict>
+				<key>scripts</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict/>
 				</dict>
 			</dict>
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{0, 300}, {1068, 702}}</string>
+	<string>{{6, 587}, {1073, 402}}</string>
 </dict>
 </plist>

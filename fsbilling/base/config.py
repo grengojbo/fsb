@@ -14,15 +14,15 @@ SHOP_GROUP = ConfigurationGroup('SHOP', _('Satchmo Shop Settings'), ordering=0)
 config_register(DecimalValue(
     SHOP_GROUP,
         'BALANCE_CASH',
-        description = _('Балан при регистрации'),
-        help_text = _("Первоначальный баланс при регистрации нового пользователя например 0.25 у.е."),
+        description = _('Beginning balance'),
+        help_text = _("The initial balance in the new user registration such as 0.25 USD"),
         default = Decimal('0.25')
     ))
 
 config_register(PositiveIntegerValue(
     SHOP_GROUP,
         'BALANCE_TARIFF',
-        description = _('Тариф по умолчанию'),
-        help_text = _("Необходимо обязательно создать тариф в тарифном плане"),
+        description = _('Default tariff'),
+        help_text = _("Make sure to create a tariff in the tariff plan"),
         default = 1
     ))
