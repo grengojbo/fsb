@@ -1,0 +1,192 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-31 00:30+0300\n"
+"PO-Revision-Date: 2009-08-31 00:37\n"
+"Last-Translator: <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.4.5.svn\n"
+
+#: config.py:12
+msgid "Satchmo Shop Settings"
+msgstr "Настройки Магазина"
+
+#: config.py:17
+msgid "Beginning balance"
+msgstr "Первоначальный баланс"
+
+#: config.py:18
+msgid "The initial balance in the new user registration such as 0.25 USD"
+msgstr "Первоначальный баланс при регистрации нового пользователя, например 0.25 USD"
+
+#: config.py:25
+msgid "Default tariff"
+msgstr "Тариф по умолчанию"
+
+#: config.py:26
+msgid "Make sure to create a tariff in the tariff plan"
+msgstr "Необходимо обязательно создать тариф в тарифном плане"
+
+#: models.py:36 models.py:49
+msgid "Balance"
+msgstr "Баланс"
+
+#: models.py:39 models.py:71 models.py:113
+msgid "Enable"
+msgstr "Включить"
+
+#: models.py:43
+msgid "Limit"
+msgstr "Лимит"
+
+#: models.py:43
+msgid "Time limit"
+msgstr "Ограничение по времени"
+
+#: models.py:44
+msgid "Credit"
+msgstr "Кредит"
+
+#: models.py:44
+msgid "Total sum for which credit is extended for calls"
+msgstr "Сумма, на которую предоставляется кредит для звонков"
+
+#: models.py:49
+msgid "Balances"
+msgstr "Балансы"
+
+#: models.py:61
+msgid "Баланс"
+msgstr "Баланс"
+
+#: models.py:69 models.py:90
+msgid "Name"
+msgstr "Имя"
+
+#: models.py:79
+msgid "Billing"
+msgstr "Счет"
+
+#: models.py:79
+msgid "Billings"
+msgstr "Счета"
+
+#: models.py:91
+msgid "small"
+msgstr "коротко"
+
+#: models.py:92
+msgid "code"
+msgstr "Код"
+
+#: models.py:98
+msgid "Currency Base"
+msgstr "Валюты"
+
+#: models.py:98
+msgid "Currency Bases"
+msgstr "База валют"
+
+#: models.py:110
+msgid "Курс"
+msgstr "Курс"
+
+#: models.py:111
+msgid "Date Start"
+msgstr "Дата начала"
+
+#: models.py:112
+msgid "Date End"
+msgstr "Дата окончания"
+
+#: models.py:114
+msgid "Primary"
+msgstr "По умолчанию"
+
+#: models.py:144
+msgid "Currency"
+msgstr "Валюта"
+
+#: models.py:144
+msgid "Currencys"
+msgstr "Валюты"
+
+#: templates/admin/base_site.html:35 templates/admin/base_site.html.py:37
+#, fuzzy
+msgid "FreeSWITCH Site Billing and Administration"
+msgstr ""
+
+#: templates/admin/index.html:20
+msgid "(show)"
+msgstr "(показать)"
+
+#: templates/admin/index.html:21
+msgid "(hide)"
+msgstr "(скрыть)"
+
+#: templates/admin/index.html:66
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:67
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:77
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:83
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:93
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:101
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:103
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:107
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:120
+msgid "Admin Tools"
+msgstr ""
+
+#: templates/admin/index.html:124
+msgid "Edit Site Settings"
+msgstr ""
+
+#: templates/admin/index.html:127
+msgid "Edit Inventory"
+msgstr ""
+
+#: templates/admin/index.html:130
+msgid "Export Product Defs"
+msgstr ""
+
+#: templates/admin/index.html:133
+msgid "Product Variation Manager"
+msgstr ""
+
+#: templates/admin/index.html:136
+msgid "Cache Status"
+msgstr ""

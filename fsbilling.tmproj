@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/base/__init__.py</string>
+	<string>INSTALL.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,9 +26,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>53</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>11</integer>
+				<integer>6</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -54,14 +54,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>18</integer>
+				<integer>27</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>40</integer>
+			<integer>25</integer>
 		</dict>
 		<key>fsbilling/base/templates/admin/base_site.html</key>
 		<dict>
@@ -71,6 +71,20 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fsbilling/base/views.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>8</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -110,6 +124,7 @@
 	<array>
 		<string>fsbilling/base/models.py</string>
 		<string>INSTALL.txt</string>
+		<string>fsbilling/base/views.py</string>
 		<string>setup.py</string>
 		<string>fsbilling/base/templates/admin/base_site.html</string>
 		<string>fsbilling/base/__init__.py</string>
@@ -132,6 +147,13 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
+						<key>base</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
+						</dict>
 						<key>tariff</key>
 						<dict>
 							<key>isExpanded</key>

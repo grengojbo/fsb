@@ -4,9 +4,3 @@
 
 ./manage.py test base tariff
 ./manage.py test userprofile
-
-Начальный баланс
-Первоначальный баланс при регистрации нового пользователя например 0.25 у.е.
-The initial balance in the new user registration such as 0.25 USD
-Тариф по умолчанию
-Необходимо обязательно создать тариф в тарифном плане

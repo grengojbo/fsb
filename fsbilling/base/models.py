@@ -25,23 +25,23 @@ except:
 
 l = logging.getLogger('fsbilling.base.models')
 
-__author__ = '$Author:$'
-__revision__ = '$Revision:$'
+__author__ = '$Author$'
+__revision__ = '$Revision$'
 
 # Create your models here.
 class Balance(models.Model):
     """(Balance description)"""
     #accountcode = models.ForeignKey(User)
     accountcode = models.ForeignKey(Contact)
-    cash = CurrencyField(_("Баланс"), max_digits=18, decimal_places=10, display_decimal=4)
+    cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=4)
     tariff = models.ForeignKey(TariffPlan, related_name='tariffplangroup')
     objects = models.Manager()
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = BalanceManager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
-    timelimit= models.FloatField(_(u'Лимит'), blank=False, default=0, help_text=_(u'Лимит звонка'))
-    credit = models.FloatField(_(u'Кредит'), blank=False, default=0, help_text=_(u'сумма на которую предоставляется кредит для звонков'))
+    timelimit= models.FloatField(_(u'Limit'), blank=False, default=0, help_text=_(u'Time limit'))
+    credit = models.FloatField(_(u'Credit'), blank=False, default=0, help_text=_(u'Total sum for which credit is extended for calls'))
     
     class Meta:
         #ordering = []
@@ -88,8 +88,8 @@ class NibbleBill(models.Model):
 class CurrencyBase(models.Model):
     """(CurrencyBase description)"""
     name = models.CharField(_(u'Name'), max_length=200)
-    name_small = models.CharField(_(u'коротко'), max_length=10)
-    code = models.CharField(_(u'код'), max_length=3)
+    name_small = models.CharField(_(u'small'), max_length=10)
+    code = models.CharField(_(u'code'), max_length=3)
     objects = models.Manager()
     
     class Meta:
@@ -111,7 +111,7 @@ class Currency(models.Model):
     date_start = models.DateTimeField(_(u'Date Start'))
     date_end = models.DateTimeField(_(u'Date End'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
-    primary = models.BooleanField(_(u"По умолчанию"), default=False)
+    primary = models.BooleanField(_(u"Primary"), default=False)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries

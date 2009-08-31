@@ -1,0 +1,191 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-31 00:30+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: config.py:12
+msgid "Satchmo Shop Settings"
+msgstr ""
+
+#: config.py:17
+msgid "Beginning balance"
+msgstr ""
+
+#: config.py:18
+msgid "The initial balance in the new user registration such as 0.25 USD"
+msgstr ""
+
+#: config.py:25
+msgid "Default tariff"
+msgstr ""
+
+#: config.py:26
+msgid "Make sure to create a tariff in the tariff plan"
+msgstr ""
+
+#: models.py:36 models.py:49
+msgid "Balance"
+msgstr ""
+
+#: models.py:39 models.py:71 models.py:113
+msgid "Enable"
+msgstr ""
+
+#: models.py:43
+msgid "Limit"
+msgstr ""
+
+#: models.py:43
+msgid "Time limit"
+msgstr ""
+
+#: models.py:44
+msgid "Credit"
+msgstr ""
+
+#: models.py:44
+msgid "Total sum for which credit is extended for calls"
+msgstr ""
+
+#: models.py:49
+msgid "Balances"
+msgstr ""
+
+#: models.py:61
+msgid "Баланс"
+msgstr ""
+
+#: models.py:69 models.py:90
+msgid "Name"
+msgstr ""
+
+#: models.py:79
+msgid "Billing"
+msgstr ""
+
+#: models.py:79
+msgid "Billings"
+msgstr ""
+
+#: models.py:91
+msgid "small"
+msgstr ""
+
+#: models.py:92
+msgid "code"
+msgstr ""
+
+#: models.py:98
+msgid "Currency Base"
+msgstr ""
+
+#: models.py:98
+msgid "Currency Bases"
+msgstr ""
+
+#: models.py:110
+msgid "Курс"
+msgstr ""
+
+#: models.py:111
+msgid "Date Start"
+msgstr ""
+
+#: models.py:112
+msgid "Date End"
+msgstr ""
+
+#: models.py:114
+msgid "Primary"
+msgstr ""
+
+#: models.py:144
+msgid "Currency"
+msgstr ""
+
+#: models.py:144
+msgid "Currencys"
+msgstr ""
+
+#: templates/admin/base_site.html:35 templates/admin/base_site.html.py:37
+msgid "FreeSWITCH Site Billing and Administration"
+msgstr ""
+
+#: templates/admin/index.html:20
+msgid "(show)"
+msgstr ""
+
+#: templates/admin/index.html:21
+msgid "(hide)"
+msgstr ""
+
+#: templates/admin/index.html:66
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:67
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:77
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:83
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:93
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:101
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:103
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:107
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:120
+msgid "Admin Tools"
+msgstr ""
+
+#: templates/admin/index.html:124
+msgid "Edit Site Settings"
+msgstr ""
+
+#: templates/admin/index.html:127
+msgid "Edit Inventory"
+msgstr ""
+
+#: templates/admin/index.html:130
+msgid "Export Product Defs"
+msgstr ""
+
+#: templates/admin/index.html:133
+msgid "Product Variation Manager"
+msgstr ""
+
+#: templates/admin/index.html:136
+msgid "Cache Status"
+msgstr ""
