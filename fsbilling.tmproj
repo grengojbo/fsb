@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>doc/installation.txt</string>
+	<string>fsbilling/base/models.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -49,47 +49,77 @@
 			<key>firstVisibleLine</key>
 			<integer>25</integer>
 		</dict>
-		<key>doc/installation.txt</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>40</integer>
-		</dict>
 		<key>fsbilling/base/__init__.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>57</integer>
 				<key>line</key>
-				<integer>11</integer>
+				<integer>9</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>57</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+		</dict>
+		<key>fsbilling/base/config.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>70</integer>
+				<key>line</key>
+				<integer>25</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>5</integer>
+		</dict>
+		<key>fsbilling/base/managers.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>95</integer>
+				<key>line</key>
+				<integer>28</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>17</integer>
 		</dict>
 		<key>fsbilling/base/models.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>21</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>27</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>25</integer>
+			<integer>34</integer>
 		</dict>
 		<key>fsbilling/base/templates/admin/base_site.html</key>
 		<dict>
@@ -118,6 +148,20 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>fsbilling/profile/__init__.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>34</integer>
+				<key>line</key>
+				<integer>16</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>5</integer>
 		</dict>
 		<key>fsbilling/tariff/models.py</key>
 		<dict>
@@ -150,14 +194,11 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
+		<string>fsbilling/base/config.py</string>
 		<string>fsbilling/base/models.py</string>
-		<string>INSTALL.txt</string>
-		<string>doc/configuration.txt</string>
-		<string>doc/installation.txt</string>
-		<string>fsbilling/base/views.py</string>
-		<string>setup.py</string>
-		<string>fsbilling/base/templates/admin/base_site.html</string>
 		<string>fsbilling/base/__init__.py</string>
+		<string>fsbilling/base/managers.py</string>
+		<string>fsbilling/profile/__init__.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -178,6 +219,28 @@
 					<key>subItems</key>
 					<dict/>
 				</dict>
+				<key>fsbilling</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>base</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
+						</dict>
+						<key>profile</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
+						</dict>
+					</dict>
+				</dict>
 				<key>scripts</key>
 				<dict>
 					<key>isExpanded</key>
@@ -189,6 +252,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{4, 134}, {1116, 417}}</string>
+	<string>{{-6, 132}, {1116, 417}}</string>
 </dict>
 </plist>
