@@ -26,6 +26,7 @@ class BalanceManager(models.Manager):
         Баланс для нового пользователя
         """
         from fsbilling.tariff.models import TariffPlan, Tariff
+        from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
         bl = self.model()
         bl.accountcode = contact
         bl.cash = config_value('SHOP','BALANCE_CASH')

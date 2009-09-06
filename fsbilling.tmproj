@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>INSTALL.txt</string>
+	<string>doc/installation.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -34,6 +34,34 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>doc/configuration.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>102</integer>
+				<key>line</key>
+				<integer>61</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>25</integer>
+		</dict>
+		<key>doc/installation.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>40</integer>
 		</dict>
 		<key>fsbilling/base/__init__.py</key>
 		<dict>
@@ -124,6 +152,8 @@
 	<array>
 		<string>fsbilling/base/models.py</string>
 		<string>INSTALL.txt</string>
+		<string>doc/configuration.txt</string>
+		<string>doc/installation.txt</string>
 		<string>fsbilling/base/views.py</string>
 		<string>setup.py</string>
 		<string>fsbilling/base/templates/admin/base_site.html</string>
@@ -141,34 +171,12 @@
 			<true/>
 			<key>subItems</key>
 			<dict>
-				<key>fsbilling</key>
+				<key>doc</key>
 				<dict>
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
-					<dict>
-						<key>base</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-						<key>tariff</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-						<key>urls</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-					</dict>
+					<dict/>
 				</dict>
 				<key>scripts</key>
 				<dict>
@@ -181,6 +189,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{6, 587}, {1073, 402}}</string>
+	<string>{{4, 134}, {1116, 417}}</string>
 </dict>
 </plist>
