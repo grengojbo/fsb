@@ -1,3 +1,4 @@
+# -*- mode: python; coding: utf-8; -*-
 from datetime import datetime
 from decimal import Decimal
 from django.contrib.sites.models import Site
@@ -30,14 +31,15 @@ class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
     site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
     order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
-    code = models.CharField(_('Prepaid Code'), max_length=100,
-        blank=True, null=True)
+    num_prepaid = models.PositiveIntegerField(_(u'Number'), default=0, unique=True)
+    code = models.PositiveIntegerField(_('Prepaid Code'), default=0,)
     purchased_by =  models.ForeignKey(Contact, verbose_name=_('Purchased by'),
         blank=True, null=True, related_name='prepaids_purchased')
     date_added = models.DateField(_("Date added"), null=True, blank=True)
-    valid = models.BooleanField(_('Valid'), default=True)
+    date_end = models.DateField(_("Date end"), null=True, blank=True)
+    enabled = models.BooleanField(_(u'Enable'), default=False)
+    valid = models.BooleanField(_('Valid'), default=False)
     message = models.CharField(_('Message'), blank=True, null=True, max_length=255)
-    #recipient_email = models.EmailField(_("Email"), blank=True, max_length=75)
     start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2,
         max_digits=8)
 
@@ -92,6 +94,7 @@ class Prepaid(models.Model):
         return u"Gift Cert: %s/%s" % (sb, b)
 
     class Meta:
+        unique_together = ("num_prepaid", "code")
         verbose_name = _("Prepaid card")
         verbose_name_plural = _("Prepaid cards")
 
@@ -132,12 +135,8 @@ class PrepaidProduct(Product):
 
     def order_success(self, order, order_item):
         log.debug("Order success called, creating gift certs on order: %s", order)
-        message = ""
-        email = ""
         for detl in order_item.orderitemdetail_set.all():
-            if detl.name == "email":
-                email = detl.value
-            elif detl.name == "message":
+            if detl.name == "message":
                 message = detl.value
 
         price=order_item.line_item_price
@@ -146,9 +145,8 @@ class PrepaidProduct(Product):
             order = order,
             start_balance= price,
             purchased_by = order.contact,
-            valid=True,
-            message=message,
-            recipient_email=email
+            valid=False,
+            message=message
             )
         gc.save()
 

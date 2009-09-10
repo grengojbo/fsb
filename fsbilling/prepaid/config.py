@@ -1,3 +1,4 @@
+# -*- mode: python; coding: utf-8; -*-
 from livesettings import *
 from django.utils.translation import ugettext_lazy as _
 

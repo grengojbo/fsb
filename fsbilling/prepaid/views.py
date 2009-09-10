@@ -1,3 +1,4 @@
+# -*- mode: python; coding: utf-8; -*-
 from django import http
 from django.contrib.sites.models import Site
 from django.shortcuts import render_to_response

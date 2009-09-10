@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- mode: python; coding: utf-8; -*-
 from decimal import Decimal
 from django.contrib.sites.models import Site
 from django.test import TestCase

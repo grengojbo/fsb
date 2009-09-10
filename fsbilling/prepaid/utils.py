@@ -1,3 +1,4 @@
+# -*- mode: python; coding: utf-8; -*-
 import random
 from livesettings import config_value
 

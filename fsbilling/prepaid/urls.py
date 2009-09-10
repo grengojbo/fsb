@@ -1,3 +1,4 @@
+# -*- mode: python; coding: utf-8; -*-
 from django.conf.urls.defaults import *
 from livesettings import config_get_group
 

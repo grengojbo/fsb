@@ -1,0 +1,27 @@
+============
+Prepaid card
+============
+
+Подключение модуля
+Для подключения необходимо в файле setting.py добавить в секции
+INSTALLED_APPS = (
+	...
+	'fsbilling.prepaid',
+	...
+)
+SATCHMO_SETTINGS = {
+    ...
+    'CUSTOM_PRODUCT_MODULES' : ['prepaid'],
+    'CUSTOM_PAYMENT_MODULES ' : ['prepaid'],
+    ...
+}
+и синронезировать модель с базой
+./manage.py syncdb
+./manage.py migrate --db-dry-run
+./manage.py migrate
+
+Создаем раздел **Карточки предоплаты** 
+Начало › Product › Разделы ›
+Затем создаем продукт **Карточка предоплаты 25**
+Начало › Prepaid › Prepaid card products 
+и добавляем карточки с кодами

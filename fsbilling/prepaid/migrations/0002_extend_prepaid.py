@@ -1,4 +1,5 @@
 # -*- mode: python; coding: utf-8; -*-
+
 from south.db import db
 from django.db import models
 from fsbilling.prepaid.models import *
@@ -10,50 +11,49 @@ class Migration:
     
     def forwards(self, orm):
         
-        # Adding model 'PrepaidProduct'
-        db.create_table('prepaid_prepaidproduct', (
-            ('product_ptr', orm['prepaid.PrepaidProduct:product_ptr']),
-        ))
-        db.send_create_signal('prepaid', ['PrepaidProduct'])
+        # Adding field 'Prepaid.enabled'
+        db.add_column('prepaid_prepaid', 'enabled', orm['prepaid.prepaid:enabled'])
         
-        # Adding model 'Prepaid'
-        db.create_table('prepaid_prepaid', (
-            ('id', orm['prepaid.Prepaid:id']),
-            ('site', orm['prepaid.Prepaid:site']),
-            ('order', orm['prepaid.Prepaid:order']),
-            ('code', orm['prepaid.Prepaid:code']),
-            ('purchased_by', orm['prepaid.Prepaid:purchased_by']),
-            ('date_added', orm['prepaid.Prepaid:date_added']),
-            ('valid', orm['prepaid.Prepaid:valid']),
-            ('message', orm['prepaid.Prepaid:message']),
-            ('start_balance', orm['prepaid.Prepaid:start_balance']),
-        ))
-        db.send_create_signal('prepaid', ['Prepaid'])
+        # Adding field 'Prepaid.num_prepaid'
+        db.add_column('prepaid_prepaid', 'num_prepaid', orm['prepaid.prepaid:num_prepaid'])
         
-        # Adding model 'PrepaidUsage'
-        db.create_table('prepaid_prepaidusage', (
-            ('id', orm['prepaid.PrepaidUsage:id']),
-            ('usage_date', orm['prepaid.PrepaidUsage:usage_date']),
-            ('notes', orm['prepaid.PrepaidUsage:notes']),
-            ('balance_used', orm['prepaid.PrepaidUsage:balance_used']),
-            ('orderpayment', orm['prepaid.PrepaidUsage:orderpayment']),
-            ('used_by', orm['prepaid.PrepaidUsage:used_by']),
-            ('prepaid', orm['prepaid.PrepaidUsage:prepaid']),
-        ))
-        db.send_create_signal('prepaid', ['PrepaidUsage'])
+        # Adding field 'Prepaid.date_end'
+        db.add_column('prepaid_prepaid', 'date_end', orm['prepaid.prepaid:date_end'])
+        
+        # Changing field 'Prepaid.code'
+        # (to signature: django.db.models.fields.PositiveIntegerField(default=0))
+        db.alter_column('prepaid_prepaid', 'code', orm['prepaid.prepaid:code'])
+        
+        # Changing field 'Prepaid.valid'
+        # (to signature: django.db.models.fields.BooleanField(default=False, blank=True))
+        db.alter_column('prepaid_prepaid', 'valid', orm['prepaid.prepaid:valid'])
+        
+        # Creating unique_together for [num_prepaid, code] on Prepaid.
+        db.create_unique('prepaid_prepaid', ['num_prepaid', 'code'])
         
     
     
     def backwards(self, orm):
         
-        # Deleting model 'PrepaidProduct'
-        db.delete_table('prepaid_prepaidproduct')
+        # Deleting unique_together for [num_prepaid, code] on Prepaid.
+        db.delete_unique('prepaid_prepaid', ['num_prepaid', 'code'])
         
-        # Deleting model 'Prepaid'
-        db.delete_table('prepaid_prepaid')
+        # Deleting field 'Prepaid.enabled'
+        db.delete_column('prepaid_prepaid', 'enabled')
         
-        # Deleting model 'PrepaidUsage'
-        db.delete_table('prepaid_prepaidusage')
+        # Deleting field 'Prepaid.num_prepaid'
+        db.delete_column('prepaid_prepaid', 'num_prepaid')
+        
+        # Deleting field 'Prepaid.date_end'
+        db.delete_column('prepaid_prepaid', 'date_end')
+        
+        # Changing field 'Prepaid.code'
+        # (to signature: django.db.models.fields.CharField(max_length=100, null=True, blank=True))
+        db.alter_column('prepaid_prepaid', 'code', orm['prepaid.prepaid:code'])
+        
+        # Changing field 'Prepaid.valid'
+        # (to signature: django.db.models.fields.BooleanField(default=True, blank=True))
+        db.alter_column('prepaid_prepaid', 'valid', orm['prepaid.prepaid:valid'])
         
     
     
@@ -126,15 +126,19 @@ class Migration:
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'prepaid.prepaid': {
-            'code': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'Meta': {'unique_together': "(('num_prepaid', 'code'),)"},
+            'code': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'date_added': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'date_end': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'enabled': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'num_prepaid': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0', 'unique': 'True'}),
             'order': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'prepaids'", 'blank': 'True', 'null': 'True', 'to': "orm['shop.Order']"}),
             'purchased_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'prepaids_purchased'", 'blank': 'True', 'null': 'True', 'to': "orm['contact.Contact']"}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']", 'null': 'True', 'blank': 'True'}),
             'start_balance': ('django.db.models.fields.DecimalField', [], {'max_digits': '8', 'decimal_places': '2'}),
-            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'})
+            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
         },
         'prepaid.prepaidproduct': {
             'product_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['product.Product']", 'unique': 'True', 'primary_key': 'True'})
