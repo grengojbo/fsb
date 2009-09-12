@@ -25,3 +25,7 @@ SATCHMO_SETTINGS = {
 Затем создаем продукт **Карточка предоплаты 25**
 Начало › Prepaid › Prepaid card products 
 и добавляем карточки с кодами
+./manage.py load_prepaid --currency=GRN ./apps/fsbilling/prepaid/fixtures/t.csv
+где currency - код валюты карточки
+формат файла указывается в
+

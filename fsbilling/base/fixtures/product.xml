@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+ <object pk="2" model="product.product">
+  <field to="sites.site" name="site" rel="ManyToOneRel">1</field>
+  <field type="CharField" name="name">Icall Card 25</field>
+  <field type="SlugField" name="slug">prcard25</field>
+  <field type="CharField" name="sku">prcard25</field>
+  <field type="TextField" name="short_description"></field>
+  <field type="TextField" name="description"></field>
+  <field type="DecimalField" name="items_in_stock">0</field>
+  <field type="TextField" name="meta"></field>
+  <field type="DateField" name="date_added">2009-09-11</field>
+  <field type="BooleanField" name="active">True</field>
+  <field type="BooleanField" name="featured">False</field>
+  <field type="IntegerField" name="ordering">0</field>
+  <field type="DecimalField" name="weight"><None></None></field>
+  <field type="CharField" name="weight_units"></field>
+  <field type="DecimalField" name="length"><None></None></field>
+  <field type="CharField" name="length_units"></field>
+  <field type="DecimalField" name="width"><None></None></field>
+  <field type="CharField" name="width_units"></field>
+  <field type="DecimalField" name="height"><None></None></field>
+  <field type="CharField" name="height_units"></field>
+  <field type="DecimalField" name="total_sold">0</field>
+  <field type="BooleanField" name="taxable">False</field>
+  <field to="product.taxclass" name="taxClass" rel="ManyToOneRel"><None></None></field>
+  <field type="CharField" name="shipclass">NO</field>
+  <field to="product.category" name="category" rel="ManyToManyRel"><object pk="1"></object></field>
+  <field to="product.product" name="related_items" rel="ManyToManyRel"></field>
+  <field to="product.product" name="also_purchased" rel="ManyToManyRel"></field>
+ </object>
+ <object pk="3" model="product.product">
+  <field to="sites.site" name="site" rel="ManyToOneRel">1</field>
+  <field type="CharField" name="name">Icall Card 50</field>
+  <field type="SlugField" name="slug">prcard50</field>
+  <field type="CharField" name="sku">prcard50</field>
+  <field type="TextField" name="short_description"></field>
+  <field type="TextField" name="description"></field>
+  <field type="DecimalField" name="items_in_stock">0</field>
+  <field type="TextField" name="meta"></field>
+  <field type="DateField" name="date_added">2009-09-11</field>
+  <field type="BooleanField" name="active">True</field>
+  <field type="BooleanField" name="featured">False</field>
+  <field type="IntegerField" name="ordering">0</field>
+  <field type="DecimalField" name="weight"><None></None></field>
+  <field type="CharField" name="weight_units"></field>
+  <field type="DecimalField" name="length"><None></None></field>
+  <field type="CharField" name="length_units"></field>
+  <field type="DecimalField" name="width"><None></None></field>
+  <field type="CharField" name="width_units"></field>
+  <field type="DecimalField" name="height"><None></None></field>
+  <field type="CharField" name="height_units"></field>
+  <field type="DecimalField" name="total_sold">0</field>
+  <field type="BooleanField" name="taxable">False</field>
+  <field to="product.taxclass" name="taxClass" rel="ManyToOneRel"><None></None></field>
+  <field type="CharField" name="shipclass">NO</field>
+  <field to="product.category" name="category" rel="ManyToManyRel"><object pk="1"></object></field>
+  <field to="product.product" name="related_items" rel="ManyToManyRel"></field>
+  <field to="product.product" name="also_purchased" rel="ManyToManyRel"></field>
+ </object>
+ <object pk="1" model="product.product">
+  <field to="sites.site" name="site" rel="ManyToOneRel">1</field>
+  <field type="CharField" name="name">Пополнение счета</field>
+  <field type="SlugField" name="slug"></field>
+  <field type="CharField" name="sku"></field>
+  <field type="TextField" name="short_description"></field>
+  <field type="TextField" name="description"></field>
+  <field type="DecimalField" name="items_in_stock">0</field>
+  <field type="TextField" name="meta"></field>
+  <field type="DateField" name="date_added">2009-09-08</field>
+  <field type="BooleanField" name="active">True</field>
+  <field type="BooleanField" name="featured">False</field>
+  <field type="IntegerField" name="ordering">0</field>
+  <field type="DecimalField" name="weight"><None></None></field>
+  <field type="CharField" name="weight_units">lb</field>
+  <field type="DecimalField" name="length"><None></None></field>
+  <field type="CharField" name="length_units">in</field>
+  <field type="DecimalField" name="width"><None></None></field>
+  <field type="CharField" name="width_units">in</field>
+  <field type="DecimalField" name="height"><None></None></field>
+  <field type="CharField" name="height_units">in</field>
+  <field type="DecimalField" name="total_sold">0</field>
+  <field type="BooleanField" name="taxable">False</field>
+  <field to="product.taxclass" name="taxClass" rel="ManyToOneRel"><None></None></field>
+  <field type="CharField" name="shipclass">NO</field>
+  <field to="product.category" name="category" rel="ManyToManyRel"><object pk="1"></object></field>
+  <field to="product.product" name="related_items" rel="ManyToManyRel"></field>
+  <field to="product.product" name="also_purchased" rel="ManyToManyRel"></field>
+ </object>
+</django-objects>

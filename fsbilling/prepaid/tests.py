@@ -10,7 +10,7 @@ from product.models import Product
 from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
 #from utils import generate_certificate_code, generate_code
-from fsbilling.base.models import CurrencyBase
+from fsbilling.base.models import CurrencyBase, Currency
 import datetime, logging
 import csv, sys, os
 
@@ -46,7 +46,7 @@ def make_test_order(country, state):
     return o
 
 class TestCertCreate(TestCase):
-    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml']
+    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml', 'product_category', 'product', 'prepaid', 'test_prepaid']
     
     def setUp(self):
         self.site = Site.objects.get_current()
@@ -60,6 +60,12 @@ class TestCertCreate(TestCase):
         try:
             res = Prepaid.objects.load_prepaid(c, self.site, f)
             self.assertEquals(res, 3) 
+        finally:
+            f.close()
+        f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test2.csv'), "rt")
+        try:
+            res = Prepaid.objects.load_prepaid(c, self.site, f)
+            self.assertEquals(res, 2) 
         finally:
             f.close()
         #gc = GiftCertificate(start_balance = '100.00', site=self.site)

@@ -7,4 +7,4 @@ class Command(NoArgsCommand):
     
     def handle_noargs(self, **options):
         """Load FSadmin default data."""
-        call_command('loaddata', 'currency_base.xml', 'currency.xml', 'tariffplan.xml', 'l10n-data.yaml', interactive=True)
+        call_command('loaddata', 'currency_base.xml', 'currency.xml', 'tariffplan.xml', 'l10n-data.yaml', 'product_category', 'product', 'prepaid', interactive=True)

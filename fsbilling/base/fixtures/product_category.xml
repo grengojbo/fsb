@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+ <object pk="1" model="product.category">
+  <field to="sites.site" name="site" rel="ManyToOneRel">1</field>
+  <field type="CharField" name="name">fsb</field>
+  <field type="SlugField" name="slug">fsb</field>
+  <field to="product.category" name="parent" rel="ManyToOneRel"><None></None></field>
+  <field type="TextField" name="meta"></field>
+  <field type="TextField" name="description"></field>
+  <field type="IntegerField" name="ordering">0</field>
+  <field type="BooleanField" name="is_active">True</field>
+  <field to="product.category" name="related_categories" rel="ManyToManyRel"></field>
+ </object>
+</django-objects>

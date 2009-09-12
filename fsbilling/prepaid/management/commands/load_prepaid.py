@@ -34,7 +34,7 @@ class Command(BaseCommand):
         from fsbilling.prepaid.models import Prepaid, PrepaidProduct
         from fsbilling.base.models import CurrencyBase
 
-        tid = options.get('currency','')
+        currency = options.get('currency','')
 
         self.style = no_style()
 

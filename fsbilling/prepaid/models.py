@@ -35,16 +35,19 @@ class PrepaidManager(models.Manager):
         """
         c - Код валюты
         """
-        bl = self.model()
-        bl.num_prepaid = n['num_prepaid']
-        bl.code = n['code']
-        bl.site = site
-        bl.start_balance = n['start_balance']
-        bl.date_added = n['date_added']
-        bl.date_end = n['date_end']
-        bl.currency = currency
-        bl.save()
-        return 1
+        try:
+            bl = self.model()
+            bl.num_prepaid = n['num_prepaid']
+            bl.code = n['code']
+            bl.site = site
+            bl.start_balance = n['start_balance']
+            bl.date_added = n['date_added']
+            bl.date_end = n['date_end']
+            bl.currency = currency
+            bl.save()
+            return 1
+        except Exception, e:
+            return 0
         
     def load_prepaid(self, currency, site, base_file):
         """
@@ -93,7 +96,7 @@ class Prepaid(models.Model):
     site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
     order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
     num_prepaid = models.PositiveIntegerField(_(u'Number'), default=0, unique=True)
-    code = models.PositiveIntegerField(_('Prepaid Code'), default=0,)
+    code = models.PositiveIntegerField(_('Prepaid Code'), default=0)
     purchased_by =  models.ForeignKey(Contact, verbose_name=_('Purchased by'),
         blank=True, null=True, related_name='prepaids_purchased')
     date_added = models.DateField(_("Date added"), null=True, blank=True)

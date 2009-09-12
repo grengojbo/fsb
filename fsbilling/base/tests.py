@@ -19,7 +19,7 @@ from satchmo_store.contact.models import Contact, ContactRole
 import csv, sys, os
 
 class BaseTestCase(test.TestCase):
-    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml']
+    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml', 'product_category', 'product']
     def setUp(self):
         self.user = User.objects.create_user('test', 'test@test.com', 'test')
         self.Contact1 = Contact.objects.create(first_name="Jim", last_name="Tester", 
