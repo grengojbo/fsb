@@ -6,6 +6,16 @@ from l10n.models import Country
 import logging
 l = logging.getLogger('fsbilling.profile')
 
+def handler_profileuser_post(sender, request, extra, **kwargs):
+    """docstring for handler_profileuser_create"""
+    l.debug("Signal post_signal -> handler_profileuser_post")
+    if sender.func_name == 'register':
+        from fsbilling.profile.models import ProfileUser
+        p, created = ProfileUser.objects.get_or_create(user=extra['newuser'])
+        if created:
+            p.regip = request.META.get("REMOTE_ADDR")
+            p.save()
+            
 def handler_create_profile(sender, user, **kwargs):
     try:
         contact = Contact.objects.get(user=user)
@@ -23,3 +33,4 @@ def handler_create_profile(sender, user, **kwargs):
     signals.satchmo_registration_verified.send(sender=sender, contact=contact)
     
 signals.profile_registration.connect(handler_create_profile)
+signals.post_signal.connect(handler_profileuser_post)

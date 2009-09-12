@@ -17,6 +17,10 @@ from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.db.models import F, Q
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
+try:
+    from decimal import Decimal
+except:
+    from django.utils._decimal import Decimal
 import logging
 l = logging.getLogger('fsbilling.base.managers')
 
@@ -26,10 +30,17 @@ class BalanceManager(models.Manager):
         Баланс для нового пользователя
         """
         from fsbilling.tariff.models import TariffPlan, Tariff
+        from fsbilling.profile.models import ProfileUser
         from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
         bl = self.model()
         bl.accountcode = contact
-        bl.cash = config_value('SHOP','BALANCE_CASH')
+        try:
+            p = ProfileUser.objects.get(user=contact.user)
+            # TODO сделать антиспам
+            bl.cash = config_value('SHOP','BALANCE_CASH')
+            #bl.cash = Decimal("0.0")
+        except Exception, e:
+            bl.cash = config_value('SHOP','BALANCE_CASH')
         bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
         bl.save()
         return bl

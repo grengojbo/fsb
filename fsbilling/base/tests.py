@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from fsbilling.base.models import Balance
 from fsadmin.server.models import Server
 from satchmo_store.contact.models import Contact, ContactRole
+from livesettings import ConfigurationSettings, config_value, config_choice_values
+from decimal import Decimal
 import csv, sys, os
 
 class BaseTestCase(test.TestCase):
@@ -32,3 +34,5 @@ class BaseTestCase(test.TestCase):
         new_balance = Balance.objects.create_balance(self.Contact1)
         self.assertEquals(new_balance.accountcode.pk, 1)
         self.assertEquals(new_balance.tariff.pk, 1)
+        self.assertEquals(new_balance.cash, config_value('SHOP','BALANCE_CASH'))
+        #self.assertEquals(new_balance.cash, Decimal("0.0"))

@@ -153,8 +153,7 @@ class Prepaid(models.Model):
 
     def __unicode__(self):
         sb = moneyfmt(self.start_balance)
-        b = moneyfmt(self.balance)
-        return u"Gift Cert: %s/%s" % (sb, b)
+        return u"Prepaid Card: %s %s" % (self.num_prepaid, sb)
 
     class Meta:
         unique_together = ("num_prepaid", "code")
@@ -189,6 +188,8 @@ class PrepaidProduct(Product):
     #product = models.OneToOneField(Product, verbose_name=_('Product'), primary_key=True)
     is_shippable = False
     discountable = False
+    
+    #unit_price
 
     def __unicode__(self):
         return u"PrepaidProduct: %s" % self.name
@@ -197,7 +198,7 @@ class PrepaidProduct(Product):
         return 'PrepaidProduct'        
 
     def order_success(self, order, order_item):
-        log.debug("Order success called, creating gift certs on order: %s", order)
+        log.debug("Order success called, creating prepaid card on order: %s", order)
         for detl in order_item.orderitemdetail_set.all():
             if detl.name == "message":
                 message = detl.value
