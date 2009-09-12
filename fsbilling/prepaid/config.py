@@ -32,9 +32,9 @@ config_register_list(
         
     StringValue(PAYMENT_GROUP,
         'FORMAT',
-        description=_('Code format'),
-        default="^^^^-^^^^-^^^^",
-        help_text=_("Enter the format for your cert code.  Use a '^' for the location of a randomly generated character.")),
+        description=_('Load format'),
+        default="delimiter=';'time_format='%d.%m.%Y'num_prepaid|code|start_balance|currency|date_end",
+        help_text=_("Load format example delimiter=';'time_format='%d.%m.%Y'num_prepaid|code|start_balance|currency|date_end")),
         
     ModuleValue(PAYMENT_GROUP,
         'MODULE',

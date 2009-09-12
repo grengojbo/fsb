@@ -2,17 +2,21 @@
 from datetime import datetime
 from decimal import Decimal
 from django.contrib.sites.models import Site
-from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from l10n.utils import moneyfmt
 from livesettings import config_value
 from fsbilling.prepaid.utils import generate_certificate_code
+from fsbilling.base.models import CurrencyBase
 from payment.utils import get_processor_by_key
 from product.models import Product, ProductManager
 from satchmo_store.contact.models import Contact
 from satchmo_store.shop.models import OrderPayment, Order
 import logging
+import csv, sys, os
+from fsadmin.core.utils import CsvData
+from django.db.models import F, Q
+from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 
 PREPAIDCODE_KEY = 'PREPAIDCODE'
 log = logging.getLogger('prepaid.models')
@@ -27,6 +31,63 @@ class PrepaidManager(models.Manager):
             return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
         raise Prepaid.DoesNotExist()
 
+    def add_prepaid(self, currency, site, n):
+        """
+        c - Код валюты
+        """
+        bl = self.model()
+        bl.num_prepaid = n['num_prepaid']
+        bl.code = n['code']
+        bl.site = site
+        bl.start_balance = n['start_balance']
+        bl.date_added = n['date_added']
+        bl.date_end = n['date_end']
+        bl.currency = currency
+        bl.save()
+        return 1
+        
+    def load_prepaid(self, currency, site, base_file):
+        """
+        Загрузка данных из csv файла
+        """
+        save_cnt = 0
+        try:
+            cd = CsvData(config_value('PAYMENT_PREPAID', 'FORMAT'))
+            reader = csv.reader(base_file, delimiter=';', dialect='excel')
+            no_base = []
+            for row in reader:
+                save_flag = False
+                n = {}
+                row_save = []
+                n['date_end'] = datetime.max
+                n['date_added'] = datetime.now()
+                for index, c in enumerate(cd.data_col):
+                    try:
+                        #log.debug("%s=%s" % (c,row[index].strip()))
+                        if c != 'zeros' and len(row[index].strip()) > 0:
+                            if c == 'num_prepaid':
+                                n["num_prepaid"] = row[index].strip()
+                            elif c == 'code':
+                                n["code"] = row[index].strip()
+                                save_flag = True
+                            elif c == 'start_balance':
+                                n['start_balance'] = Decimal(cd.set_num(row[index].strip()))
+                            elif c == 'date_added' and len(row[index].strip()) > 1:
+                                n['date_added'] = cd.set_time(row[index].strip())
+                            elif c == 'date_end' and len(row[index].strip()) > 1:
+                                n['date_end'] = cd.set_time(row[index].strip())
+                            elif row[index].strip() != '':
+                                n[c]=row[index].strip()
+                    except:
+                        pass
+                if save_flag:
+                    save_cnt += self.add_prepaid(currency, site, n)
+                    log.debug('Card number: %s' % n["num_prepaid"])
+                n.clear()
+        except csv.Error, e:
+            log.error('line %d: %s' % (reader.line_num, e))
+        return save_cnt
+
 class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
     site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
@@ -40,9 +101,8 @@ class Prepaid(models.Model):
     enabled = models.BooleanField(_(u'Enable'), default=False)
     valid = models.BooleanField(_('Valid'), default=False)
     message = models.CharField(_('Message'), blank=True, null=True, max_length=255)
-    start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2,
-        max_digits=8)
-
+    start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2, max_digits=8)
+    currency = models.ForeignKey(CurrencyBase, default=1, related_name='currencys', verbose_name=_('Currency'))
     objects = PrepaidManager()
 
     @property

@@ -9,16 +9,16 @@ from models import *
 from product.models import Product
 from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
-from utils import generate_certificate_code, generate_code
+#from utils import generate_certificate_code, generate_code
+from fsbilling.base.models import CurrencyBase
 import datetime, logging
+import csv, sys, os
 
-log = logging.getLogger('giftcertificate.tests')
-
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
+log = logging.getLogger('prepaid.tests')
 
 def make_test_order(country, state):
-    c = Contact(first_name="Gift", last_name="Tester", 
-        role=ContactRole.objects.get(pk='Customer'), email="gift@example.com")
+    c = Contact(first_name="Prepaid", last_name="Tester", 
+        role=ContactRole.objects.get(pk='Customer'), email="prepaid@example.com")
     c.save()
     if not isinstance(country, Country):
         country = Country.objects.get(iso2_code__iexact = country)
@@ -45,44 +45,8 @@ def make_test_order(country, state):
 
     return o
 
-class TestGenerateCode(TestCase):
-
-    def testGetCode(self):
-        c = generate_code(alphabet, '^^^^')
-        
-        self.assertEqual(len(c), 4)
-        
-        for ch in c:
-            self.assert_(ch in alphabet)
-            
-    def testGetCode2(self):
-        c = generate_code(alphabet, '^^^^-^^^^')
-        c2 = generate_code(alphabet, '^^^^-^^^^')
-        self.assertNotEqual(c,c2)
-        
-    def testFormat(self):
-        c = generate_code(alphabet, '^-^-^-^')
-        for i in (0,2,4,6):
-            self.assert_(c[i] in alphabet)
-        for i in (1,3,5):
-            self.assertEqual(c[i], '-')
-
-class TestGenerateCertificateCode(TestCase):
-    def setUp(self):
-        self.charset = config_value('PAYMENT_GIFTCERTIFICATE', 'CHARSET')
-        self.format = config_value('PAYMENT_GIFTCERTIFICATE', 'FORMAT')
-        
-    def testGetCode(self):
-        c = generate_certificate_code()
-        self.assertEqual(len(c), len(self.format))
-
-        chars = [x for x in self.format if not x=='^']
-        chars.extend(self.charset)
-        for ch in c:
-            self.assert_(ch in chars)
-    
 class TestCertCreate(TestCase):
-    fixtures = ['l10n-data.yaml','test_shop']
+    fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml']
     
     def setUp(self):
         self.site = Site.objects.get_current()
@@ -91,37 +55,23 @@ class TestCertCreate(TestCase):
         cache_delete()
 
     def testCreate(self):
-        gc = GiftCertificate(start_balance = '100.00', site=self.site)
-        gc.save()
+        c = CurrencyBase.objects.get(code='GRN')
+        f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test.csv'), "rt")
+        try:
+            res = Prepaid.objects.load_prepaid(c, self.site, f)
+            self.assertEquals(res, 3) 
+        finally:
+            f.close()
+        #gc = GiftCertificate(start_balance = '100.00', site=self.site)
+        #gc.save()
         
-        self.assert_(gc.code)
-        self.assertEqual(gc.balance, Decimal('100.00'))
+        #self.assert_(gc.code)
+        #self.assertEqual(gc.balance, Decimal('100.00'))
 
     def testUse(self):
-        gc = GiftCertificate(start_balance = '100.00', site=self.site)
-        gc.save()
-        bal = gc.use('10.00')
-        self.assertEqual(bal, Decimal('90.00'))
-        self.assertEqual(gc.usages.count(), 1)
-        
-        
-class GiftCertOrderTest(TestCase):
-
-    fixtures = ['l10n-data.yaml', 'test_shop.yaml', 'test_prepaid.yaml', 'test_prepaid_config.yaml']
-    
-    def tearDown(self):
-        cache_delete()
-
-    def testOrderSuccess(self):
-        """Test cert creation on order success"""
-        cache_delete()
-        order = make_test_order('US', '')
-        order.order_success()
-    
-        certs = order.prepaids.all()
-        self.assertEqual(len(certs), 1)
-        c = certs[0]
-        self.assertEqual(c.balance, Decimal('20.00'))
-        self.assertEqual(c.recipient_email, 'me@example.com')
-        self.assertEqual(c.message, 'hello there')
-        
+        #gc = GiftCertificate(start_balance = '100.00', site=self.site)
+        #gc.save()
+        #bal = gc.use('10.00')
+        #self.assertEqual(bal, Decimal('90.00'))
+        #self.assertEqual(gc.usages.count(), 1)
+        pass

@@ -17,6 +17,7 @@ import os.path, csv, logging
 from pytils.dt import ru_strftime
 from satchmo_utils.fields import CurrencyField
 from satchmo_store.contact.models import Contact
+from decimal import Decimal
 
 try:
     from decimal import Decimal
@@ -41,6 +42,7 @@ class Balance(models.Model):
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     timelimit= models.FloatField(_(u'Limit'), blank=False, default=0, help_text=_(u'Time limit'))
+    #credit = CurrencyField(_("Discount Amount"), decimal_places=2, display_decimal=2, max_digits=8, default=Decimal("0.0"), help_text=_(u'Total sum for which credit is extended for calls'))
     credit = models.FloatField(_(u'Credit'), blank=False, default=0, help_text=_(u'Total sum for which credit is extended for calls'))
     
     class Meta:
