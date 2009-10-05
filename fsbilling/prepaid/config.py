@@ -1,9 +1,10 @@
 # -*- mode: python; coding: utf-8; -*-
 from livesettings import *
 from django.utils.translation import ugettext_lazy as _
+gettext = lambda s: s
 
 PAYMENT_MODULES = config_get('PAYMENT', 'MODULES')
-PAYMENT_MODULES.add_choice(('PAYMENT_PREPAID', 'Prepaid Cards'))
+PAYMENT_MODULES.add_choice(('PAYMENT_PREPAID', _('Prepaid Cards')))
 
 PRODUCTS = config_get('PRODUCT', 'PRODUCT_TYPES')
 PRODUCTS.add_choice(('prepaid::PrepaidProduct', _('Prepaid Card')))
@@ -57,7 +58,7 @@ config_register_list(
     StringValue(PAYMENT_GROUP,
         'URL_BASE',
         description=_('The url base used for constructing urlpatterns which will use this module'),
-        default = r'^prepaid/'),
+        default = '^prepaid/'),
         
     BooleanValue(PAYMENT_GROUP,
         'EXTRA_LOGGING',

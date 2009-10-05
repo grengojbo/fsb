@@ -1,13 +1,12 @@
-{% extends "shop/checkout/base_pay_ship.html" %}
-{% load i18n %}
-{# gift cert pay_ship version #}
-
+{% extends "shop/checkout/fsb_pay_ship.html" %}
+{% load i18n forms media %}
 {% block payment_table %}
-    <tr><td><h4>{% trans "Payment Information" %}</h4></td></tr>
+    <h4>{% trans "Payment Information" %}</h4>
     {% if not PAYMENT_LIVE %}
-    <tr><td colspan="2" valign="top"><b>TEST MODE</b></td></tr>
+    <p><b>TEST MODE</b></p>
     {% endif %}
-
-    <tr><td><label for="id_prepaidcode">{% trans "Prepaid Card Code" %}</label></td> <td>{{ form.prepaidcode }}</td></tr>
-    <tr><td></td><td>{% if form.prepaidcode.errors %}*** {{ form.prepaidcode.errors|join:", " }}{% endif %}</td></tr>
+	{% for field in form %}
+	{% show_label field %}
+	<p>{{ field }} {% show_errors field %} </p>
+	{% endfor %}
 {% endblock %}

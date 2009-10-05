@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/prepaid/tests.py</string>
+	<string>fsbilling/prepaid/views.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -53,7 +53,7 @@
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>34</integer>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
 			</dict>
@@ -63,36 +63,6 @@
 				<integer>57</integer>
 				<key>line</key>
 				<integer>0</integer>
-			</dict>
-		</dict>
-		<key>doc/prepaid.txt</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>32</integer>
-				<key>line</key>
-				<integer>19</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>7</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>19</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>32</integer>
-				<key>line</key>
-				<integer>19</integer>
 			</dict>
 		</dict>
 		<key>fsbilling/base/__init__.py</key>
@@ -100,9 +70,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>57</integer>
+				<integer>77</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>8</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
@@ -115,14 +85,14 @@
 				<key>column</key>
 				<integer>4</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>8</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>57</integer>
+				<integer>77</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>8</integer>
 			</dict>
 		</dict>
 		<key>fsbilling/base/managers.py</key>
@@ -130,14 +100,44 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>95</integer>
+				<integer>35</integer>
 				<key>line</key>
-				<integer>28</integer>
+				<integer>38</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>17</integer>
+			<integer>27</integer>
+		</dict>
+		<key>fsbilling/base/models.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>22</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>27</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>22</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>22</integer>
+			</dict>
 		</dict>
 		<key>fsbilling/base/templates/admin/base_site.html</key>
 		<dict>
@@ -153,6 +153,20 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>fsbilling/base/tests.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>37</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>20</integer>
+		</dict>
 		<key>fsbilling/base/views.py</key>
 		<dict>
 			<key>caret</key>
@@ -167,89 +181,93 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fsbilling/prepaid/admin.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>83</integer>
-				<key>line</key>
-				<integer>11</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fsbilling/prepaid/config.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>116</integer>
-				<key>line</key>
-				<integer>36</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>5</integer>
-		</dict>
 		<key>fsbilling/prepaid/forms.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>38</integer>
+				<integer>32</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>3</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>26</integer>
+				<key>line</key>
+				<integer>3</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>43</integer>
+				<key>line</key>
+				<integer>3</integer>
+			</dict>
 		</dict>
-		<key>fsbilling/prepaid/models.py</key>
+		<key>fsbilling/prepaid/views.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>25</integer>
-				<key>line</key>
-				<integer>65</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>60</integer>
-		</dict>
-		<key>fsbilling/prepaid/tests.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>44</integer>
+				<integer>56</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>57</integer>
+			<integer>50</integer>
 		</dict>
 		<key>fsbilling/profile/__init__.py</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>34</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>16</integer>
+				<integer>36</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>5</integer>
+			<integer>17</integer>
+		</dict>
+		<key>fsbilling/profile/models.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>12</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>8</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>12</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>12</integer>
+			</dict>
 		</dict>
 		<key>fsbilling/tariff/models.py</key>
 		<dict>
@@ -282,11 +300,8 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>fsbilling/prepaid/models.py</string>
-		<string>fsbilling/prepaid/tests.py</string>
-		<string>fsbilling/prepaid/config.py</string>
-		<string>doc/prepaid.txt</string>
-		<string>doc/dev.txt</string>
+		<string>fsbilling/prepaid/forms.py</string>
+		<string>fsbilling/prepaid/views.py</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -300,96 +315,53 @@
 			<true/>
 			<key>subItems</key>
 			<dict>
-				<key>doc</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
 				<key>fsbilling</key>
 				<dict>
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>base</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>migrations</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
-						</dict>
 						<key>prepaid</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>fixtures</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>management</key>
+								<key>templates</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
 									<dict>
-										<key>commands</key>
+										<key>prepaid</key>
 										<dict>
 											<key>isExpanded</key>
 											<true/>
 											<key>subItems</key>
 											<dict/>
 										</dict>
-									</dict>
-								</dict>
-							</dict>
-						</dict>
-						<key>profile</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-						<key>tariff</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>fixtures</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-								<key>management</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>commands</key>
+										<key>shop</key>
 										<dict>
 											<key>isExpanded</key>
 											<true/>
 											<key>subItems</key>
-											<dict/>
+											<dict>
+												<key>checkout</key>
+												<dict>
+													<key>isExpanded</key>
+													<true/>
+													<key>subItems</key>
+													<dict>
+														<key>prepaid</key>
+														<dict>
+															<key>isExpanded</key>
+															<true/>
+															<key>subItems</key>
+															<dict/>
+														</dict>
+													</dict>
+												</dict>
+											</dict>
 										</dict>
 									</dict>
 								</dict>
@@ -397,17 +369,10 @@
 						</dict>
 					</dict>
 				</dict>
-				<key>scripts</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
 			</dict>
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{3, 65}, {1116, 417}}</string>
+	<string>{{1, 89}, {1116, 417}}</string>
 </dict>
 </plist>

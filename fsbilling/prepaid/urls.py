@@ -1,6 +1,6 @@
 # -*- mode: python; coding: utf-8; -*-
 from django.conf.urls.defaults import *
-from livesettings import config_get_group
+from livesettings import config_value, config_get_group
 
 config = config_get_group('PAYMENT_PREPAID')
 

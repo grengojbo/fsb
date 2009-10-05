@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+{% load i18n forms media %}
+{% block content %}
+<form action="." method="post" accept-charset="utf-8">
+<fieldset>
+	<legend>{% trans "Checkout" %}</legend>
+	{% if form.errors %}
+	    <h2>{% blocktrans count form.errors|length as count %}Please correct the following error:{% plural %}Please correct the following errors:{% endblocktrans %}</h2>
+	{% endif %}
+	{% show_errors form.non_field_errors %}
+    {% block payment_table %}
+    {# put your payment module specific rows here.  For example, CC number. #}
+    {% endblock %}
+</fieldset>
+	<div class="buttons">
+		<button type="submit" class="positive"><img src="{% media "images/icons/tick.png" %}" alt="{% trans "Confirm" %}"/>{% trans "Confirm" %}</button>
+	</div>
+	</form>
+</form>
+
+{% endblock %}
