@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fsbilling/prepaid/views.py</string>
+	<string>INSTALL.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,6 +21,20 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
+		<key>INSTALL.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>25</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>doc/configuration.txt</key>
 		<dict>
 			<key>caret</key>
@@ -107,7 +121,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>27</integer>
+			<integer>29</integer>
 		</dict>
 		<key>fsbilling/base/models.py</key>
 		<dict>
@@ -180,50 +194,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>fsbilling/prepaid/forms.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>32</integer>
-				<key>line</key>
-				<integer>3</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>26</integer>
-				<key>line</key>
-				<integer>3</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>43</integer>
-				<key>line</key>
-				<integer>3</integer>
-			</dict>
-		</dict>
-		<key>fsbilling/prepaid/views.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>56</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>50</integer>
 		</dict>
 		<key>fsbilling/profile/__init__.py</key>
 		<dict>
@@ -300,8 +270,9 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>fsbilling/prepaid/forms.py</string>
-		<string>fsbilling/prepaid/views.py</string>
+		<string>fsbilling/base/__init__.py</string>
+		<string>fsbilling/base/managers.py</string>
+		<string>INSTALL.txt</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -320,59 +291,12 @@
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
-					<dict>
-						<key>prepaid</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>templates</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>prepaid</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-										<key>shop</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict>
-												<key>checkout</key>
-												<dict>
-													<key>isExpanded</key>
-													<true/>
-													<key>subItems</key>
-													<dict>
-														<key>prepaid</key>
-														<dict>
-															<key>isExpanded</key>
-															<true/>
-															<key>subItems</key>
-															<dict/>
-														</dict>
-													</dict>
-												</dict>
-											</dict>
-										</dict>
-									</dict>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
+					<dict/>
 				</dict>
 			</dict>
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{1, 89}, {1116, 417}}</string>
+	<string>{{2, 584}, {1116, 417}}</string>
 </dict>
 </plist>

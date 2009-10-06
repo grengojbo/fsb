@@ -11,7 +11,6 @@ from satchmo_store.shop.models import Order
 from payment.utils import pay_ship_save, get_or_create_order
 from payment.views import confirm, payship
 from satchmo_utils.dynamic import lookup_url
-from django.contrib.sites.models import Site
 import logging
 from product.models import Product
 from satchmo_store.contact.models import AddressBook, Contact, ContactRole

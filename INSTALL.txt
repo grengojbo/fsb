@@ -4,3 +4,16 @@
 
 ./manage.py test base tariff
 ./manage.py test userprofile
+
+
+GeoIP
+apt-get install geoip-bin
+cd ..
+wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+gunzip GeoLiteCity.dat.gz
+mv GeoLiteCity.dat /usr/local/share/GeoIP/GeoIPCity.dat
+wget http://geolite.maxmind.com/download/geoip/api/python/GeoIP-Python-1.2.4.tar.gz
+tar xvfz GeoIP-Python-1.2.4.tar.gz
+cd GeoIP-Python-1.2.4/
+python setup.py build
+python setup.py install
