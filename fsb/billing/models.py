@@ -38,7 +38,7 @@ class Balance(models.Model):
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     timelimit= models.FloatField(_(u'Limit'), blank=False, default=0, help_text=_(u'Time limit'))
     #credit = CurrencyField(_("Discount Amount"), decimal_places=2, display_decimal=2, max_digits=8, default=Decimal("0.0"), help_text=_(u'Total sum for which credit is extended for calls'))
-    credit = models.FloatField(_(u'Credit'), blank=False, default=0, help_text=_(u'Total sum for which credit is extended for calls'))
+    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=10, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
     
     class Meta:
         #ordering = []
