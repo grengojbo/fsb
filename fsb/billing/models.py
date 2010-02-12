@@ -46,7 +46,7 @@ class Balance(models.Model):
         verbose_name, verbose_name_plural = _(u"Balance"), _(u"Balances")
 
     def __unicode__(self):
-        return self.accountcode.full_name
+        return self.accountcode.username
 
     @models.permalink
     def get_absolute_url(self):

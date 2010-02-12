@@ -27,3 +27,4 @@ settings_local\.py$
 ^web/admin-media/
 \.db$
 \.log$
+.DS_Store
