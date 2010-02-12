@@ -1,5 +1,5 @@
 # -*- mode: python; coding: utf-8; -*-
-from fsbilling.prepaid.models import Prepaid, PrepaidUsage, PrepaidProduct
+from fsb.prepaid.models import Prepaid, PrepaidUsage, PrepaidProduct
 from django.contrib import admin
 from django.utils.translation import get_language, ugettext_lazy as _
 

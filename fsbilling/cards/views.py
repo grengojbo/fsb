@@ -6,7 +6,7 @@ from django.views.generic.list_detail import object_list
 from lib.decorators import render_to
 from django.shortcuts import get_object_or_404
 import logging
-l = logging.getLogger('fsbilling.tariff.views')
+l = logging.getLogger('fsb.tariff.views')
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'

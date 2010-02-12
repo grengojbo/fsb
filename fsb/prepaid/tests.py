@@ -10,7 +10,7 @@ from product.models import Product
 from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
 #from utils import generate_certificate_code, generate_code
-from fsbilling.base.models import CurrencyBase, Currency
+from fsb.billing.models import CurrencyBase, Currency
 import datetime, logging
 import csv, sys, os
 

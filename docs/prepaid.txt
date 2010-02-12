@@ -6,7 +6,7 @@ Prepaid card
 Для подключения необходимо в файле setting.py добавить в секции
 INSTALLED_APPS = (
 	...
-	'fsbilling.prepaid',
+	'fsb.prepaid',
 	...
 )
 SATCHMO_SETTINGS = {

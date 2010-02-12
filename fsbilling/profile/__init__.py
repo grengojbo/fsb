@@ -4,16 +4,17 @@ from userprofile import signals
 from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
 from l10n.models import Country
 import logging
-l = logging.getLogger('fsbilling.profile')
+from tracking.utils import get_ip
+l = logging.getLogger('fsb.profile')
 
 def handler_profileuser_post(sender, request, extra, **kwargs):
     """docstring for handler_profileuser_create"""
     l.debug("Signal post_signal -> handler_profileuser_post")
     if sender.func_name == 'register':
-        from fsbilling.profile.models import ProfileUser
+        from fsb.profile.models import ProfileUser
         p, created = ProfileUser.objects.get_or_create(user=extra['newuser'])
         if created:
-            p.regip = request.META.get("REMOTE_ADDR")
+            p.regip = get_ip(request)
             p.save()
             
 def handler_create_profile(sender, user, **kwargs):

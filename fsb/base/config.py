@@ -9,10 +9,10 @@ from livesettings import config_register, BooleanValue, StringValue, \
     MultipleStringValue, ConfigurationGroup, PositiveIntegerValue, \
     DecimalValue
     
-SHOP_GROUP = ConfigurationGroup('SHOP', _('Satchmo Shop Settings'), ordering=0)
+BILLING_GROUP = ConfigurationGroup('BILLING', _('Billing Settings'), ordering=0)
 
 config_register(DecimalValue(
-    SHOP_GROUP,
+    BILLING_GROUP,
         'BALANCE_CASH',
         description = _('Beginning balance'),
         help_text = _("The initial balance in the new user registration such as 0.25 USD"),
@@ -20,7 +20,7 @@ config_register(DecimalValue(
     ))
 
 config_register(PositiveIntegerValue(
-    SHOP_GROUP,
+    BILLING_GROUP,
         'BALANCE_TARIFF',
         description = _('Default tariff'),
         help_text = _("Make sure to create a tariff in the tariff plan"),

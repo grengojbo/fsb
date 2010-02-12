@@ -31,8 +31,8 @@ class Command(BaseCommand):
         from django.core import serializers
         from django.db import connection, transaction
         from django.conf import settings
-        from fsbilling.prepaid.models import Prepaid, PrepaidProduct
-        from fsbilling.base.models import CurrencyBase
+        from fsb.prepaid.models import Prepaid, PrepaidProduct
+        from fsb.billing.models import CurrencyBase
 
         currency = options.get('currency','')
 

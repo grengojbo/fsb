@@ -1,4 +1,3 @@
 include docs/*
-include AUTHORS CONTRIBUTORS LICENSE CHANGELOG
-include setup.cfg
-recursive-include fsbilling *.po *.mo *.html *.xml
+include README.txt CHANGELOG
+recursive-include fsb *.po *.mo *.html *.xml

@@ -9,12 +9,12 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 from django import template
 from django.conf import settings
 from satchmo_store.contact.models import Contact
-from fsbilling.base.models import Balance
+from fsb.billing.models import Balance
 from livesettings import config_value
 import sys
 import logging
 
-l = logging.getLogger('fsbilling.base.tags')
+l = logging.getLogger('fsb.billing.tags')
 
 register = template.Library()
 

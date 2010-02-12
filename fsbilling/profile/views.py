@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 import logging
-l = logging.getLogger('fsbilling.profile.views')
+l = logging.getLogger('fsb.profile.views')
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'

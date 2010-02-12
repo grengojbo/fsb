@@ -5,7 +5,7 @@ from django.db import models
 from django.db import connection
 import logging, re, string, csv
 import time, datetime
-from fsadmin.core.utils import CsvData
+from fsa.core.utils import CsvData
 #from django.template import Context, loader
 from django.contrib.auth.models import User
 #from fsadmin.dialplan.models import Context
@@ -15,7 +15,7 @@ from django.utils.encoding import force_unicode
 from django.db.models import F, Q
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 
-l = logging.getLogger('fsbilling.tariff.managers')
+l = logging.getLogger('fsb.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):

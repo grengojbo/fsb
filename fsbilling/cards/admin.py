@@ -1,9 +1,9 @@
 # -*- mode: python; coding: utf-8; -*-
 from django.contrib import databrowse, admin
 from django.utils.translation import ugettext_lazy as _
-from fsbilling.tariff.models import TariffPlan, Tariff
+from fsb.tariff.models import TariffPlan, Tariff
 import logging
-l = logging.getLogger('fsbilling.tariff.admin')
+l = logging.getLogger('fsb.tariff.admin')
 
 class TariffPlanAdmin(admin.ModelAdmin):
     #date_hierarchy = ''

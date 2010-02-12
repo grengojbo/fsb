@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import signals
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from fsadmin.core.managers import GenericManager
+from fsa.core.managers import GenericManager
 from fsadmin.server.models import Server
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 import datetime
@@ -14,7 +14,7 @@ from django.utils.encoding import force_unicode
 import os.path, csv, logging
 from pytils.dt import ru_strftime
 
-l = logging.getLogger('fsbilling.tariff.models')
+l = logging.getLogger('fsb.tariff.models')
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'
@@ -144,7 +144,7 @@ class Tariff(models.Model):
     
 # Monkey-patching http://www.alrond.com/ru/2008/may/03/monkey-patching-in-django/
 #from contact.models import Contact
-#Contact.add_to_class('tariff',models.ForeignKey('fsbilling.tariff.TariffPlan',limit_choices_to = {'enabled': True}))
+#Contact.add_to_class('tariff',models.ForeignKey('fsb.tariff.TariffPlan',limit_choices_to = {'enabled': True}))
 ##Contact._meta.admin.fields += (('Additional', {'fields': ('tariff',)}),)                                             
 ##Contact._meta.admin.list_display = Contact._meta.admin.list_display + ('tariff', )                                    
 ##Contact._meta.admin.list_display += ('tariff', )

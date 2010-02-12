@@ -13,7 +13,7 @@ import unittest
 from django import test
 from django.test.client import Client
 from django.contrib.auth.models import User
-from fsbilling.core.models import c
+from fsb.core.models import c
 from fsadmin.server.models import Server
 import csv, sys, os
 

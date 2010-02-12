@@ -17,3 +17,5 @@ tar xvfz GeoIP-Python-1.2.4.tar.gz
 cd GeoIP-Python-1.2.4/
 python setup.py build
 python setup.py install
+
+http://www.random.org/

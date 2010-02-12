@@ -13,6 +13,6 @@ import satchmo_store
 log = logging.getLogger('fsadmin.urls')
 
 urlpatterns = patterns('',
-    (r'^billing/', include('fsbilling.base.urls')),
+    (r'^billing/', include('fsb.billing.urls')),
 )
 

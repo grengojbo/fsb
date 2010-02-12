@@ -41,7 +41,7 @@ config_register_list(
         'MODULE',
         description=_('Implementation module'),
         hidden=True,
-        default = 'fsbilling.prepaid'),
+        default = 'fsb.prepaid'),
 
     StringValue(PAYMENT_GROUP,
         'LABEL',

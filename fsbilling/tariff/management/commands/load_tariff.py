@@ -30,7 +30,7 @@ class Command(BaseCommand):
         from django.core import serializers
         from django.db import connection, transaction
         from django.conf import settings
-        from fsbilling.tariff.models import TariffPlan, Tariff
+        from fsb.tariff.models import TariffPlan, Tariff
 
         tid = options.get('tid','')
 
