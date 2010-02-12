@@ -29,7 +29,7 @@ class Balance(models.Model):
     """(Balance description)"""
     accountcode = models.ForeignKey(User)
     #accountcode = models.ForeignKey(Contact)
-    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=2)
+    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=10)
     #cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=2)
     #tariff = models.ForeignKey(TariffPlan, related_name='tariffplangroup')
     enabled = models.BooleanField(_(u'Enable'), default=True)
