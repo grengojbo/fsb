@@ -1,19 +1,21 @@
-# -*- mode: python; coding: utf-8; -*-
+# -*- mode: python; coding: utf-8; -*- 
 from setuptools import setup, find_packages
 import os, os.path
 import sys
 
 DIRNAME = os.path.dirname(__file__)
-version = '0.0.3'
 
-setup(name='fsbilling',
+# Dynamically calculate the version based on django.VERSION.
+version = __import__('fsb').__version__
+
+setup(name='fsb',
     version=version,
     description="Freeswitch Billing",
     long_description="Billing System from FreeSWITCH",
     keywords='freeswitch',
     author='Oleg Dolya',
     author_email='oleg.dolya@gmail.com',
-    url='http://linktel.com.ua/project/fsbilling/',
+    url='http://bitbucket.org/jbo/fsa/',
     license='GPL',
     include_package_data=True,
     #package_dir = {
@@ -39,10 +41,10 @@ setup(name='fsbilling',
     #    'elementtree',
     #    'docutils',
     #    'fsadmin'
-    ],
+    #],
     classifiers = [
         'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: GPL License',
         'Operating System :: OS Independent', 
         'Topic :: Office/Business',
     ],

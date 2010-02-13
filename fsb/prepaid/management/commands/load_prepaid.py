@@ -23,7 +23,7 @@ class Command(BaseCommand):
         make_option('--currency', default='', dest='currency',
         help='Currency code'),
     )
-    help = 'Load Prepaid Card Base ./manage.py load_prepaid --currency=GRN /fsbilling/prepaid/fixtures/test.csv'
+    help = 'Load Prepaid Card Base ./manage.py load_prepaid --currency=UAH /fsb/prepaid/fixtures/test.csv'
     args = '[fixture ...]'
 
     def handle(self, fixture_labels, **options):
@@ -31,8 +31,7 @@ class Command(BaseCommand):
         from django.core import serializers
         from django.db import connection, transaction
         from django.conf import settings
-        from fsb.prepaid.models import Prepaid, PrepaidProduct
-        from fsb.billing.models import CurrencyBase
+        from fsb.prepaid.models import Prepaid
 
         currency = options.get('currency','')
 

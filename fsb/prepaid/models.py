@@ -12,7 +12,7 @@ from livesettings import config_value
 #from product.models import Product, ProductManager
 #from satchmo_store.contact.models import Contact
 #from satchmo_store.shop.models import OrderPayment, Order
-#import logging
+import logging
 #import csv, sys, os
 #from fsa.core.utils import CsvData
 from django.db.models import F, Q
@@ -21,6 +21,10 @@ from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 PREPAIDCODE_KEY = 'PREPAIDCODE'
 log = logging.getLogger('prepaid.models')
 
+N_TYPES = ((0, _(u'Partner')),
+           (1,_(u'Default')),
+           (2,_(u'Starting packet')),
+        )
 class PrepaidManager(models.Manager):
 
 ##    def from_order(self, order):
@@ -48,7 +52,7 @@ class PrepaidManager(models.Manager):
             return 1
         except Exception, e:
             return 0
-        
+
     def load_prepaid(self, currency, site, base_file):
         """
         Загрузка данных из csv файла
@@ -95,61 +99,19 @@ class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
     site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
     #order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
-    num_prepaid = models.PositiveIntegerField(_(u'Number'), default=0, unique=True)
-    code = models.PositiveIntegerField(_('Prepaid Code'), default=0)
+    num_prepaid = models.CharField(_(u'Number'), max_length=12, unique=True)
+    code = models.CharField(_('Prepaid Code'), max_length=12, unique=True)
     #purchased_by =  models.ForeignKey(Contact, verbose_name=_('Purchased by'),
     #    blank=True, null=True, related_name='prepaids_purchased')
-    date_added = models.DateField(_("Date added"), null=True, blank=True)
+    date_added = models.DateField(_("Date added"), auto_now_add = True)
     date_end = models.DateField(_("Date end"), null=True, blank=True)
+    nt = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=N_TYPES, default=1, blank=False)
     enabled = models.BooleanField(_(u'Enable'), default=False)
     valid = models.BooleanField(_('Valid'), default=False)
-    message = models.CharField(_('Message'), blank=True, null=True, max_length=255)
+    message = models.CharField(_('Message'), blank=True, null=True, max_length=254)
     start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2, max_digits=8)
     #currency = models.ForeignKey(CurrencyBase, default=1, related_name='currencys', verbose_name=_('Currency'))
     objects = PrepaidManager()
-
-    @property
-    def balance(self):
-        b = Decimal(self.start_balance)
-        for usage in self.usages.all():
-            log.info('usage: %s' % usage)
-            b = b - Decimal(usage.balance_used)
-
-        return b
-
-    def apply_to_order(self, order):
-        """Apply up to the full amount of the balance of this cert to the order.
-
-        Returns new balance.
-        """
-        amount = min(order.balance, self.balance)
-        log.info('applying %s from giftcert #%i [%s] to order #%i [%s]', 
-            moneyfmt(amount), 
-            self.id, 
-            moneyfmt(self.balance), 
-            order.id, 
-            moneyfmt(order.balance))
-            
-        processor = get_processor_by_key('PAYMENT_PREPAID')
-        orderpayment = processor.record_payment(order=order, amount=amount)
-        self.orderpayment = orderpayment
-        return self.use(amount, orderpayment=orderpayment)
-
-    def use(self, amount, notes="", orderpayment=None):
-        """Use some amount of the gift cert, returning the current balance."""
-        u = PrepaidUsage(notes=notes, balance_used = amount,
-            orderpayment=orderpayment, prepaid=self)
-        u.save()
-        return self.balance
-
-    def save(self, force_insert=False, force_update=False):
-        if not self.pk:
-            self.date_added = datetime.now()
-        if not self.code:
-            self.code = generate_certificate_code()
-        if not self.site:
-            self.site = Site.objects.get_current()
-        super(Prepaid, self).save(force_insert=force_insert, force_update=force_update)
 
     def __unicode__(self):
         sb = moneyfmt(self.start_balance)
@@ -159,6 +121,48 @@ class Prepaid(models.Model):
         unique_together = ("num_prepaid", "code")
         verbose_name = _("Prepaid card")
         verbose_name_plural = _("Prepaid cards")
+
+
+    @property
+    def balance(self):
+        return moneyfmt(self.start_balance)
+##
+##        return b
+##
+##    def apply_to_order(self, order):
+##        """Apply up to the full amount of the balance of this cert to the order.
+##
+##        Returns new balance.
+##        """
+##        amount = min(order.balance, self.balance)
+##        log.info('applying %s from giftcert #%i [%s] to order #%i [%s]', 
+##            moneyfmt(amount), 
+##            self.id, 
+##            moneyfmt(self.balance), 
+##            order.id, 
+##            moneyfmt(order.balance))
+##            
+##        processor = get_processor_by_key('PAYMENT_PREPAID')
+##        orderpayment = processor.record_payment(order=order, amount=amount)
+##        self.orderpayment = orderpayment
+##        return self.use(amount, orderpayment=orderpayment)
+##
+##    def use(self, amount, notes="", orderpayment=None):
+##        """Use some amount of the gift cert, returning the current balance."""
+##        u = PrepaidUsage(notes=notes, balance_used = amount,
+##            orderpayment=orderpayment, prepaid=self)
+##        u.save()
+##        return self.balance
+##
+##    def save(self, force_insert=False, force_update=False):
+##        if not self.pk:
+##            self.date_added = datetime.now()
+##        if not self.code:
+##            self.code = generate_certificate_code()
+##        if not self.site:
+##            self.site = Site.objects.get_current()
+##        super(Prepaid, self).save(force_insert=force_insert, force_update=force_update)
+
 
 ##class PrepaidUsage(models.Model):
 ##    """Any usage of a Gift Cert is logged with one of these objects."""
@@ -218,4 +222,4 @@ class Prepaid(models.Model):
 ##        verbose_name = _("Prepaid card product")
 ##        verbose_name_plural = _("Prepaid card products")
 
-import config
+#import config
