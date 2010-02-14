@@ -141,3 +141,5 @@ class Balance(models.Model):
 ##        verbose_name, verbose_name_plural = _(u"Currency"), _(u"Currencys")
     
 import config
+import listeners
+listeners.start_listening()

@@ -34,20 +34,23 @@ class PrepaidManager(models.Manager):
 ##            site = order.site
 ##            return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
 ##        raise Prepaid.DoesNotExist()
-
-    def add_prepaid(self, currency, site, n):
+    #----------------------------------------------------------------------
+    def activate(self, num,code):
+        """"""
+        return self.objects.get(num_prepaid=num, code=code, date_end__lt=datetime.datetime.now())
+    
+    def add_prepaid(self, cd, n):
         """
-        c - Код валюты
+        
         """
         try:
             bl = self.model()
             bl.num_prepaid = n['num_prepaid']
             bl.code = n['code']
-            bl.site = site
-            bl.start_balance = n['start_balance']
-            bl.date_added = n['date_added']
+            bl.start_balance = n['rate']
+            bl.nt = n['nt']
             bl.date_end = n['date_end']
-            bl.currency = currency
+            #bl.currency = currency
             bl.save()
             return 1
         except Exception, e:
@@ -97,7 +100,7 @@ class PrepaidManager(models.Manager):
 
 class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
-    site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
+    #site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
     #order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
     num_prepaid = models.CharField(_(u'Number'), max_length=12, unique=True)
     code = models.CharField(_('Prepaid Code'), max_length=12, unique=True)
@@ -223,3 +226,5 @@ class Prepaid(models.Model):
 ##        verbose_name_plural = _("Prepaid card products")
 
 #import config
+#import listeners
+#listeners.start_listening()

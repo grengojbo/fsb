@@ -5,7 +5,8 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.core import serializers
-from django.utils.datastructures import SortedDict 
+from django.utils.datastructures import SortedDict
+from fsa.core.utils import CsvData
 import csv, sys
 import os
 import gzip
@@ -81,11 +82,23 @@ class Command(BaseCommand):
         if has_bz2:
             compression_types['bz2'] = bz2.BZ2File
             
-        f = open(fixture_labels, "rt")
-        c = CurrencyBase.objects.get(code=currency)
-        site = Site.objects.get_current()
+        
+        
+        #site = Site.objects.get_current()
         try:
-            objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
+            d1="delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|nt|rate|zeros|date_end"
+            cd = CsvData(d1)
+            f = open(fixture_labels, "rt")
+            reader = csv.reader(f, delimiter=';', dialect='excel')
+            for row in reader:
+                try:
+                    #l.debug(row)
+                    n = cd.parse(row)
+                    objects_in_fixture = Prepaid.objects.add_prepaid(n)
+                except Exception, e:
+                    l.error("line: %i => %s" % (cd.line_num, e)) 
+                    pass
+            #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
             label_found = True
         finally:
             f.close()

@@ -2,6 +2,8 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 #from django.utils.translation import ugettext_lazy as _
+from signals_ahoy import signals
+import fsb.billing
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'
@@ -21,3 +23,5 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/(.*)', admin.site.root),
 )
+
+signals.collect_urls.send(sender=fsb.billing, patterns=urlpatterns)

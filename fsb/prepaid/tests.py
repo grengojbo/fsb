@@ -8,6 +8,7 @@ from keyedcache import cache_delete
 from l10n.models import Country
 from livesettings import config_get_group, config_value
 from models import *
+from fsa.core.utils import CsvData
 #from product.models import Product
 #from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 #from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
@@ -15,7 +16,7 @@ from models import *
 import datetime, logging
 import csv, sys, os
 
-log = logging.getLogger('fsb.prepaid.tests')
+l = logging.getLogger('fsb.prepaid.tests')
 
 ##def make_test_order(country, state):
 ##    c = Contact(first_name="Prepaid", last_name="Tester", 
@@ -60,24 +61,29 @@ class TestCertCreate(test.TestCase):
             #f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test_all.csv'), "rt")
             f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test.csv'), "rt")
             save_cnt = 0
-            default_currency = 'UAH'
-##        try:
-##            res = Prepaid.objects.load_prepaid(c, self.site, f)
-##            self.assertEquals(res, 3) 
-##        finally:
-##            f.close()
-##        f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test2.csv'), "rt")
-##        try:
-##            res = Prepaid.objects.load_prepaid(c, self.site, f)
-##            self.assertEquals(res, 2) 
-##        finally:
-##            f.close()
-##        #gc = GiftCertificate(start_balance = '100.00', site=self.site)
-##        #gc.save()
-##        
-##        #self.assert_(gc.code)
-##        #self.assertEqual(gc.balance, Decimal('100.00'))
-##
+            d1="delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|ratent|zeros|date_end"
+            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|ratent|zeros|date_end")
+            l.debug('-----------')
+            reader = csv.reader(f, delimiter=';', dialect='excel')
+            for row in reader:
+                try:
+                    l.debug(row)
+                    #n = cd.parse(row)
+                    #objects_in_fixture = Prepaid.objects.add_prepaid(cd, n)
+                except Exception, e:
+                    l.error("line: %i => %s" % (cd.line_num, e)) 
+                    pass
+            #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
+            label_found = True
+        except Exception, e:
+            l.error(e)
+        finally:
+            f.close()
+        
+        gc = Prepaid.objects.all()
+        self.assertEqual(gc.count(),3)
+        
+
 ##    def testUse(self):
 ##        #gc = GiftCertificate(start_balance = '100.00', site=self.site)
 ##        #gc.save()
