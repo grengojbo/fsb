@@ -39,7 +39,7 @@ class PrepaidManager(models.Manager):
         """"""
         return self.objects.get(num_prepaid=num, code=code, date_end__lt=datetime.datetime.now())
     
-    def add_prepaid(self, cd, n):
+    def add_prepaid(self, n):
         """
         
         """

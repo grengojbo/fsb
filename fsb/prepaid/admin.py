@@ -10,9 +10,9 @@ from django.utils.translation import get_language, ugettext_lazy as _
 #    extra = 1
 
 class PrepaidOptions(admin.ModelAdmin):
-    list_display = ['site', 'num_prepaid', 'enabled', 'valid', 'balance', 'date_end']
+    list_display = ['num_prepaid', 'enabled', 'valid', 'balance', 'date_end']
     list_display_links = ('num_prepaid',)
-    ordering = ['site', 'date_added']
+    ordering = ['date_added']
     #inlines = [PrepaidUsage_Inline]
 
 admin.site.register(Prepaid, PrepaidOptions)

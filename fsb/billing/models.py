@@ -61,6 +61,12 @@ class Balance(models.Model):
     def currency(self):
         return u'у.е.'
         
+##class CreditBase(models.Model):
+##    """"""
+##    balance = models.ForeignKey(Balance)
+##    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=10, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
+##    usere = models.ForeignKey(User)
+    
 ##class NibbleBill(models.Model):
 ##    """(NibbleBill description)"""
 ##    name = models.CharField(_(u'Name'), max_length=200)

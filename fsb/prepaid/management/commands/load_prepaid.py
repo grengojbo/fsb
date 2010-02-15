@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core import serializers
 from django.utils.datastructures import SortedDict
 from fsa.core.utils import CsvData
+from fsa.server.models import CsvBase
 import csv, sys
 import os
 import gzip
@@ -21,10 +22,10 @@ from optparse import make_option
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('--currency', default='', dest='currency',
-        help='Currency code'),
+        make_option('--format_csv', default='', dest='format_csv',
+        help='Format CSV file'),
     )
-    help = 'Load Prepaid Card Base ./manage.py load_prepaid --currency=UAH /fsb/prepaid/fixtures/test.csv'
+    help = 'Load Prepaid Card Base ./manage.py load_prepaid --format_csv=1 /fsb/prepaid/fixtures/test.csv'
     args = '[fixture ...]'
 
     def handle(self, fixture_labels, **options):
@@ -34,7 +35,7 @@ class Command(BaseCommand):
         from django.conf import settings
         from fsb.prepaid.models import Prepaid
 
-        currency = options.get('currency','')
+        format_csv = options.get('format_csv','')
 
         self.style = no_style()
 
@@ -81,24 +82,18 @@ class Command(BaseCommand):
         }
         if has_bz2:
             compression_types['bz2'] = bz2.BZ2File
-            
         
-        
-        #site = Site.objects.get_current()
         try:
-            d1="delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|nt|rate|zeros|date_end"
-            cd = CsvData(d1)
+            cd = CsvData(CsvBase.objects.get(pk=format_csv))
             f = open(fixture_labels, "rt")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             for row in reader:
                 try:
-                    #l.debug(row)
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
                 except Exception, e:
                     l.error("line: %i => %s" % (cd.line_num, e)) 
                     pass
-            #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
             label_found = True
         finally:
             f.close()

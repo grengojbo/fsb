@@ -61,18 +61,14 @@ class TestCertCreate(test.TestCase):
             #f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test_all.csv'), "rt")
             f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test.csv'), "rt")
             save_cnt = 0
-            d1="delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|ratent|zeros|date_end"
-            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|ratent|zeros|date_end")
-            l.debug('-----------')
+            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|rate|nt|zeros|date_end")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             for row in reader:
                 try:
-                    l.debug(row)
-                    #n = cd.parse(row)
-                    #objects_in_fixture = Prepaid.objects.add_prepaid(cd, n)
+                    n = cd.parse(row)
+                    objects_in_fixture = Prepaid.objects.add_prepaid(n)
                 except Exception, e:
                     l.error("line: %i => %s" % (cd.line_num, e)) 
-                    pass
             #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
             label_found = True
         except Exception, e:
