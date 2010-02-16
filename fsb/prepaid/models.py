@@ -17,6 +17,8 @@ import logging
 #from fsa.core.utils import CsvData
 from django.db.models import F, Q
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
+from fsb.billing.models import Balance, BalanceHistory
+from fsa.directory.models import Endpoint
 
 PREPAIDCODE_KEY = 'PREPAIDCODE'
 log = logging.getLogger('prepaid.models')
@@ -24,6 +26,7 @@ log = logging.getLogger('prepaid.models')
 N_TYPES = ((0, _(u'Partner')),
            (1,_(u'Default')),
            (2,_(u'Starting packet')),
+           (3,_(u'Other')),
         )
 class PrepaidManager(models.Manager):
 
@@ -35,22 +38,46 @@ class PrepaidManager(models.Manager):
 ##            return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
 ##        raise Prepaid.DoesNotExist()
     #----------------------------------------------------------------------
-    def is_valid(self, num,code, accountcode, nt=1):
+    def is_valid(self, num,code, accountcode):
         """"""
-        from fsb.billing.models import Balance, BalanceHistory
-        from django.db.models.expressions import F
         try:
-            card = self.filter(num_prepaid = num, code = code, date_end__lt = datetime.now(), nt = nt, enabled = False)
+            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 1, enabled = False)
             comments = 'prepaid:::%i' % card.pk
-            BalanceHistory.objects.create(name=_(u'Added prepaid card'), accountcode=accountcode, cash=card.start_balance, comments=comments)
             up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
-            # Ваш баланс был пополнен на 
+            # Ваш баланс был пополнен на
+            name='Added prepaid card'
+            BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=card.start_balance, comments=comments)
+            card.enabled =True
+            card.save()
             return (True, _("Your balance was replenished"))
-        except:
+##                # этой картой вы неможете пополнить баланс
+##                return (False, _("You cannot supplement the balance with this card"))
+##                # эта карта уже активирована
+##                #return (False, _("This card is already activated"))
+        except Exception, e:
             # Ваш баланс не пополнен
+            log.error(e)
             return (False, _("Your balance is not replenished. Error code or number"))
             
-    
+    def is_starting(self, num,code):
+        """"""
+        try:
+            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 2, enabled = False)
+            new_user = User.objects.create_user(num, '', code)
+            new_endpoint = Endpoint.objects.create_endpoint(new_user)
+            comments = 'prepaid:::%i' % card.pk
+            if card.start_balance > 0:
+                BalanceHistory.objects.create(name='the starting packet is activated', accountcode=new_user, cash=card.start_balance, comments=comments)
+                up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
+            card.enabled = True
+            card.save()
+            # Ваш баланс был пополнен на 
+            return (True, _("The starting packet is activated"), new_user)
+        except Exception, e:
+            # Ваш баланс не пополнен
+            log.error(e)
+            return (False, _("Error code or number"), None)
+        
     def add_prepaid(self, n):
         """
         

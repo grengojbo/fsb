@@ -12,6 +12,7 @@ from fsa.core.utils import CsvData
 #from product.models import Product
 #from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 #from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
+from fsb.billing.models import Balance
 ##from utils import generate_certificate_code, generate_code
 import datetime, logging
 import csv, sys, os
@@ -52,6 +53,7 @@ class TestCertCreate(test.TestCase):
         # Every test needs a client.
         self.client = Client()
         self.site = Site.objects.get_current()
+        self.user = User.objects.create_user('test', 'test@test.com', 'test')
 
     def tearDown(self):
         cache_delete()
@@ -77,7 +79,23 @@ class TestCertCreate(test.TestCase):
             f.close()
         
         gc = Prepaid.objects.all()
-        self.assertEqual(gc.count(),3)
+        self.assertEqual(gc.count(),6)
+        res, mes = Prepaid.objects.is_valid('11018','222222222',self.user)
+        self.assertEquals(res, True)
+        res, mes = Prepaid.objects.is_valid('11018','222222222',self.user)
+        self.assertEquals(res, False)
+        bal = Balance.objects.get(accountcode=self.user)
+        self.assertEquals(bal.cash, Decimal("25"))
+        res, mes = Prepaid.objects.is_valid('11019','222222222',self.user)
+        self.assertEquals(res, False)
+        res, mes = Prepaid.objects.is_valid('11018','111111111',self.user)
+        self.assertEquals(res, False)
+        res, mes = Prepaid.objects.is_valid('11019','111111111',self.user)
+        self.assertEquals(res, True)
+        bal = Balance.objects.get(accountcode=self.user)
+        self.assertEquals(bal.cash, Decimal("75"))
+        res, mes = Prepaid.objects.is_valid('5003020','123456781',self.user)
+        self.assertEquals(res, False)
         
 
 ##    def testUse(self):
