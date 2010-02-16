@@ -30,18 +30,19 @@ class BalanceManager(models.Manager):
         #from fsb.tariff.models import TariffPlan, Tariff
         #from fsb.profile.models import ProfileUser
         #from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
-        #bl = self.model()
-        #bl.accountcode = contact
-        #try:
-        #    p = ProfileUser.objects.get(user=contact.user)
-        #    # TODO сделать антиспам
-        #    bl.cash = config_value('SHOP','BALANCE_CASH')
-        #    #bl.cash = Decimal("0.0")
-        #except Exception, e:
-        #    bl.cash = config_value('SHOP','BALANCE_CASH')
+        bl = self.model()
+        bl.accountcode = contact
+        bl.enabled = True
+        try:
+            #p = ProfileUser.objects.get(user=contact.user)
+            # TODO сделать антиспам
+            #bl.cash = config_value('SHOP','BALANCE_CASH')
+            bl.cash = Decimal("0.0")
+        except Exception, e:
+            #bl.cash = config_value('SHOP','BALANCE_CASH')
+            pass
         #bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
-        #bl.save()
-        #return bl
-        pass
+        bl.save()
+        return bl
     
 # Create your models here.

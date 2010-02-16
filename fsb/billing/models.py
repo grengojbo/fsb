@@ -9,7 +9,8 @@ from fsa.core.managers import GenericManager
 from fsb.billing.managers import BalanceManager
 from fsa.server.models import Server
 #from fsb.tariff.models import TariffPlan
-from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance 
+from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
+from django.db.models.expressions import F
 import datetime
 from django.utils.dateformat import DateFormat
 from django.utils.encoding import force_unicode
@@ -29,7 +30,7 @@ class Balance(models.Model):
     """(Balance description)"""
     accountcode = models.ForeignKey(User)
     #accountcode = models.ForeignKey(Contact)
-    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=10)
+    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     #cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=2)
     #tariff = models.ForeignKey(TariffPlan, related_name='tariffplangroup')
     enabled = models.BooleanField(_(u'Enable'), default=True)
@@ -38,7 +39,7 @@ class Balance(models.Model):
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     timelimit= models.FloatField(_(u'Limit'), blank=False, default=0, help_text=_(u'Time limit'))
     #credit = CurrencyField(_("Discount Amount"), decimal_places=2, display_decimal=2, max_digits=8, default=Decimal("0.0"), help_text=_(u'Total sum for which credit is extended for calls'))
-    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=10, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
+    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
     
     class Meta:
         #ordering = []
@@ -60,13 +61,68 @@ class Balance(models.Model):
     @property
     def currency(self):
         return u'у.е.'
-        
-##class CreditBase(models.Model):
-##    """"""
-##    balance = models.ForeignKey(Balance)
-##    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=10, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
-##    usere = models.ForeignKey(User)
+
+class BalanceHistory(models.Model):
+    """"""
+    name = models.CharField(_(u'Name'), max_length=100)
+    accountcode = models.ForeignKey(User)
+    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
+    time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
+    comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
     
+    class Meta:
+        db_table = 'balance_history'
+        verbose_name = _(u'The history of the operations')
+        verbose_name_plural = _(u'The history of the operations')
+    
+    def __unicode__(self):
+        return self.name
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('BalanceHistory', [self.id])
+    
+class CreditBase(models.Model):
+    """"""
+    balance = models.ForeignKey(Balance)
+    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
+    user = models.ForeignKey(User)
+    enabled = models.BooleanField(_(u'Enable'), default=True)
+    objects = models.Manager() # default manager must be always on first place! It's used as default_manager
+    active_objects = GenericManager( enabled = True ) # only active entries
+    inactive_objects = GenericManager( enabled = False ) # only inactive entries
+    time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
+    expire_time = models.DateTimeField(_('Expire time'), blank=True)
+    
+    def is_valid(self):
+        # TODO: Check expire
+        #if not self.downloadable_product.active:
+        #    return (False, _("This download is no longer active"))
+        #if self.num_attempts >= self.downloadable_product.num_allowed_downloads:
+        #    return (False, _("You have exceeded the number of allowed downloads."))
+        #expire_time = datetime.timedelta(minutes=self.downloadable_product.expire_minutes) + self.time_stamp
+        #if datetime.datetime.now() > expire_time:
+        #    return (False, _("This download link has expired."))
+        return (True, "")
+        
+    def save(self, *args, **kwargse):
+        """
+       
+        """
+        if self.enabled:
+            l.debug("add credit")
+            ball = Balance.objects.get(pk=self.balance.pk)
+            ball.credit +=self.credit
+            ball.save()
+        else:
+            l.debug("delete credit")
+            ball = Balance.objects.get(pk=self.balance.pk)
+            ball.credit -=self.credit
+            ball.save()
+        if self.expire_time is None:
+            self.expire_time = datetime.timedelta(days=360) + datetime.datetime.now()
+        super(CreditBase, self).save(*args, **kwargse)
+     
 ##class NibbleBill(models.Model):
 ##    """(NibbleBill description)"""
 ##    name = models.CharField(_(u'Name'), max_length=200)

@@ -35,9 +35,21 @@ class PrepaidManager(models.Manager):
 ##            return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
 ##        raise Prepaid.DoesNotExist()
     #----------------------------------------------------------------------
-    def activate(self, num,code):
+    def is_valid(self, num,code, accountcode, nt=1):
         """"""
-        return self.objects.get(num_prepaid=num, code=code, date_end__lt=datetime.datetime.now())
+        from fsb.billing.models import Balance, BalanceHistory
+        from django.db.models.expressions import F
+        try:
+            card = self.filter(num_prepaid = num, code = code, date_end__lt = datetime.now(), nt = nt, enabled = False)
+            comments = 'prepaid:::%i' % card.pk
+            BalanceHistory.objects.create(name=_(u'Added prepaid card'), accountcode=accountcode, cash=card.start_balance, comments=comments)
+            up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
+            # Ваш баланс был пополнен на 
+            return (True, _("Your balance was replenished"))
+        except:
+            # Ваш баланс не пополнен
+            return (False, _("Your balance is not replenished. Error code or number"))
+            
     
     def add_prepaid(self, n):
         """
