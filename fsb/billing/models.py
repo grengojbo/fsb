@@ -28,7 +28,7 @@ __revision__ = '$Revision$'
 # Create your models here.
 class Balance(models.Model):
     """(Balance description)"""
-    accountcode = models.ForeignKey(User)
+    accountcode = models.OneToOneField(User, parent_link=True, primary_key=True)
     #accountcode = models.ForeignKey(Contact)
     cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     #cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=2)

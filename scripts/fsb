@@ -1,5 +1,4 @@
 #!/bin/bash
-easy_install -U django
-easy_install -U userprofile
-easy_install -U fsadmin
-
+pip install -e hg+http://bitbucket.org/jbo/fsb/#egg=fsb
+./manage.py syncdb
+./manage.py migrate prepaid
