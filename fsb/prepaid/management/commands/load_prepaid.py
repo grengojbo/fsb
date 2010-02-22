@@ -8,8 +8,15 @@ from django.core import serializers
 from django.utils.datastructures import SortedDict
 from fsa.core.utils import CsvData
 from fsa.server.models import CsvBase
-import csv, sys
-import os
+import datetime, logging
+import csv, sys, os
+from django.contrib.auth.models import User
+from keyedcache import cache_delete
+from l10n.models import Country
+from livesettings import config_get_group, config_value
+
+log = logging.getLogger('fsb.prepaid.managemment')
+
 import gzip
 import zipfile
 try:
@@ -23,7 +30,7 @@ from optparse import make_option
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--format_csv', default='', dest='format_csv',
-        help='Format CSV file'),
+                    help='Format CSV file'),
     )
     help = 'Load Prepaid Card Base ./manage.py load_prepaid --format_csv=1 /fsb/prepaid/fixtures/test.csv'
     args = '[fixture ...]'
@@ -61,7 +68,7 @@ class Command(BaseCommand):
         # the side effect of initializing the test database (if
         # it isn't already initialized).
         cursor = connection.cursor()
-    
+
         if commit:
             transaction.commit_unless_managed()
             transaction.enter_transaction_management()
@@ -83,8 +90,11 @@ class Command(BaseCommand):
         if has_bz2:
             compression_types['bz2'] = bz2.BZ2File
         
+        #cd = CsvData(CsvBase.objects.get(pk=format_csv))
         try:
-            cd = CsvData(CsvBase.objects.get(pk=format_csv))
+            csb = CsvBase.objects.get(pk=format_csv)
+            cd = CsvData(csb.val)
+            log.debug(fixture_labels)
             f = open(fixture_labels, "rt")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             for row in reader:
@@ -92,9 +102,11 @@ class Command(BaseCommand):
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
                 except Exception, e:
-                    l.error("line: %i => %s" % (cd.line_num, e)) 
+                    log.error("line: %i => %s" % (cd.line_num, e)) 
                     pass
             label_found = True
+        except Exception, e:
+            log.error(e)
         finally:
             f.close()
         if object_count > 0:
