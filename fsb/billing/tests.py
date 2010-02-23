@@ -31,10 +31,12 @@ class BaseTestCase(test.TestCase):
         
     def testBalance(self):
         """docstring for billing core"""
-        #new_balance = Balance.objects.create_balance(self.Contact1)
+        new_balance = Balance.objects.create_balance(self.user)
         #self.assertEquals(new_balance.accountcode.pk, 1)
         #self.assertEquals(new_balance.tariff.pk, 1)
         #self.assertEquals(new_balance.cash, config_value('SHOP','BALANCE_CASH'))
-        #self.assertEquals(new_balance.cash, Decimal("0.0"))
-        pass
-    
+        self.assertEquals(new_balance.cash, Decimal("0.0"))
+        new_balance = Balance.objects.get(pk=self.user.pk)
+        self.assertEquals(new_balance.cash, Decimal("0.0"))
+        new_balance = Balance.objects.create_balance(self.user, '1.33')
+        self.assertEquals(new_balance.cash, Decimal("0.0"))

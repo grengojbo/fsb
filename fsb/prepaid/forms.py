@@ -12,7 +12,7 @@ class PrepaidCodeForm(forms.Form):
         """
         Verify 
         """
-        res, mes = Prepaid.objects.is_valid(self.cleaned_data.get("number"), self.cleaned_data.get("code"))
+        res, mes, user = Prepaid.objects.is_starting(self.cleaned_data.get("number"), self.cleaned_data.get("code"))
         if res:
             return self.cleaned_data
         else:

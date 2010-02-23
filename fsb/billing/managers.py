@@ -20,29 +20,34 @@ from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from decimal import Decimal
 import logging
 
-l = logging.getLogger('fsb.billing.managers')
+log = logging.getLogger('fsb.billing.managers')
 
 class BalanceManager(models.Manager):
-    def create_balance(self, contact):
+    def create_balance(self, contact, cash=None):
         """
         Баланс для нового пользователя
+        create_balance
         """
         #from fsb.tariff.models import TariffPlan, Tariff
         #from fsb.profile.models import ProfileUser
         #from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
-        bl = self.model()
-        bl.accountcode = contact
-        bl.enabled = True
         try:
-            #p = ProfileUser.objects.get(user=contact.user)
-            # TODO сделать антиспам
-            #bl.cash = config_value('SHOP','BALANCE_CASH')
-            bl.cash = Decimal("0.0")
+            bl = self.get(accountcode=contact)
+            return bl
         except Exception, e:
+            bl = self.model()
+            bl.accountcode = contact
+            bl.enabled = True
+            #p = ProfileUser.objects.get(user=contact.user)
+            if cash is None:
+                # TODO сделать антиспам
+                #bl.cash = config_value('SHOP','BALANCE_CASH')
+                bl.cash = Decimal("0.0")
+            else:
+                bl.cash = Decimal(cash)
             #bl.cash = config_value('SHOP','BALANCE_CASH')
-            pass
-        #bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
-        bl.save()
-        return bl
+            #bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
+            bl.save()
+            return bl
     
 # Create your models here.

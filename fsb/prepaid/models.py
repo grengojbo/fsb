@@ -1,4 +1,13 @@
 # -*- mode: python; coding: utf-8; -*-
+#
+# Author:  Oleg Dolya --<oleg.dolya@gmail.com>
+# Purpose: 
+# Created: 22.02.2010
+#
+
+__version__ = "$Revision$"  
+# $Source$
+
 from datetime import datetime
 from decimal import Decimal
 from django.contrib.sites.models import Site
@@ -20,6 +29,8 @@ from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from fsb.billing.models import Balance, BalanceHistory
 from fsa.directory.models import Endpoint
 
+
+
 PREPAIDCODE_KEY = 'PREPAIDCODE'
 log = logging.getLogger('prepaid.models')
 
@@ -39,7 +50,17 @@ class PrepaidManager(models.Manager):
 ##        raise Prepaid.DoesNotExist()
     #----------------------------------------------------------------------
     def is_valid(self, num,code, accountcode):
-        """"""
+        """
+        Validate Prepaid Card  
+        
+        Keyword arguments:
+        num -- Number Card (SIP ID)
+        code -- activate code
+        accountcode -- User
+        
+        Return:
+        (True/False, Message)
+        """
         try:
             card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 1, enabled = False)
             comments = 'prepaid:::%i' % card.pk
@@ -59,8 +80,17 @@ class PrepaidManager(models.Manager):
             log.error(e)
             return (False, _("Your balance is not replenished. Error code or number"))
             
-    def is_starting(self, num,code):
-        """"""
+    def is_starting(self, num, code):
+        """
+        Activate Prepaid Card and create User  
+        
+        Keyword arguments:  
+        num -- Number Card (SIP ID)  
+        code -- activate code  
+        
+        Return:  
+        (True/False, Message, Create User)
+        """
         try:
             card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 2, enabled = False)
             new_user = User.objects.create_user(num, '', code)
