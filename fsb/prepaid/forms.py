@@ -8,20 +8,16 @@ class PrepaidCodeForm(forms.Form):
     number = forms.CharField(_('Number'), required=True)
     code = forms.CharField(_('Code'), required=True)
     
+    def __init__(self, request, data, *args, **kwargs):
+        super(PrepaidCodeForm, self).__init__(request, number, data, *args, **kwargs)
+        
     def clean(self):
         """
         Verify 
         """
-        res, mes, user = Prepaid.objects.is_starting(self.cleaned_data.get("number"), self.cleaned_data.get("code"))
+        res, mes, user = Prepaid.objects.is_starting(self.data.get("number"), self.data.get("code"))
         if res:
-            return self.cleaned_data
+            return self.data
         else:
             raise forms.ValidationError(mes)
     
-##class PrepaidPayShipForm(SimplePayShipForm):
-##    prepaidnumber = forms.CharField(max_length=14)
-##    prepaidcode = forms.CharField(max_length=14)
-##    
-##
-##    def __init__(self, request, paymentmodule, *args, **kwargs):
-##        super(PrepaidPayShipForm, self).__init__(request, paymentmodule, *args, **kwargs)
