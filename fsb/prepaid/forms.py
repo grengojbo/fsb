@@ -3,13 +3,16 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 #from payment.forms import SimplePayShipForm
 from models import Prepaid
+import logging
+log = logging.getLogger("prepaid.forms")
 
 class PrepaidCodeForm(forms.Form):
     number = forms.CharField(_('Number'), required=True)
     code = forms.CharField(_('Code'), required=True)
     
-    def __init__(self, request, data, *args, **kwargs):
-        super(PrepaidCodeForm, self).__init__(request, number, data, *args, **kwargs)
+    #log.debug(request)
+    #def __init__(self, request, data, *args, **kwargs):
+    #    super(PrepaidCodeForm, self).__init__(request, number, data, *args, **kwargs)
         
     def clean(self):
         """

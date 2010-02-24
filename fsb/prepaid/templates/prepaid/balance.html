@@ -8,26 +8,26 @@
 
 {% block content %}
 <div id="giftcertificate">
-	{% if code %}
-	{% if success} %}
-	<h3>{% trans 'Prepaid Card' %}</h3>
-	<p>
-		{% trans 'Purchased on:' %} {{ prepaid.date_added|date:'y-M-d' }}
-		{% if prepaid.message %}
-			<p class="message">{{ prepaid.message }}</p>
-		{% else %}
-		<br/>
-		{% endif %}
-		{% trans 'Initial Balance:' %} {{ prepaid.initial_balance|currency }}<br/>
-		{% trans 'Current Balance:' %} {{ prepaid.balance|currency }}<br/>
-	</p>
-	{% else %}
-	<p class="warning">{% trans 'No such Prepaid Card found.' %}</p>
-	{% endif %}
-	{% else %}
-	<form method="GET" action="{% url satchmo_prepaid_balance %}">
-	{{ form }}
-	<p><input type="submit" value="{% trans 'Look up balance' %}" /></p>
-	</form>
-	{% endif %}
+    {% if code %}
+    {% if success} %}
+    <h3>{% trans 'Prepaid Card' %}</h3>
+    <p>
+        {% trans 'Purchased on:' %} {{ prepaid.date_added|date:'y-M-d' }}
+        {% if prepaid.message %}
+            <p class="message">{{ prepaid.message }}</p>
+        {% else %}
+        <br/>
+        {% endif %}
+        {% trans 'Initial Balance:' %} {{ prepaid.initial_balance|currency }}<br/>
+        {% trans 'Current Balance:' %} {{ prepaid.balance|currency }}<br/>
+    </p>
+    {% else %}
+    <p class="warning">{% trans 'No such Prepaid Card found.' %}</p>
+    {% endif %}
+    {% else %}
+    <form method="GET" action="{% url satchmo_prepaid_balance %}">
+    {{ form }}
+    <p><input type="submit" value="{% trans 'Look up balance' %}" /></p>
+    </form>
+    {% endif %}
 {% endblock %}

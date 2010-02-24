@@ -23,15 +23,25 @@ log = logging.getLogger("prepaid.views")
 
 gc = config_get_group('PAYMENT_PREPAID')
 
-def prepaid_form(request):
+def prepaid_form(request, template_name='prepaid/activate.html',
+             success_url='profile_overview', extra_context=None, **kwargs):
+    log.debug(request)
     if request.method == "POST":
-        new_data = request.POST.copy()
-        form = PrepaidCodeForm(request,new_data)
+        form = PrepaidCodeForm(request, data=request.POST, files=request.FILES)
         if form.is_valid():
             data = form.cleaned_data
     else:
-        form = PrepaidCodeForm(request,new_data)
-    return (False, form)
+        form = PrepaidCodeForm(request)
+    #return (False, form)
+    
+    if extra_context is None:
+        extra_context = {}
+    context = RequestContext(request)
+    for key, value in extra_context.items():
+        context[key] = callable(value) and value() or value
+    
+    return render_to_response(template_name, { 'form': form }, context_instance=context)
+
 ##
 ##            # Create a new order.
 ##            newOrder = get_or_create_order(request, working_cart, contact, data)            
