@@ -2,6 +2,7 @@
 from django import http
 from django.contrib.sites.models import Site
 from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 #from forms import PrepaidCodeForm, PrepaidPayShipForm
@@ -23,17 +24,15 @@ log = logging.getLogger("prepaid.views")
 
 gc = config_get_group('PAYMENT_PREPAID')
 
+@login_required
 def prepaid_form(request, template_name='prepaid/activate.html',
              success_url='profile_overview', extra_context=None, **kwargs):
-    log.debug(request)
     if request.method == "POST":
-        form = PrepaidCodeForm(request, data=request.POST, files=request.FILES)
+        form = PrepaidCodeForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             data = form.cleaned_data
     else:
-        form = PrepaidCodeForm(request)
-    #return (False, form)
-    
+        form = PrepaidCodeForm()
     if extra_context is None:
         extra_context = {}
     context = RequestContext(request)

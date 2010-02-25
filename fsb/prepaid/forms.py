@@ -7,20 +7,27 @@ import logging
 log = logging.getLogger("prepaid.forms")
 
 class PrepaidCodeForm(forms.Form):
-    number = forms.CharField(_('Number'), required=True)
-    code = forms.CharField(_('Code'), required=True)
+    prnumber = forms.CharField(label=_('Number'), required=True)
+    prcode = forms.CharField(label=_('Code'), required=True)
     
     #log.debug(request)
-    #def __init__(self, request, data, *args, **kwargs):
-    #    super(PrepaidCodeForm, self).__init__(request, number, data, *args, **kwargs)
+    #def __init__(self, data=None, files=None, user=None, *args, **kwargs):
+    #    super(PrepaidCodeForm, self).__init__(*args, **kwargs)
+    #    self.user = user
+    #def __init__(self, user, *args, **kwargs):
+    #    super(ContactForm, self).__init__(*args, **kwargs)
+    #    if not user.is_authenticated():
+    #        self.fields['captcha'] = CaptchaField()
         
     def clean(self):
         """
         Verify 
         """
         res, mes, user = Prepaid.objects.is_starting(self.data.get("number"), self.data.get("code"))
-        if res:
-            return self.data
-        else:
-            raise forms.ValidationError(mes)
+        #if res:
+        #    return self.data
+        #else:
+        #    raise forms.ValidationError(mes)
+        #raise forms.ValidationError(_("The two password fields didn't match."))
+        return self.cleaned_data
     
