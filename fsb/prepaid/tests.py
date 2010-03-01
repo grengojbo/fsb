@@ -13,6 +13,7 @@ from fsa.core.utils import CsvData
 #from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 #from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
 from fsb.billing.models import Balance
+from fsa.directory.models import Endpoint
 ##from utils import generate_certificate_code, generate_code
 import datetime, logging
 import csv, sys, os
@@ -80,22 +81,35 @@ class TestCertCreate(test.TestCase):
         
         gc = Prepaid.objects.all()
         self.assertEqual(gc.count(),6)
-        res, mes = Prepaid.objects.is_valid('11018','222222222',self.user)
-        self.assertEquals(res, True)
-        res, mes = Prepaid.objects.is_valid('11018','222222222',self.user)
-        self.assertEquals(res, False)
+        res = Prepaid.objects.is_valid('11018','222222222')
+        self.assertEquals(res.num_prepaid, '11018')
+        r = res.activate_card(self.user)
+        self.assertEquals(r, True)
+        
+        res = Prepaid.objects.is_valid('11018','222222222')
+        self.assertEquals(res, None)
         bal = Balance.objects.get(accountcode=self.user)
         self.assertEquals(bal.cash, Decimal("25"))
-        res, mes = Prepaid.objects.is_valid('11019','222222222',self.user)
-        self.assertEquals(res, False)
-        res, mes = Prepaid.objects.is_valid('11018','111111111',self.user)
-        self.assertEquals(res, False)
-        res, mes = Prepaid.objects.is_valid('11019','111111111',self.user)
-        self.assertEquals(res, True)
+        res = Prepaid.objects.is_valid('11019','222222222')
+        self.assertEquals(res, None)
+        res = Prepaid.objects.is_valid('11018','111111111')
+        self.assertEquals(res, None)
+        
+        res = Prepaid.objects.is_valid('11019','111111111')
+        self.assertEquals(res.code, '111111111')
+        if res is not None and res.nt == 1:
+            r = res.activate_card(self.user)
         bal = Balance.objects.get(accountcode=self.user)
         self.assertEquals(bal.cash, Decimal("75"))
-        res, mes = Prepaid.objects.is_valid('5003020','123456781',self.user)
-        self.assertEquals(res, False)
+        
+        res = Prepaid.objects.is_valid('5003020','123456781')
+        if res is not None and res.nt == 2:
+            new_user = User.objects.create_user(res.num_prepaid, '', res.code)
+            new_endpoint = Endpoint.objects.create_endpoint(new_user, res.num_prepaid)
+            r = res.activate_card(self.user)
+        self.assertEquals(res.nt, 2)
+        bal = Balance.objects.get(accountcode=new_user)
+        self.assertEquals(bal.cash, Decimal("1"))
         
 
 ##    def testUse(self):

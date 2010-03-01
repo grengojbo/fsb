@@ -49,28 +49,28 @@ class PrepaidManager(models.Manager):
 ##            return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
 ##        raise Prepaid.DoesNotExist()
     #----------------------------------------------------------------------
-    def is_valid(self, num,code, accountcode):
+    def is_valid(self, num,code):
         """
         Validate Prepaid Card  
         
-        Keyword arguments:
-        num -- Number Card (SIP ID)
-        code -- activate code
-        accountcode -- User
+        Keyword arguments:  
+        num -- Number Card (SIP ID)  
+        code -- activate code  
         
         Return:
-        (True/False, Message)
+        (Prepaid or None)
         """
         try:
-            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 1, enabled = False)
-            comments = 'prepaid:::%i' % card.pk
-            up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
+            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), enabled = False)
+            #comments = 'prepaid:::%i' % card.pk
+            #up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
             # Ваш баланс был пополнен на
-            name='Added prepaid card'
-            BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=card.start_balance, comments=comments)
-            card.enabled =True
-            card.save()
-            return (True, _("Your balance was replenished"))
+            #name='Added prepaid card'
+            #BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=card.start_balance, comments=comments)
+            #card.enabled =True
+            #card.save()
+            return card
+            #return (True, _("Your balance was replenished"))
 ##                # этой картой вы неможете пополнить баланс
 ##                return (False, _("You cannot supplement the balance with this card"))
 ##                # эта карта уже активирована
@@ -78,11 +78,12 @@ class PrepaidManager(models.Manager):
         except Exception, e:
             # Ваш баланс не пополнен
             log.error(e)
-            return (False, _("Your balance is not replenished. Error code or number"))
+            #return (False, _("Your balance is not replenished. Error code or number"))
+            return None
             
     def is_starting(self, num, code):
         """
-        Activate Prepaid Card and create User  
+        The checking Prepaid Card  
         
         Keyword arguments:  
         num -- Number Card (SIP ID)  
@@ -194,6 +195,23 @@ class Prepaid(models.Model):
         verbose_name = _("Prepaid card")
         verbose_name_plural = _("Prepaid cards")
 
+    def activate_card(self, accountcode):
+        """Activate Prepaid Card"""
+        try:
+            
+            comments = 'prepaid:::%i' % self.pk
+            up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + self.start_balance)
+            # Ваш баланс был пополнен на
+            name='Added prepaid card'
+            BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=self.start_balance, comments=comments)
+            self.enabled = True
+            self.save()
+            return True
+        except Exception, e:
+            # Ваш баланс не пополнен
+            log.error(e)
+            return None
+        
 
     @property
     def balance(self):

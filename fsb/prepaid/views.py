@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Prepaid, PREPAIDCODE_KEY
 from forms import PrepaidCodeForm
 from livesettings import config_get_group, config_value
+from django.shortcuts import redirect
 #from satchmo_store.shop.models import Order
 #from payment.utils import pay_ship_save, get_or_create_order
 #from payment.views import confirm, payship
@@ -30,7 +31,8 @@ def prepaid_form(request, template_name='prepaid/activate.html',
     if request.method == "POST":
         form = PrepaidCodeForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            data = form.cleaned_data
+            #data = form.cleaned_data
+            redirect(success_url)
     else:
         form = PrepaidCodeForm()
     if extra_context is None:

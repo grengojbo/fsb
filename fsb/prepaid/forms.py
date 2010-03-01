@@ -11,8 +11,9 @@ class PrepaidCodeForm(forms.Form):
     prcode = forms.CharField(label=_('Code'), required=True)
     
     #log.debug(request)
-    #def __init__(self, data=None, files=None, user=None, *args, **kwargs):
-    #    super(PrepaidCodeForm, self).__init__(*args, **kwargs)
+    #def __init__(self, request, data=None, files=None, user=None, *args, **kwargs):
+    #    self.req = request
+    #    super(PrepaidCodeForm, self).__init__(data=data, files=files, *args, **kwargs)
     #    self.user = user
     #def __init__(self, user, *args, **kwargs):
     #    super(ContactForm, self).__init__(*args, **kwargs)
@@ -23,11 +24,11 @@ class PrepaidCodeForm(forms.Form):
         """
         Verify 
         """
-        res, mes, user = Prepaid.objects.is_starting(self.data.get("number"), self.data.get("code"))
-        #if res:
-        #    return self.data
-        #else:
-        #    raise forms.ValidationError(mes)
-        #raise forms.ValidationError(_("The two password fields didn't match."))
+        res = Prepaid.objects.is_valid(self.data.get("prnumber"), self.data.get("prcode"))
+        log.debug("number: %s" % self.data.get("prnumber"))
+        if res is None:
+            raise forms.ValidationError(_("Incorrect number or the code of the card."))
+        elif res.nt != 1:
+            raise forms.ValidationError(_("You cannot supplement calculation with this card"))
         return self.cleaned_data
     
