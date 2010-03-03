@@ -11,24 +11,21 @@ class PrepaidCodeForm(forms.Form):
     prcode = forms.CharField(label=_('Code'), required=True)
     
     #log.debug(request)
-    #def __init__(self, request, data=None, files=None, user=None, *args, **kwargs):
-    #    self.req = request
-    #    super(PrepaidCodeForm, self).__init__(data=data, files=files, *args, **kwargs)
-    #    self.user = user
-    #def __init__(self, user, *args, **kwargs):
-    #    super(ContactForm, self).__init__(*args, **kwargs)
-    #    if not user.is_authenticated():
-    #        self.fields['captcha'] = CaptchaField()
+    def __init__(self, request, *args, **kwargs):
+        super(PrepaidCodeForm, self).__init__(*args, **kwargs)
+        self.user = request.user
         
     def clean(self):
         """
         Verify 
         """
+        log.debug("number: %s (%s)" % (self.data.get("prnumber"), self.user))
         res = Prepaid.objects.is_valid(self.data.get("prnumber"), self.data.get("prcode"))
-        log.debug("number: %s" % self.data.get("prnumber"))
         if res is None:
             raise forms.ValidationError(_("Incorrect number or the code of the card."))
         elif res.nt != 1:
             raise forms.ValidationError(_("You cannot supplement calculation with this card"))
+        else:
+            res.activate_card(self.user)
         return self.cleaned_data
     
