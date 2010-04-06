@@ -1,11 +1,11 @@
 # -*- mode: python; coding: utf-8; -*-
 #
 # Author:  Oleg Dolya --<oleg.dolya@gmail.com>
-# Purpose: 
+# Purpose:
 # Created: 22.02.2010
 #
 
-__version__ = "$Revision$"  
+__version__ = "$Revision$"
 # $Source$
 
 from datetime import datetime
@@ -51,12 +51,12 @@ class PrepaidManager(models.Manager):
     #----------------------------------------------------------------------
     def is_valid(self, num,code):
         """
-        Validate Prepaid Card  
-        
-        Keyword arguments:  
-        num -- Number Card (SIP ID)  
-        code -- activate code  
-        
+        Validate Prepaid Card
+
+        Keyword arguments:
+        num -- Number Card (SIP ID)
+        code -- activate code
+
         Return:
         (Prepaid or None)
         """
@@ -80,16 +80,16 @@ class PrepaidManager(models.Manager):
             log.error(e)
             #return (False, _("Your balance is not replenished. Error code or number"))
             return None
-            
+
     def is_starting(self, num, code):
         """
-        The checking Prepaid Card  
-        
-        Keyword arguments:  
-        num -- Number Card (SIP ID)  
-        code -- activate code  
-        
-        Return:  
+        The checking Prepaid Card
+
+        Keyword arguments:
+        num -- Number Card (SIP ID)
+        code -- activate code
+
+        Return:
         (True/False, Message, Create User)
         """
         try:
@@ -102,16 +102,16 @@ class PrepaidManager(models.Manager):
                 up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
             card.enabled = True
             card.save()
-            # Ваш баланс был пополнен на 
+            # Ваш баланс был пополнен на
             return (True, _("The starting packet is activated"), new_user)
         except Exception, e:
             # Ваш баланс не пополнен
             log.error(e)
             return (False, _("Error code or number"), None)
-        
+
     def add_prepaid(self, n):
         """
-        
+
         """
         try:
             bl = self.model()
@@ -124,6 +124,7 @@ class PrepaidManager(models.Manager):
             bl.save()
             return 1
         except Exception, e:
+            log.error(e)
             return 0
 
     def load_prepaid(self, currency, site, base_file):
@@ -198,7 +199,7 @@ class Prepaid(models.Model):
     def activate_card(self, accountcode):
         """Activate Prepaid Card"""
         try:
-            
+
             comments = 'prepaid:::%i' % self.pk
             up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + self.start_balance)
             # Ваш баланс был пополнен на
@@ -211,7 +212,7 @@ class Prepaid(models.Model):
             # Ваш баланс не пополнен
             log.error(e)
             return None
-        
+
 
     @property
     def balance(self):
@@ -225,13 +226,13 @@ class Prepaid(models.Model):
 ##        Returns new balance.
 ##        """
 ##        amount = min(order.balance, self.balance)
-##        log.info('applying %s from giftcert #%i [%s] to order #%i [%s]', 
-##            moneyfmt(amount), 
-##            self.id, 
-##            moneyfmt(self.balance), 
-##            order.id, 
+##        log.info('applying %s from giftcert #%i [%s] to order #%i [%s]',
+##            moneyfmt(amount),
+##            self.id,
+##            moneyfmt(self.balance),
+##            order.id,
 ##            moneyfmt(order.balance))
-##            
+##
 ##        processor = get_processor_by_key('PAYMENT_PREPAID')
 ##        orderpayment = processor.record_payment(order=order, amount=amount)
 ##        self.orderpayment = orderpayment
@@ -282,14 +283,14 @@ class Prepaid(models.Model):
 ##    #product = models.OneToOneField(Product, verbose_name=_('Product'), primary_key=True)
 ##    is_shippable = False
 ##    discountable = False
-##    
+##
 ##    #unit_price
 ##
 ##    def __unicode__(self):
 ##        return u"PrepaidProduct: %s" % self.name
-##        
+##
 ##    def _get_subtype(self):
-##        return 'PrepaidProduct'        
+##        return 'PrepaidProduct'
 ##
 ##    def order_success(self, order, order_item):
 ##        log.debug("Order success called, creating prepaid card on order: %s", order)

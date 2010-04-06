@@ -1,7 +1,7 @@
-# -*- coding: UTF-8 -*-  
+# -*- coding: UTF-8 -*-
 #from django.core.management.base import NoArgsCommand
 from django.core.management.color import no_style
-from django.contrib.sites.models import Site 
+from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.core import serializers
@@ -89,7 +89,7 @@ class Command(BaseCommand):
         }
         if has_bz2:
             compression_types['bz2'] = bz2.BZ2File
-        
+
         #cd = CsvData(CsvBase.objects.get(pk=format_csv))
         try:
             csb = CsvBase.objects.get(pk=format_csv)
@@ -101,8 +101,9 @@ class Command(BaseCommand):
                 try:
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
+                    log.debug("line: %i => %s" % (cd.line_num, row))
                 except Exception, e:
-                    log.error("line: %i => %s" % (cd.line_num, e)) 
+                    log.error("line: %i => %s" % (cd.line_num, e))
                     pass
             label_found = True
         except Exception, e:
