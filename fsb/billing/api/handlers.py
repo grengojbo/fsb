@@ -10,8 +10,7 @@ class AccountHandler(BaseHandler):
     """
     Authenticated entrypoint for blogposts.
     """
-    #allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
-    allowed_methods = ('GET', 'PUT', 'DELETE')
+    allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
     fields = (('accountcode', ('username', 'email')), 'cash', 'enabled', 'credit')
