@@ -1,8 +1,10 @@
-# -*- mode: python; coding: utf-8; -*- 
+# -*- mode: python; coding: utf-8; -*-
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from piston.utils import rc, require_mime, require_extended
 #from piston.doc import generate_doc
 import logging
+from django.contrib.auth.models import User
+
 log = logging.getLogger('fsb.billing.api.handlers')
 from fsb.billing.models import Balance
 
@@ -14,7 +16,7 @@ class AccountHandler(BaseHandler):
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
     fields = (('accountcode', ('username', 'email')), 'cash', 'enabled', 'credit')
-    
+
     #@staticmethod
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
@@ -28,8 +30,12 @@ class AccountHandler(BaseHandler):
          - `phone_number`: The title of the post to retrieve.
         """
         log.debug("read accounts %s" % account)
+        if request.GET.get("start"):
+            start = request.GET.get("start")
+        if request.GET.get("limit"):
+            limit = int(request.GET.get("limit"))
+            limit += int(start)
         base = Balance.objects
-
         if account:
             return {"count": 1, "accounts": base.get(accountcode__username=account)}
         else:
@@ -67,9 +73,14 @@ class AccountHandler(BaseHandler):
         Update number plan type.
         """
         attrs = self.flatten_dict(request.POST)
+        log.info(attrs.get("enabled"))
+        if attrs.get("enabled") == "True":
+            active = True
+        else:
+            active = False
+        account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email")))
+        #np = Balance.objects.get(accountcode=account)
+        #np.enables=False
+        #np.save()
 
-        np = Balance.objects.get(accountcode=account)
-        np.enables=False
-        np.save()
-
-        return np
+        return True
