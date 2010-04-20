@@ -13,7 +13,7 @@ account = Resource(handler=AccountHandler, authentication=auth)
 urlpatterns = patterns('',
     url(r'^$', account),
     url(r'^doc/$', documentation_view),
-    url(r'^(?P<start>.+)/(?P<limit>.+)/$', account),
+    #url(r'^(?P<start>.+)/(?P<limit>.+)/$', account),
     url(r'^(?P<account>.+)/$', account),
     #url(r'^posts\.(?P<emitter_format>.+)', blogposts, name='blogposts'),
 

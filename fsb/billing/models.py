@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from fsa.core.managers import GenericManager
 from fsb.billing.managers import BalanceManager
 from fsa.server.models import Server
-#from fsb.tariff.models import TariffPlan
+from fsb.tariff.models import TariffPlan
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from django.db.models.expressions import F
 import datetime
@@ -16,8 +16,12 @@ from django.utils.dateformat import DateFormat
 from django.utils.encoding import force_unicode
 import os.path, csv, logging
 from pytils.dt import ru_strftime
-#from satchmo_utils.fields import CurrencyField
-#from satchmo_store.contact.models import Contact
+from django.contrib.sites.models import RequestSite
+from django.contrib.sites.models import Site
+from bursar.fields import CurrencyField
+from currency.fields import *
+from currency.money import Money
+from currency.models import Currency
 from decimal import Decimal
 
 l = logging.getLogger('fsb.billing.models')
@@ -30,17 +34,17 @@ class Balance(models.Model):
     """(Balance description)"""
     accountcode = models.OneToOneField(User, parent_link=True, primary_key=True)
     #accountcode = models.ForeignKey(Contact)
-    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
-    #cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=10, display_decimal=2)
-    #tariff = models.ForeignKey(TariffPlan, related_name='tariffplangroup')
+    #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
+    cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
+    tariff = models.ForeignKey(TariffPlan, default=1, verbose_name=_('Tariff Plan'), related_name='tariffplangroup')
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = BalanceManager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     timelimit= models.FloatField(_(u'Limit'), blank=False, default=0, help_text=_(u'Time limit'))
-    #credit = CurrencyField(_("Discount Amount"), decimal_places=2, display_decimal=2, max_digits=8, default=Decimal("0.0"), help_text=_(u'Total sum for which credit is extended for calls'))
-    credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
-    
+    credit = CurrencyField(_("Discount Amount"), decimal_places=2, display_decimal=2, max_digits=8, default=Decimal("0.0"), help_text=_(u'Total sum for which credit is extended for calls'))
+    #credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
+    site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
     class Meta:
         #ordering = []
         db_table = 'balance'

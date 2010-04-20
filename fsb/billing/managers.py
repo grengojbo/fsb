@@ -31,20 +31,24 @@ class BalanceManager(models.Manager):
         #from fsb.tariff.models import TariffPlan, Tariff
         #from fsb.profile.models import ProfileUser
         #from satchmo_store.contact.models import AddressBook, PhoneNumber, Contact, ContactRole
+        log.info(site)
         try:
             bl = self.get(accountcode=contact)
             return bl
         except Exception, e:
             bl = self.model()
             bl.accountcode = contact
-            bl.enabled = True
+            bl.enabled = enabled
             #p = ProfileUser.objects.get(user=contact.user)
+            log.info(site)
             if cash is None:
                 # TODO сделать антиспам
                 #bl.cash = config_value('SHOP','BALANCE_CASH')
                 bl.cash = Decimal("0.0")
             else:
                 bl.cash = Decimal(cash)
+            if site is not None:
+                bl.site = site
             #bl.cash = config_value('SHOP','BALANCE_CASH')
             #bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
             bl.save()
