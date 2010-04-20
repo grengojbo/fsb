@@ -7,14 +7,20 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from fsa.core.managers import GenericManager
 from fsb.tariff.managers import TariffManager
-from fsadmin.server.models import Server
+from fsa.server.models import Server
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 import datetime
 from django.utils.dateformat import DateFormat
 from django.utils.encoding import force_unicode
 import os.path, csv, logging
 from pytils.dt import ru_strftime
-
+from django.contrib.sites.models import RequestSite
+from django.contrib.sites.models import Site
+from bursar.fields import CurrencyField
+from currency.fields import *
+from currency.money import Money
+from currency.models import Currency
+from decimal import Decimal
 l = logging.getLogger('fsb.tariff.models')
 
 __author__ = '$Author:$'
@@ -39,15 +45,16 @@ class TariffPlan(models.Model):
     если формат даты отличается то необходимо указать формат date_start=%d.%m.%Y 00:00
     """
     name = models.CharField(_(u'Name'), max_length=80)
-    cash_min = models.FloatField(_(u'Плата за соединение'), blank=False, default=0)
-    fee = models.FloatField(_(u'Абонплата'), blank=False, default=0)
+    cash_min = CurrencyField(_("Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
+    fee = CurrencyField(_("Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
     fee_period = models.SmallIntegerField(_(u'Период'), choices=FEE_TARIFF_CHOICES, default=0, help_text=_(u'период за который снимается абонентская плата'))
-    activation = models.FloatField(_(u'Активация'), blank=False, default=0, help_text=_(u'стоимость активации тарифного плана'))
-    date_start = models.DateTimeField(_(u'Date Start'))
-    date_end = models.DateTimeField(_(u'Date End'))
+    activation = CurrencyField(_("Активация"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4, help_text=_(u'стоимость активации тарифного плана'))
+    date_start = models.DateTimeField(_(u'Date Start'), default=datetime.datetime.now())
+    date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
     enabled = models.BooleanField(_(u'Enable'), default=True)
     primary = models.BooleanField(_(u'По умолчанию'), default=False)
-    tariff_format = models.CharField(_(u'Tariff Format'), default="delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|name|rate", max_length=250, help_text=_(u'Формат CSV файла для загрузки  тарифного плана'))
+    site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
+    #tariff_format = models.CharField(_(u'Tariff Format'), default="delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|name|rate", max_length=250, help_text=_(u'Формат CSV файла для загрузки  тарифного плана'))
     description = models.CharField(_(u'Description'), blank=True, max_length=240)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
@@ -104,12 +111,22 @@ class Tariff(models.Model):
     # TODO: напрвление
     name = models.CharField(_(u'Направление'), max_length=200, blank=True)
     name_lcr = models.CharField(_(u'Направление по базе LCR'), max_length=200, blank=True)
-    rate = models.FloatField(verbose_name=_(u"Стоимость"), default=0)
+    rate = CurrencyField(_("Стоимость"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=4)
+    price = MoneyField(max_digits=18, decimal_places=4, default=Money(0, Currency.objects.get_default()))
     tariff_plan = models.ForeignKey('TariffPlan', related_name='tpg')
     #tariff = models.ForeignKey(TariffPlan)
-    date_start = models.DateTimeField(_(u'Date Start'))
-    date_end = models.DateTimeField(_(u'Date End'))
+    date_start = models.DateTimeField(_(u'Date Start'), default=datetime.datetime.now())
+    date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
     enabled = models.BooleanField(_(u'Enable'), default=True)
+    week1 = models.BooleanField(_(u'Monday'), default=True)
+    week2 = models.BooleanField(_(u'Tuesday'), default=True)
+    week3 = models.BooleanField(_(u'Wednesday'), default=True)
+    week4 = models.BooleanField(_(u'Thursday'), default=True)
+    week5 = models.BooleanField(_(u'Friday'), default=True)
+    week6 = models.BooleanField(_(u'Saturday'), default=True)
+    week7 = models.BooleanField(_(u'Sunday'), default=True)
+    time_start = models.TimeField(_(u'Time Start'), default=datetime.datetime.strptime("00:00", "%H:%M"))
+    time_end = models.TimeField(_(u'Time End'), default=datetime.datetime.strptime("23:59", "%H:%M"))
     objects =TariffManager()
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries

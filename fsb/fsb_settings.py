@@ -3,8 +3,8 @@ from settings import *
 
 # TODO delete lib.decorators
 INSTALLED_APPS += (
+    'fsb.tariff',
     'fsb.billing',
     'fsb.prepaid',
-    #'fsb.tariff',
     #'contact',
     )

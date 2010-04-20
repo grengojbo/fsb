@@ -78,7 +78,7 @@ class AccountHandler(BaseHandler):
             active = True
         else:
             active = False
-        account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email")))
+        account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email"))
         #np = Balance.objects.get(accountcode=account)
         #np.enables=False
         #np.save()
