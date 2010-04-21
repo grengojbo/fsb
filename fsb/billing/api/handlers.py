@@ -20,7 +20,7 @@ class AccountHandler(BaseHandler):
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
-    fields = (('accountcode', ('username', 'email', 'password')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
+    fields = (('accountcode', ('username', 'email')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
 
     #@staticmethod
     #def resource_uri():
@@ -51,6 +51,7 @@ class AccountHandler(BaseHandler):
         except:
             return rc.NOT_HERE
 
+    @transaction.commit_on_success
     def update(self, request, account):
         """
         Update number plan type.
@@ -61,11 +62,14 @@ class AccountHandler(BaseHandler):
             return rc.DUPLICATE_ENTRY
         else:
             np = Balance.objects.get(accountcode=account)
-            np.nt=attrs['nt']
+            #np.nt=attrs['email']
+            if attrs['tariff']:
+                log.info('Change tarif: %i' % int(attrs['tariff']))
+                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']))
             np.save()
-
             return np
 
+    @transaction.commit_on_success
     def delete(self, request, account):
         """
         Update number plan type.
@@ -76,7 +80,7 @@ class AccountHandler(BaseHandler):
         np.enables=False
         np.save()
 
-        return np
+        return rc.DELETED
     
     @transaction.commit_on_success
     def create(self, request):
@@ -84,8 +88,8 @@ class AccountHandler(BaseHandler):
         Update number plan type.
         """
         attrs = self.flatten_dict(request.POST)
-        u = User.objects.get(username__iexact=request.user)
-        s = Site.objects.get(name__iexact=request.user)
+        u = User.objects.get(username=request.user)
+        s = Site.objects.get(name=request.user)
         if attrs.get("enabled") == "true":
             active = True
         else:
@@ -96,15 +100,15 @@ class AccountHandler(BaseHandler):
         else:
             password = User.objects.make_random_password()
         try:
+            #log.info(attrs.get('username'))
+            #log.info(request.user)
             account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email"), password=password)
+            np = Balance.objects.get(accountcode=account)
+            np.enabled = active
+            np.site = Site.objects.get(name=request.user)
+            np.save()
+            return rc.CREATED
         except:
             resp = rc.DUPLICATE_ENTRY
             resp.write(' - username is not unique')
             return resp
-        log.info(s)
-        np = Balance.objects.get(contact=account)
-        np.enables=active
-        np.site = s
-        np.save()
-
-        return np
