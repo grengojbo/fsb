@@ -6,6 +6,7 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from threaded_multihost.threadlocals import get_current_user, set_current_user
 #from piston.doc import generate_doc
+from fsb.tariff.models import TariffPlan
 from django.db import transaction
 
 import logging
@@ -20,7 +21,7 @@ class AccountHandler(BaseHandler):
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
-    fields = (('accountcode', ('username', 'email')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
+    fields = (('accountcode', ('username', 'email', 'date_joined')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
 
     #@staticmethod
     #def resource_uri():
@@ -47,7 +48,8 @@ class AccountHandler(BaseHandler):
                 return {"count": 1, "accounts": base.get(accountcode__username__iexact=account, site__name__iexact=request.user)}
             else:
                 resp = base.filter(site__name__iexact=request.user)[start:limit]
-                return {"count": 1000, "accounts": resp}
+                count = base.filter(site__name__iexact=request.user).count()
+                return {"count": count, "accounts": resp}
         except:
             return rc.NOT_HERE
 
@@ -57,17 +59,22 @@ class AccountHandler(BaseHandler):
         Update number plan type.
         """
         attrs = self.flatten_dict(request.POST)
-
-        if self.exists(**attrs):
-            return rc.DUPLICATE_ENTRY
-        else:
-            np = Balance.objects.get(accountcode=account)
+        try:
+            np = Balance.objects.get(accountcode__username__iexact=account, site__name__iexact=request.user)
             #np.nt=attrs['email']
-            if attrs['tariff']:
+            if attrs.get('tariff'):
                 log.info('Change tarif: %i' % int(attrs['tariff']))
-                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']))
+                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']), enabled=True, site__name__iexact=request.user)
+            if attrs.get('email'):
+                log.info('Change email: %s' % attrs['email'])
+                u = User.objects.get(balance=np)
+                u.email=attrs['email']
+                u.save()
+                np.accountcode = u
             np.save()
             return np
+        except:
+            return rc.BAD_REQUEST
 
     @transaction.commit_on_success
     def delete(self, request, account):
@@ -75,12 +82,13 @@ class AccountHandler(BaseHandler):
         Update number plan type.
         """
         attrs = self.flatten_dict(request.POST)
-
-        np = Balance.objects.get(accountcode=account)
-        np.enables=False
-        np.save()
-
-        return rc.DELETED
+        try:
+            np = Balance.objects.get(accountcode__username__iexact=account, site__name__iexact=request.user)
+            np.enabled = False
+            np.save()
+            return rc.DELETED
+        except:
+            return rc.NOT_HERE
     
     @transaction.commit_on_success
     def create(self, request):
@@ -99,12 +107,17 @@ class AccountHandler(BaseHandler):
             password = attrs.get('password')
         else:
             password = User.objects.make_random_password()
+        if attrs.get('tariff'):
+            tariff = TariffPlan.objects.get(pk=int(attrs.get('tariff')), enabled=True, site__name__iexact=request.user)
+        else:
+            tariff = TariffPlan.objects.get(primary=True, enabled=True, site__name__iexact=request.user)
         try:
             #log.info(attrs.get('username'))
             #log.info(request.user)
             account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email"), password=password)
             np = Balance.objects.get(accountcode=account)
             np.enabled = active
+            np.tariff = tariff
             np.site = Site.objects.get(name=request.user)
             np.save()
             return rc.CREATED
