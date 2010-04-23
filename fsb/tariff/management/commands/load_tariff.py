@@ -5,10 +5,19 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.core import serializers
 from django.utils.datastructures import SortedDict 
+from fsa.core.utils import CsvData
+from fsa.server.models import CsvBase
 import csv, sys
 import os
 import gzip
 import zipfile
+import csv, sys, os
+import time, datetime
+from decimal import Decimal
+from decimal import *
+from fsa.core.utils import CsvData
+import logging
+log = logging.getLogger('fsb.tariff.management.load_tariff')
 try:
     import bz2
     has_bz2 = True
@@ -19,10 +28,11 @@ from optparse import make_option
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('--tid', default='', dest='tid',
-        help='Tariff Plan Name'),
+        make_option('--tariff', default=1, dest='tariff', help='Tariff Plan Name'),
+        make_option('--site', default=1, dest='site', help='Site ID'),
+        make_option('--format_csv', default=1, dest='format_csv', help='Format csv file'),
     )
-    help = 'Load Tariff data ./manage.py load_tariff --tid=1 /fsbilling/tariff/fixtures/14.csv'
+    help = 'Load Tariff data ./manage.py load_tariff --tariff=1 --site=1 --format_csv=3 /fsb/tariff/fixtures/tariff_test.csv'
     args = '[fixture ...]'
 
     def handle(self, fixture_labels, **options):
@@ -31,8 +41,14 @@ class Command(BaseCommand):
         from django.db import connection, transaction
         from django.conf import settings
         from fsb.tariff.models import TariffPlan, Tariff
+        from currency.money import Money
+        from currency.models import Currency
+        from django.contrib.sites.models import RequestSite
+        from django.contrib.sites.models import Site
 
-        tid = options.get('tid','')
+        tariff = options.get('tariff',1)
+        site = options.get('site',1)
+        format_csv = options.get('format_csv',1)
 
         self.style = no_style()
 
@@ -81,10 +97,30 @@ class Command(BaseCommand):
             compression_types['bz2'] = bz2.BZ2File
             
         f = open(fixture_labels, "rt")
-        tf = TariffPlan.objects.get(pk=tid)
         try:
-            objects_in_fixture = Tariff.objects.load_tariff(tf, f)
+            tf = TariffPlan.objects.get(pk=tariff, enabled=True, site__pk=site)
+            #d1="delimiter=';'time_format='%d.%m.%Y 00:00'name|country_code|special_digits|rate"
+            csb = CsvBase.objects.get(pk=format_csv)
+            cd = CsvData(csb.val)
+            log.debug(fixture_labels)
+            reader = csv.reader(f, delimiter=';', dialect='excel')
+            for row in reader:
+                try:
+                    country_list, country_code, n = cd.parse(row)
+                    for country in country_list:
+                        n['country_code'] = country_code
+                        digits = n['digits']
+                        price = Money(n['price'], n['currency'])
+                        #price = Money(n['price'], 'USD')
+                        #price = n['price']
+                        objects_in_fixture = Tariff.objects.add_tariff(tf, n, digits, price)
+                        object_count += objects_in_fixture
+                except Exception, e:
+                    log.error("line: %i => %s" % (cd.line_num, e))
+                    pass
             label_found = True
+        except Exception, e:
+            log.error(e)
         finally:
             f.close()
         if object_count > 0:

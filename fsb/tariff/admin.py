@@ -7,7 +7,7 @@ l = logging.getLogger('fsb.tariff.admin')
 
 class TariffPlanAdmin(admin.ModelAdmin):
     #date_hierarchy = ''
-    list_display = ('id', 'name', 'cash_currency', 'fee_view', 'enabled_date', 'primary', 'enabled',)
+    list_display = ('id', 'name', 'cash_currency', 'fee_view', 'enabled_date', 'primary', 'enabled', 'site')
     list_filter = ('enabled',)
     #search_fields = []
 

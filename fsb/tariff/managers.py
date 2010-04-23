@@ -19,17 +19,25 @@ l = logging.getLogger('fsb.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):
-    def add_tariff(self, tf, n, digits):
+    def add_tariff(self, tf, n, digits, price):
         """
         tf - Тарифный план
         """
         bl = self.model()
         bl.name = n['name']
-        bl.name_lcr = n['lcr']
+        #bl.name_lcr = n['lcr']
+        bl.name_lcr = n['name']
+        bl.country_code = n['country_code']
         # TODO проверка на неправильный формат, замена 5,12->5.12
         bl.rate = n['rate']
         bl.date_start = n['date_start']
         bl.date_end = n['date_end']
+        if n['time_start']:
+            bl.time_start = n['time_start']
+        if n['time_end']:
+            bl.time_end = n['time_end']
+        if n['weeks']:
+            bl.weeks = n['weeks']
         #bl.lead_strip = 0
         #bl.trail_strip = 0
         #bl.quality = 0
@@ -37,6 +45,7 @@ class TariffManager(models.Manager):
         #bl.enabled = True
         bl.tariff_plan = tf
         bl.digits = digits
+        bl.price = price
         bl.save()
         return 1
     

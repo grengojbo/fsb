@@ -1,1 +1,0 @@
-[{"pk": 1, "model": "tariff.tariffplan", "fields": {"fee": "0", "name": "default", "activation": "0", "date_start": "2010-04-20 13:26:43", "enabled": false, "primary": false, "site": 1, "cash_min": "0", "date_end": "9999-12-31 23:59:59", "fee_period": 0, "description": ""}}]
