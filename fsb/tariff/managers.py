@@ -19,6 +19,9 @@ l = logging.getLogger('fsb.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):
+    def phone_tariff(self, phone, site):
+        return self.filter(digits=phone, enabled=True, tariff_plan__site__name__iexact=site)
+    
     def add_tariff(self, tf, n, digits, price):
         """
         tf - Тарифный план
