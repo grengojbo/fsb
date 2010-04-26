@@ -23,6 +23,7 @@ from currency.fields import *
 from currency.money import Money
 from currency.models import Currency
 from decimal import Decimal
+from bursar.models import PaymentBase
 
 l = logging.getLogger('fsb.billing.models')
 
@@ -66,13 +67,15 @@ class Balance(models.Model):
     def currency(self):
         return u'у.е.'
 
-class BalanceHistory(models.Model):
+class BalanceHistory(PaymentBase):
     """"""
     name = models.CharField(_(u'Name'), max_length=100)
     accountcode = models.ForeignKey(User)
-    cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
-    time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
-    comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
+    success = models.BooleanField(_('Success'), default=False)
+    site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
+    #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
+    #time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
+    #comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
     
     class Meta:
         db_table = 'balance_history'
