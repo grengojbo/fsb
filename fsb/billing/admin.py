@@ -47,7 +47,7 @@ class CreditBaseAdmin(admin.ModelAdmin):
     list_per_page = 50
 
 class BalanceHistoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'accountcode', 'cash', 'time_stamp',)
+    list_display = ('name', 'accountcode', 'amount', 'time_stamp')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
 

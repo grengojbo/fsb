@@ -91,7 +91,7 @@ class Balance(models.Model):
 class BalanceHistoryManager(models.Manager):
     def create_linked(self, other, user, accountcode, amount):
         #code = accountcode.join(amount, other.transaction_id, other.details, other.name, user).strip().replace(" ", '').upper()
-        code = "".join(accountcode).join(amount).join(other['transaction_id']).join(other['details']).join(other['name']).join(user).upper()
+        code = "".join(accountcode).join(amount).join(other['transaction_id']).join(other['details']).join(other['name']).join(str(user)).upper()
         mcode = md5.new()
         mcode.update(code)
         linked = BalanceHistory(
@@ -130,6 +130,9 @@ class BalanceHistory(PaymentBase):
     @models.permalink
     def get_absolute_url(self):
         return ('BalanceHistory', [self.id])
+    @property
+    def account(self):
+        return self.accountcode.accountcode.username
     
 class CreditBase(models.Model):
     """"""
