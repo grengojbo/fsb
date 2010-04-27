@@ -21,7 +21,7 @@ class AccountHandler(BaseHandler):
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
-    fields = (('accountcode', ('username', 'email', 'date_joined')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
+    fields = (('accountcode', ('username', 'email', 'first_name', 'last_name', 'date_joined', 'last_login', 'last_registered', 'is_registered')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
 
     #@staticmethod
     #def resource_uri():
@@ -61,13 +61,22 @@ class AccountHandler(BaseHandler):
         attrs = self.flatten_dict(request.POST)
         try:
             np = Balance.objects.get(accountcode__username__iexact=account, site__name__iexact=request.user)
+            u = User.objects.get(balance=np)
             #np.nt=attrs['email']
+            if attrs.get('first_name'):
+                u.first_name = attrs.get('first_name')
+                u.save()
+            if attrs.get('last_name'):
+                u.last_name = attrs.get('last_name')
+                u.save()
+            if attrs.get('password'):
+                u.set_password(attrs.get('password'))
+                u.save()
             if attrs.get('tariff'):
                 log.info('Change tarif: %i' % int(attrs['tariff']))
                 np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']), enabled=True, site__name__iexact=request.user)
             if attrs.get('email'):
                 log.info('Change email: %s' % attrs['email'])
-                u = User.objects.get(balance=np)
                 u.email=attrs['email']
                 u.save()
                 np.accountcode = u
@@ -115,6 +124,11 @@ class AccountHandler(BaseHandler):
             #log.info(attrs.get('username'))
             #log.info(request.user)
             account =  User.objects.create(username=attrs.get("username"), email=attrs.get("email"), password=password)
+            if attrs.get('first_name'):
+                account.first_name = attrs.get('first_name')
+            if attrs.get('last_name'):
+                account.last_name = attrs.get('last_name')
+            account.save()
             np = Balance.objects.get(accountcode=account)
             np.enabled = active
             np.tariff = tariff
