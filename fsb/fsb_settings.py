@@ -6,5 +6,6 @@ INSTALLED_APPS += (
     'fsb.tariff',
     'fsb.billing',
     'fsb.prepaid',
+    'fsb.payments',
     #'contact',
     )

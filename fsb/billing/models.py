@@ -24,6 +24,7 @@ from currency.money import Money
 from currency.models import Currency
 from decimal import Decimal
 from bursar.models import PaymentBase
+import md5
 
 l = logging.getLogger('fsb.billing.models')
 
@@ -66,24 +67,65 @@ class Balance(models.Model):
     @property
     def currency(self):
         return u'у.е.'
+    
+    @property
+    def is_positiv(self):
+        if self.cash > Decimal('0'):
+            return True
+        else:
+            return False
+    
+    def cash_add(self, amount):
+        if Decimal(amount) > 0:
+            self.cash +=Decimal(amount)
+        else:
+            self.cash -=Decimal(amount)
+            
+    def cash_del(self, amount):
+        if Decimal(amount) > 0:
+            self.cash -=Decimal(amount)
+        else:
+            self.cash +=Decimal(amount)
+            
+
+class BalanceHistoryManager(models.Manager):
+    def create_linked(self, other, user, accountcode, amount):
+        #code = accountcode.join(amount, other.transaction_id, other.details, other.name, user).strip().replace(" ", '').upper()
+        code = "".join(accountcode).join(amount).join(other['transaction_id']).join(other['details']).join(other['name']).join(user).upper()
+        mcode = md5.new()
+        mcode.update(code)
+        linked = BalanceHistory(
+                name = other['name'],
+                accountcode = other['accountcode'],
+                site = other['site'],
+                method = other['method'],
+                amount = Decimal(amount),
+                transaction_id = other['transaction_id'],
+                details=other['details'],
+                reason_code=mcode.hexdigest())
+        linked.save()
+        return linked
 
 class BalanceHistory(PaymentBase):
     """"""
     name = models.CharField(_(u'Name'), max_length=100)
-    accountcode = models.ForeignKey(User)
+    accountcode = models.ForeignKey(Balance)
     success = models.BooleanField(_('Success'), default=False)
     site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     #time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
     #comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
+    objects = BalanceHistoryManager()
     
     class Meta:
         db_table = 'balance_history'
         verbose_name = _(u'The history of the operations')
         verbose_name_plural = _(u'The history of the operations')
     
+
     def __unicode__(self):
-        return self.name
+        if self.id is not None:
+            return u"Payment #%i: amount=%s" % (self.id, self.amount)
     
     @models.permalink
     def get_absolute_url(self):
