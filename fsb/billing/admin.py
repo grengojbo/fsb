@@ -29,7 +29,7 @@ class BillingBaseAdmin(admin.ModelAdmin):
 ##    list_per_page = 50
     
 class BalanceAdmin(admin.ModelAdmin):
-    list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit',)
+    list_display = ('accountcode', 'enabled', 'cash_currency',  'tariff', 'timelimit', 'credit', 'site',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     actions = ['delete_selected']
 
