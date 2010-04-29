@@ -27,7 +27,7 @@ class AccountHandler(BaseHandler):
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
     #@require_mime('json', 'yaml')
-    def read(self, request, start=0, limit=5, account=None):
+    def read(self, request, start=0, limit=50, account=None):
         """
         Returns a blogpost, if `title` is given,
         otherwise all the posts.
@@ -134,7 +134,10 @@ class AccountHandler(BaseHandler):
             np.tariff = tariff
             np.site = Site.objects.get(name=request.user)
             np.save()
-            return rc.CREATED
+            resp = rc.CREATED
+            resp.write(' - account created: %s' % attrs.get("username"))
+            return resp
+        
         except:
             resp = rc.DUPLICATE_ENTRY
             resp.write(' - username is not unique')
