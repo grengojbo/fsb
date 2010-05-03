@@ -24,6 +24,7 @@ from currency.money import Money
 from currency.models import Currency
 from decimal import Decimal
 from bursar.models import PaymentBase
+# TODO  the md5 module is deprecated; use hashlib instead
 import md5
 
 l = logging.getLogger('fsb.billing.models')

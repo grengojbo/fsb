@@ -128,6 +128,7 @@ class AccountHandler(BaseHandler):
                 account.first_name = attrs.get('first_name')
             if attrs.get('last_name'):
                 account.last_name = attrs.get('last_name')
+            account.set_password(password)
             account.save()
             np = Balance.objects.get(accountcode=account)
             np.enabled = active
