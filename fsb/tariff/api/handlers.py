@@ -19,13 +19,13 @@ class TariffHandler(BaseHandler):
     allowed_methods = ('GET')
     model = Tariff
     #anonymous = 'AnonymousBlogpostHandler'
-    fields = ('digits', 'name', 'country_code', 'rate', 'weeks', 'time_start', 'time_end', 'enabled')
+    fields = ('digits', 'name', 'country_code', 'rate', 'weeks', 'time_start', 'time_end')
 
     #@staticmethod
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
     #@require_mime('json', 'yaml')
-    def read(self, request, start=0, limit=5, tariff=None, phone=None):
+    def read(self, request, start=0, limit=50, tariff=None, phone=None):
         """
         Returns a blogpost, if `title` is given,
         otherwise all the posts.
@@ -45,10 +45,10 @@ class TariffHandler(BaseHandler):
         try:
             if phone is not None:
                 log.info(phone)
-                return {"count": 1, "tariff": base.phone_tariff(phone, request.user)}
+                return {"rate": '0.58'}
             else:
-                resp = base.filter(tariff_plan__id=tariff, tariff_plan__site__name__iexact=request.user)[start:limit]
-                count = base.filter(tariff_plan__id=tariff, tariff_plan__site__name__iexact=request.user).count()
+                resp = base.filter(tariff_plan__id=tariff, enabled=True, tariff_plan__site__name__iexact=request.user)[start:limit]
+                count = base.filter(tariff_plan__id=tariff, enabled=True, tariff_plan__site__name__iexact=request.user).count()
                 return {"count": count, "tariff": resp}
         except:
             return rc.NOT_HERE
