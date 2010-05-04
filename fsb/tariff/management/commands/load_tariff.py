@@ -16,6 +16,7 @@ import time, datetime
 from decimal import Decimal
 from decimal import *
 from fsa.core.utils import CsvData
+from bursar.numbers import trunc_decimal
 import logging
 log = logging.getLogger('fsb.tariff.management.load_tariff')
 try:
@@ -109,6 +110,7 @@ class Command(BaseCommand):
                     country_list, country_code, n = cd.parse(row)
                     for country in country_list:
                         n['country_code'] = country_code
+                        n['price'] = str(trunc_decimal(n['price'], 2))
                         digits = n['digits']
                         price = Money(n['price'], n['currency'])
                         #price = Money(n['price'], 'USD')

@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 #from fsb.core.models import c
 #from fsa.server.models import Server
 from fsb.tariff.models import TariffPlan, Tariff
+from bursar.numbers import trunc_decimal
 import csv, sys, os
 import time, datetime
 from decimal import Decimal
@@ -57,6 +58,7 @@ class TariffTestCase(test.TestCase):
                     l.debug(country_code)
                     for country in country_list:
                         n['country_code'] = country_code
+                        n['price'] = str(trunc_decimal(n['price'], 2))
                         digits = n['digits']
                         #price = Money(n['price'], n['currency'])
                         price = Money(n['price'], 'USD')
