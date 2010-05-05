@@ -19,8 +19,11 @@ l = logging.getLogger('fsb.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):
-    def phone_tariff(self, phone, site):
-        return self.filter(digits=phone, enabled=True, tariff_plan__site__name__iexact=site)
+    def phone_tariff(self, phone, tariff_id, site):
+        """
+        Search rate from tariff
+        """
+        return self.filter(digits=phone, enabled=True, tariff_plan__site__name__exact=site)
     
     def add_tariff(self, tf, n, digits, price):
         """
