@@ -21,7 +21,7 @@ class AccountHandler(BaseHandler):
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
     #anonymous = 'AnonymousBlogpostHandler'
-    fields = (('accountcode', ('username', 'email', 'first_name', 'last_name', 'date_joined', 'last_login', 'last_registered', 'is_registered')), 'cash', ('tariff', ('id', 'name')),'enabled', 'credit')
+    fields = (('accountcode', ('username', 'email', 'first_name', 'last_name', 'date_joined', 'last_registered')), 'cash', ('tariff', ('id', 'name')),'enabled')
 
     #@staticmethod
     #def resource_uri():
@@ -65,16 +65,19 @@ class AccountHandler(BaseHandler):
             #np.nt=attrs['email']
             if attrs.get('first_name'):
                 u.first_name = attrs.get('first_name')
-                u.save()
             if attrs.get('last_name'):
                 u.last_name = attrs.get('last_name')
-                u.save()
             if attrs.get('password'):
                 u.set_password(attrs.get('password'))
-                u.save()
+            if attrs.get("enabled") == "true":
+                np.enabled = True
+            else:
+                np.enabled = False
+            # TODO add disable User
+            u.save()
             if attrs.get('tariff'):
                 log.info('Change tarif: %i' % int(attrs['tariff']))
-                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']), enabled=True, site__name__iexact=request.user)
+                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']), enabled=True, site__name__exact=request.user)
             if attrs.get('email'):
                 log.info('Change email: %s' % attrs['email'])
                 u.email=attrs['email']
@@ -92,7 +95,7 @@ class AccountHandler(BaseHandler):
         """
         attrs = self.flatten_dict(request.POST)
         try:
-            np = Balance.objects.get(accountcode__username__iexact=account, site__name__iexact=request.user)
+            np = Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)
             np.enabled = False
             np.save()
             return rc.DELETED
@@ -117,9 +120,9 @@ class AccountHandler(BaseHandler):
         else:
             password = User.objects.make_random_password()
         if attrs.get('tariff'):
-            tariff = TariffPlan.objects.get(pk=int(attrs.get('tariff')), enabled=True, site__name__iexact=request.user)
+            tariff = TariffPlan.objects.get(pk=int(attrs.get('tariff')), enabled=True, site__name__exact=request.user)
         else:
-            tariff = TariffPlan.objects.get(primary=True, enabled=True, site__name__iexact=request.user)
+            tariff = TariffPlan.objects.get(primary=True, enabled=True, site__name__exact=request.user)
         try:
             #log.info(attrs.get('username'))
             #log.info(request.user)
