@@ -138,11 +138,11 @@ class AccountHandler(BaseHandler):
             np.tariff = tariff
             np.site = Site.objects.get(name=request.user)
             np.save()
-            resp = rc.CREATED
-            resp.write(' - account created: %s' % attrs.get("username"))
+            resp = rc.ALL_OK
+            #resp = rc.CREATED
+            #resp.write(' - account created: %s' % attrs.get("username"))
             return resp
-        
         except:
             resp = rc.DUPLICATE_ENTRY
-            resp.write(' - username is not unique')
+            #resp.write(' - username is not unique')
             return resp
