@@ -47,7 +47,7 @@ class TariffHandler(BaseHandler):
         try:
             if phone is not None:
                 log.info(phone)
-                query = "select * from tariff where tariff_plan_id=%i digits IN (%s) ORDER BY digits DESC, rand();" % (int(tariff), pars_phone("phone"))
+                query = "select * from tariff where tariff_plan_id=%i AND digits IN (%s) ORDER BY digits DESC, rand();" % (int(tariff), pars_phone(phone))
                 resp = base.raw(query)[0]
                 return {"rate": resp.rate }
             else:
@@ -70,7 +70,7 @@ class TariffPlanHandler(BaseHandler):
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
     #@require_mime('json', 'yaml')
-    def read(self, request, start=0, limit=5, tariff=None):
+    def read(self, request, start=0, limit=50, tariff=None):
         """
         Returns a blogpost, if `title` is given,
         otherwise all the posts.
