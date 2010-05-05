@@ -131,8 +131,9 @@ class BalanceHistory(PaymentBase):
     @models.permalink
     def get_absolute_url(self):
         return ('BalanceHistory', [self.id])
+    
     @property
-    def account(self):
+    def username(self):
         return self.accountcode.accountcode.username
     
 class CreditBase(models.Model):

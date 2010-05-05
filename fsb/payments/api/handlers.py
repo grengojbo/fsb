@@ -24,7 +24,7 @@ class PaymentsHandler(BaseHandler):
     model = BalanceHistory
     #anonymous = 'AnonymousBlogpostHandler'
     #fields = ('name', 'accountcode', 'amount', 'transaction_id', 'time_stamp', 'success', 'details')
-    fields = ('name', 'account', 'amount', 'transaction_id', 'time_stamp', 'details', 'success')
+    fields = ('name', 'username', 'amount', 'transaction_id', 'time_stamp', 'details', 'success')
 
     #@staticmethod
     #def resource_uri():
@@ -48,15 +48,15 @@ class PaymentsHandler(BaseHandler):
         base = BalanceHistory.objects
         try:
             if transaction_id is not None:
-                return {"count": 1, "payment": base.get(transaction_id=transaction_id, site__name__iexact=request.user)}
+                return {"count": 1, "payment": base.get(transaction_id=transaction_id, site__name__exact=request.user)}
             elif account is not None:
                 bal = Balance.objects.from_api_get(account, request.user)
-                resp = base.filter(accountcode=bal, site__name__iexact=request.user)[start:limit]
-                count = base.filter(accountcode=bal, site__name__iexact=request.user).count()
+                resp = base.filter(accountcode=bal, site__name__exact=request.user)[start:limit]
+                count = base.filter(accountcode=bal, site__name__exact=request.user).count()
                 return {"count": count, "payment": resp}
             else:
-                resp = base.filter(site__name__iexact=request.user)[start:limit]
-                count = base.filter(site__name__iexact=request.user).count()
+                resp = base.filter(site__name__exact=request.user)[start:limit]
+                count = base.filter(site__name__exact=request.user).count()
                 return {"count": count, "payment": resp}
         except:
             return rc.NOT_HERE
@@ -69,11 +69,11 @@ class PaymentsHandler(BaseHandler):
         attrs = self.flatten_dict(request.POST)
         #b = BalanceHistory.objects.create_linked(paymentargs, request.user, attrs.get('accountcode'), attrs.get('amount'))
         try:
-            bal = Balance.objects.from_api_get(attrs.get('accountcode'), request.user)
+            bal = Balance.objects.from_api_get(attrs.get('username'), request.user)
         except Balance.DoesNotExist:
-            log.error("DoesNotExist accountcode %s" % attrs.get('accountcode'))
+            log.error("DoesNotExist username %s" % attrs.get('username'))
             resp = rc.rc.NOT_HERE
-            resp.write(' - "DoesNotExist accountcode %s' % attrs.get('accountcode'))
+            resp.write(' - "DoesNotExist username %s' % attrs.get('username'))
             return resp
         except Site.DoesNotExist:
             log.error("DoesNotExist user")
@@ -81,7 +81,7 @@ class PaymentsHandler(BaseHandler):
             resp.write(' - DoesNotExist user')
             return resp
         try:
-            code = "".join(attrs.get('accountcode')).join(attrs.get('amount')).join(attrs.get('transaction_id')).join(attrs.get('details')).join(attrs.get('name')).join(str(request.user))
+            code = "".join(attrs.get('username')).join(attrs.get('amount')).join(attrs.get('transaction_id')).join(attrs.get('details')).join(attrs.get('name')).join(str(request.user))
             mcode = md5.new()
             mcode.update(code.upper())
             b = BalanceHistory.objects.create(name = attrs.get('name'), accountcode= bal, site = Site.objects.get(name=request.user),
