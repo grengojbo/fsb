@@ -84,7 +84,7 @@ class AccountHandler(BaseHandler):
                 u.save()
                 np.accountcode = u
             np.save()
-            return np
+            return Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)
         except:
             return rc.BAD_REQUEST
 
