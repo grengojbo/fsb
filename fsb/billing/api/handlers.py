@@ -71,7 +71,7 @@ class AccountHandler(BaseHandler):
                 u.set_password(attrs.get('password'))
             if attrs.get("enabled") == "true":
                 np.enabled = True
-            else:
+            if attrs.get("enabled") == "false":
                 np.enabled = False
             # TODO add disable User
             u.save()
