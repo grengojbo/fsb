@@ -19,4 +19,4 @@ def get_conf(request):
     log.debug(request.POST.get('hostname')) 
     es = get_object_or_404(Server, name__exact=request.POST.get('hostname'), enabled=True)
     #l.debug("es.odbc_dsn %s" % (es.odbc_dsn))
-    return request.Context({'name':request.POST.get('hostname'), 'es':es}).render_response('server/limit.conf.xml')
+    return request.Context({'name':request.POST.get('hostname'), 'es':es}).render_response('billing/nibblebill.conf.xml')
