@@ -71,7 +71,7 @@ class AccountHandler(BaseHandler):
                 u.set_password(attrs.get('password'))
             if attrs.get("enabled") == "true":
                 np.enabled = True
-            else:
+            if attrs.get("enabled") == "false":
                 np.enabled = False
             # TODO add disable User
             u.save()
@@ -84,7 +84,7 @@ class AccountHandler(BaseHandler):
                 u.save()
                 np.accountcode = u
             np.save()
-            return np
+            return Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)
         except:
             return rc.BAD_REQUEST
 
