@@ -7,9 +7,18 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from livesettings import config_register, BooleanValue, StringValue, \
     MultipleStringValue, ConfigurationGroup, PositiveIntegerValue, \
-    DecimalValue
+    DecimalValue, config_get
     
 BILLING_GROUP = ConfigurationGroup('BILLING', _('Billing Settings'), ordering=0)
+
+SERVER_MODULES = config_get('SERVER', 'MODULES')
+SERVER_MODULES.add_choice(('nibblebill', _('Billings')))
+SERVER_MODULES.add_choice(('nibblebill', _('Billings')))
+
+##SERVER_GROUP = ConfigurationGroup('xml_cdr', 
+##    _('CDR XML Module Settings'), 
+##    requires=SERVER_MODULES,
+##    ordering = 104)
 
 config_register(DecimalValue(
     BILLING_GROUP,

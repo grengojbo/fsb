@@ -1,21 +1,22 @@
 # -*- mode: python; coding: utf-8; -*-
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from fsadmin.server.models import Server
 from django.views.generic.list_detail import object_list
-from lib.decorators import render_to
+#from sugar.views.decorators import render_to
 from django.shortcuts import get_object_or_404
+#from lib.helpers import reverse
+from fsa.server.models import Server, SipProfile, Conf
+from fsa.server.config import active_modules
 import logging
-l = logging.getLogger('fsb.billing.views')
+log = logging.getLogger('fsb.billing.views')
 
 __author__ = '$Author:$'
 __revision__ = '$Revision:$'
 
 # Create your views here.
 
-@render_to('base/nibblebill.conf.xml')    
 def get_conf(request):
     """return nibblebill config file"""
-    l.debug(request.POST.get('hostname')) 
-    es = get_object_or_404(Server, name=request.POST.get('hostname'))
-    return {'es':es}
+    log.debug(request.POST.get('hostname')) 
+    es = get_object_or_404(Server, name__exact=request.POST.get('hostname'), enabled=True)
+    #l.debug("es.odbc_dsn %s" % (es.odbc_dsn))
+    return request.Context({'name':request.POST.get('hostname'), 'es':es}).render_response('server/limit.conf.xml')
