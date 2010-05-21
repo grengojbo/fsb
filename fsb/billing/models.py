@@ -59,7 +59,7 @@ class Balance(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('Balance', [self.id])
-   
+
     def cash_currency(self):
         """docstring for rate_currency"""
         return "%(rate)0.2f %(currency)s" % {'rate': self.cash, 'currency': self.currency}
@@ -68,26 +68,26 @@ class Balance(models.Model):
     @property
     def currency(self):
         return u'у.е.'
-    
+
     @property
     def is_positiv(self):
         if self.cash > Decimal('0'):
             return True
         else:
             return False
-    
+
     def cash_add(self, amount):
         if Decimal(amount) > 0:
             self.cash +=Decimal(amount)
         else:
             self.cash -=Decimal(amount)
-            
+
     def cash_del(self, amount):
         if Decimal(amount) > 0:
             self.cash -=Decimal(amount)
         else:
             self.cash +=Decimal(amount)
-            
+
 
 class BalanceHistoryManager(models.Manager):
     def create_linked(self, other, user, accountcode, amount):
@@ -114,28 +114,28 @@ class BalanceHistory(PaymentBase):
     success = models.BooleanField(_('Success'), default=False)
     site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
-    #time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
+    pya_date = models.DateTimeField(_('Pay Date'), default=datetime.datetime.now())
     #comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
     objects = BalanceHistoryManager()
-    
+
     class Meta:
         db_table = 'balance_history'
         verbose_name = _(u'The history of the operations')
         verbose_name_plural = _(u'The history of the operations')
-    
+
 
     def __unicode__(self):
         if self.id is not None:
             return u"Payment #%i: amount=%s" % (self.id, self.amount)
-    
+
     @models.permalink
     def get_absolute_url(self):
         return ('BalanceHistory', [self.id])
-    
+
     @property
     def username(self):
         return self.accountcode.accountcode.username
-    
+
 class CreditBase(models.Model):
     """"""
     balance = models.ForeignKey(Balance)
@@ -147,7 +147,7 @@ class CreditBase(models.Model):
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
     expire_time = models.DateTimeField(_('Expire time'), blank=True)
-    
+
     def is_valid(self):
         # TODO: Check expire
         #if not self.downloadable_product.active:
@@ -158,10 +158,10 @@ class CreditBase(models.Model):
         #if datetime.datetime.now() > expire_time:
         #    return (False, _("This download link has expired."))
         return (True, "")
-        
+
     def save(self, *args, **kwargse):
         """
-       
+
         """
         if self.enabled:
             l.debug("add credit")
@@ -176,7 +176,7 @@ class CreditBase(models.Model):
         if self.expire_time is None:
             self.expire_time = datetime.timedelta(days=360) + datetime.datetime.now()
         super(CreditBase, self).save(*args, **kwargse)
-     
+
 ##class NibbleBill(models.Model):
 ##    """(NibbleBill description)"""
 ##    name = models.CharField(_(u'Name'), max_length=200)
@@ -184,7 +184,7 @@ class CreditBase(models.Model):
 ##    enabled = models.BooleanField(_(u'Enable'), default=True)
 ##    objects = models.Manager() # default manager must be always on first place! It's used as default_manager
 ##    active_objects = GenericManager( enabled = True ) # only active entries
-##    inactive_objects = GenericManager( enabled = False ) # only inactive entries 
+##    inactive_objects = GenericManager( enabled = False ) # only inactive entries
 ##
 ##    class Meta:
 ##        #ordering = []
@@ -197,14 +197,14 @@ class CreditBase(models.Model):
 ##    @models.permalink
 ##    def get_absolute_url(self):
 ##        return ('NibbleBill', [self.id])
-        
+
 ##class CurrencyBase(models.Model):
 ##    """(CurrencyBase description)"""
 ##    name = models.CharField(_(u'Name'), max_length=200)
 ##    name_small = models.CharField(_(u'small'), max_length=10)
 ##    code = models.CharField(_(u'code'), max_length=3)
 ##    objects = models.Manager()
-##    
+##
 ##    class Meta:
 ##        #ordering = []
 ##        db_table = 'currency_base'
@@ -216,7 +216,7 @@ class CreditBase(models.Model):
 ##    @models.permalink
 ##    def get_absolute_url(self):
 ##        return ('CurrencyBase', [self.id])
-        
+
 ##class Currency(models.Model):
 ##    """docstring for Currency"""
 ##    currency_name = models.ForeignKey(CurrencyBase)
@@ -228,34 +228,34 @@ class CreditBase(models.Model):
 ##    objects = models.Manager() # default manager must be always on first place! It's used as default_manager
 ##    active_objects = GenericManager( enabled = True ) # only active entries
 ##    inactive_objects = GenericManager( enabled = False ) # only inactive entries
-##    
+##
 ##    @property
 ##    def enabled_date(self):
 ##        """docstring for enable_date"""
-##        
+##
 ##        if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
 ##            de = ""
 ##        else:
 ##            de = " по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
 ##        return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
-##        
+##
 ##    @property
 ##    def rate_currency(self):
 ##        """docstring for rate_currency"""
 ##        return "%(rate)0.2f %(currency)s" % {'rate': self.rate, 'currency': self.currency_name.name_small}
-##    
+##
 ##    @models.permalink
 ##    def get_absolute_url(self):
 ##        return ('Currency', [self.id])
 ##
 ##    def __unicode__(self):
 ##        return self.currency_name.name
-##    
+##
 ##    class Meta:
 ##        ordering = ['-primary']
 ##        db_table = 'currency'
 ##        verbose_name, verbose_name_plural = _(u"Currency"), _(u"Currencys")
-    
+
 import config
 import listeners
 listeners.start_listening()
