@@ -1,4 +1,4 @@
 #!/bin/bash
-pip install -e hg+http://bitbucket.org/jbo/fsb/#egg=fsb
+pip install -e git+http://github.com/grengojbo/fsb.git#egg=fsb
 ./manage.py syncdb
 ./manage.py migrate prepaid
