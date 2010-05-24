@@ -103,6 +103,7 @@ class BalanceHistoryManager(models.Manager):
                 amount = Decimal(amount),
                 transaction_id = other['transaction_id'],
                 details=other['details'],
+                pay_date=other['pay_date'],
                 reason_code=mcode.hexdigest())
         linked.save()
         return linked
@@ -147,6 +148,11 @@ class CreditBase(models.Model):
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
     time_stamp = models.DateTimeField(_('Time stamp'), auto_now_add=True)
     expire_time = models.DateTimeField(_('Expire time'), blank=True)
+
+    class Meta:
+        db_table = 'balance_credit'
+        verbose_name = _(u'Credit Balance')
+        verbose_name_plural = _(u'Credits Balance')
 
     def is_valid(self):
         # TODO: Check expire
