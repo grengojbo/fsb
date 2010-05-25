@@ -69,7 +69,11 @@ class AccountHandler(PaginatedCollectionBaseHandler):
                 u.set_password(attrs.get('password'))
             if attrs.get("enabled") == "true":
                 np.enabled = True
-            if attrs.get("enabled") == "false":
+            elif attrs.get("enabled") == "true":
+                np.enabled = False
+            elif attrs.get("enable") == "true":
+                np.enabled = True
+            elif attrs.get("enable") == "true":
                 np.enabled = False
             # TODO add disable User
             u.save()
@@ -108,11 +112,15 @@ class AccountHandler(PaginatedCollectionBaseHandler):
         attrs = self.flatten_dict(request.POST)
         u = User.objects.get(username=request.user)
         s = Site.objects.get(name=request.user)
+        active = False
         if attrs.get("enabled") == "true":
             active = True
-        else:
+        elif attrs.get("enabled") == "true":
             active = False
-            
+        elif attrs.get("enable") == "true":
+            active = True
+        elif attrs.get("enable") == "true":
+            active = False
         if attrs.get('password'):
             password = attrs.get('password')
         else:
