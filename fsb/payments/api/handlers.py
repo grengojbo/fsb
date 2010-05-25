@@ -13,6 +13,7 @@ from django.db.models import F
 from decimal import Decimal
 import time, datetime
 import md5
+#import hashlib
 
 import logging
 
@@ -40,13 +41,12 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
         Parameters:
          - `phone_number`: The title of the post to retrieve.
         """
-        #s = Site.objects.get(name__iexact=request.user)
-        log.debug("read accounts %s" % account)
         self.resource_name = 'payment'
         try:
             if transaction_id is not None:
                 return {"count": 1, "payment": BalanceHistory.objects.get(transaction_id=transaction_id, site__name__exact=request.user)}
             elif account is not None:
+                log.debug("read accounts %s" % account)
                 bal = Balance.objects.from_api_get(account, request.user)
                 #resp = base.filter(accountcode=bal, site__name__exact=request.user)[start:limit]
                 #count = base.filter(accountcode=bal, site__name__exact=request.user).count()
@@ -72,6 +72,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
         """
         Update number plan type.
         """
+        log.debug(request.POST)
         attrs = self.flatten_dict(request.POST)
         #b = BalanceHistory.objects.create_linked(paymentargs, request.user, attrs.get('accountcode'), attrs.get('amount'))
         try:

@@ -24,7 +24,7 @@ log = logging.getLogger('fsb.billing.managers')
 
 class BalanceManager(models.Manager):
     def from_api_get(self, accountcode, site):
-        return self.get(accountcode__username__iexact=accountcode, site__name__iexact=site)
+        return self.get(accountcode__username__exact=accountcode, site__name__exact=site)
     
     def create_balance(self, contact, cash=None):
         """
