@@ -1,5 +1,6 @@
 # -*- mode: python; coding: utf-8; -*-
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.handler import PaginatedCollectionBaseHandler
 from piston.utils import rc, require_mime, require_extended
 from django.contrib.auth.models import User
 from django.contrib.sites.models import RequestSite
@@ -14,20 +15,20 @@ import logging
 log = logging.getLogger('fsb.billing.api.handlers')
 from fsb.billing.models import Balance
 
-class AccountHandler(BaseHandler):
+class AccountHandler(PaginatedCollectionBaseHandler):
     """
     Authenticated entrypoint for blogposts.
     """
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
-    #anonymous = 'AnonymousBlogpostHandler'
     fields = (('accountcode', ('username', 'email', 'first_name', 'last_name', 'date_joined', 'last_registered')), 'cash', ('tariff', ('id', 'name')),'enabled')
 
     #@staticmethod
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
+    
     #@require_mime('json', 'yaml')
-    def read(self, request, start=0, limit=50, account=None):
+    def read(self, request, account=None):
         """
         Returns a blogpost, if `title` is given,
         otherwise all the posts.
@@ -36,20 +37,17 @@ class AccountHandler(BaseHandler):
          - `phone_number`: The title of the post to retrieve.
         """
         #s = Site.objects.get(name__iexact=request.user)
-        log.debug("read accounts %s" % account)
-        if request.GET.get("start"):
-            start = request.GET.get("start")
-        if request.GET.get("limit"):
-            limit = int(request.GET.get("limit"))
-            limit += int(start)
-        base = Balance.objects
+        self.resource_name = 'accounts'
         try:
-            if account:
-                return {"count": 1, "accounts": base.get(accountcode__username__iexact=account, site__name__iexact=request.user)}
+            if account is not None:
+                log.debug("read accounts %s" % account)
+                return {"count": 1, "accounts": Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)}
             else:
-                resp = base.filter(site__name__iexact=request.user)[start:limit]
-                count = base.filter(site__name__iexact=request.user).count()
-                return {"count": count, "accounts": resp}
+                #resp = base.filter(site__name__iexact=request.user)[start:limit]
+                #count = base.filter(site__name__iexact=request.user).count()
+                #return {"count": count, "accounts": resp}
+                self.resources = Balance.objects.filter(site__name__exact=request.user)
+                return super(AccountHandler, self).read(request)
         except:
             return rc.NOT_HERE
 
@@ -60,7 +58,7 @@ class AccountHandler(BaseHandler):
         """
         attrs = self.flatten_dict(request.POST)
         try:
-            np = Balance.objects.get(accountcode__username__iexact=account, site__name__iexact=request.user)
+            np = Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)
             u = User.objects.get(balance=np)
             #np.nt=attrs['email']
             if attrs.get('first_name'):
@@ -76,11 +74,11 @@ class AccountHandler(BaseHandler):
             # TODO add disable User
             u.save()
             if attrs.get('tariff'):
-                log.info('Change tarif: %i' % int(attrs['tariff']))
-                np.tariff=TariffPlan.objects.get(pk=int(attrs['tariff']), enabled=True, site__name__exact=request.user)
+                log.info('Change tarif: %i' % int(attrs.get('tariff')))
+                np.tariff=TariffPlan.objects.get(pk=int(attrs.get('tariff')), enabled=True, site__name__exact=request.user)
             if attrs.get('email'):
-                log.info('Change email: %s' % attrs['email'])
-                u.email=attrs['email']
+                log.info('Change email: %s' % attrs.get('email'))
+                u.email=attrs.get('email')
                 u.save()
                 np.accountcode = u
             np.save()
@@ -138,10 +136,11 @@ class AccountHandler(BaseHandler):
             np.tariff = tariff
             np.site = Site.objects.get(name=request.user)
             np.save()
-            resp = rc.ALL_OK
+            #resp = rc.ALL_OK
             #resp = rc.CREATED
             #resp.write(' - account created: %s' % attrs.get("username"))
-            return resp
+            #return resp
+            return Balance.objects.get(pk=np.pk)
         except:
             resp = rc.DUPLICATE_ENTRY
             #resp.write(' - username is not unique')
