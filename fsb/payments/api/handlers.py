@@ -96,7 +96,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
                 pay_date = datetime.datetime.strptime(attrs.get('pay_date'), "%Y-%m-%d %H:%M:%S")
             else:
                 pay_date = datetime.datetime.now()
-            b = BalanceHistory.objects.create(name = attrs.get('name'), accountcode= bal, site = Site.objects.get(name=request.user, pay_date=pay_date),
+            b = BalanceHistory.objects.create(name = attrs.get('name'), accountcode= bal, site = Site.objects.get(name=request.user), pay_date=pay_date,
                 method = 'from api payments', amount = Decimal(attrs.get('amount')), transaction_id = attrs.get('transaction_id'),
                 details=attrs.get('details'), reason_code=mcode.hexdigest())
             b.save()
