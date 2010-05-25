@@ -14,7 +14,7 @@ class BillingBaseAdmin(admin.ModelAdmin):
     #search_fields = []
 
     #fieldsets = ()
-    
+
     save_as = True
     save_on_top = True
     #inlines = []
@@ -27,7 +27,7 @@ class BillingBaseAdmin(admin.ModelAdmin):
 ##    save_as = True
 ##    save_on_top = True
 ##    list_per_page = 50
-    
+
 class BalanceAdmin(admin.ModelAdmin):
     list_display = ('accountcode', 'enabled', 'cash_currency',  'tariff', 'timelimit', 'credit', 'site',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
@@ -36,7 +36,7 @@ class BalanceAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
     list_per_page = 50
-    
+
 class CreditBaseAdmin(admin.ModelAdmin):
     list_display = ('balance', 'credit', 'enabled','user')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
@@ -47,14 +47,14 @@ class CreditBaseAdmin(admin.ModelAdmin):
     list_per_page = 50
 
 class BalanceHistoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'accountcode', 'amount', 'time_stamp')
+    list_display = ('name', 'accountcode', 'amount', 'time_stamp','pay_date')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
 
     save_as = False
     save_on_top = False
     list_per_page = 50
-    
+
 admin.site.register(Balance, BalanceAdmin)
 admin.site.register(CreditBase, CreditBaseAdmin)
 admin.site.register(BalanceHistory, BalanceHistoryAdmin)
