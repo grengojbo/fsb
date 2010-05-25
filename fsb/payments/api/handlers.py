@@ -1,5 +1,6 @@
 # -*- mode: python; coding: utf-8; -*-
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.handler import PaginatedCollectionBaseHandler
 from piston.utils import rc, require_mime, require_extended
 from django.contrib.auth.models import User
 from django.contrib.sites.models import RequestSite
@@ -10,13 +11,14 @@ from fsb.billing.models import BalanceHistory, Balance
 from django.db import transaction
 from django.db.models import F
 from decimal import Decimal
+import time, datetime
 import md5
 
 import logging
 
 log = logging.getLogger('fsb.payments.api.handlers')
 
-class PaymentsHandler(BaseHandler):
+class PaymentsHandler(PaginatedCollectionBaseHandler):
     """
     Authenticated entrypoint for blogposts.
     """
@@ -24,13 +26,13 @@ class PaymentsHandler(BaseHandler):
     model = BalanceHistory
     #anonymous = 'AnonymousBlogpostHandler'
     #fields = ('name', 'accountcode', 'amount', 'transaction_id', 'time_stamp', 'success', 'details')
-    fields = ('name', 'username', 'amount', 'transaction_id', 'time_stamp', 'details', 'success')
+    fields = ('name', 'username', 'amount', 'transaction_id', 'time_stamp', 'pay_date', 'details', 'success')
 
     #@staticmethod
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
     #@require_mime('json', 'yaml')
-    def read(self, request, start=0, limit=5, account=None, transaction_id=None):
+    def read(self, request, account=None, transaction_id=None, start_date=None, end_date=None):
         """
         Returns a blogpost, if `title` is given,
         otherwise all the posts.
@@ -40,24 +42,28 @@ class PaymentsHandler(BaseHandler):
         """
         #s = Site.objects.get(name__iexact=request.user)
         log.debug("read accounts %s" % account)
-        if request.GET.get("start"):
-            start = request.GET.get("start")
-        if request.GET.get("limit"):
-            limit = int(request.GET.get("limit"))
-            limit += int(start)
-        base = BalanceHistory.objects
+        self.resource_name = 'payment'
         try:
             if transaction_id is not None:
-                return {"count": 1, "payment": base.get(transaction_id=transaction_id, site__name__exact=request.user)}
+                return {"count": 1, "payment": BalanceHistory.objects.get(transaction_id=transaction_id, site__name__exact=request.user)}
             elif account is not None:
                 bal = Balance.objects.from_api_get(account, request.user)
-                resp = base.filter(accountcode=bal, site__name__exact=request.user)[start:limit]
-                count = base.filter(accountcode=bal, site__name__exact=request.user).count()
-                return {"count": count, "payment": resp}
+                #resp = base.filter(accountcode=bal, site__name__exact=request.user)[start:limit]
+                #count = base.filter(accountcode=bal, site__name__exact=request.user).count()
+                #return {"count": count, "payment": resp}
+                self.resources = NumberPlan.objects.filter(accountcode=bal, site__name__exact=request.user)
+                return super(PaymentsHandler, self).read(request)
+            elif start_date is not None and end_date is not None:
+                fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                self.resources = NumberPlan.objects.filter(site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
+                return super(PaymentsHandler, self).read(request)
             else:
-                resp = base.filter(site__name__exact=request.user)[start:limit]
-                count = base.filter(site__name__exact=request.user).count()
-                return {"count": count, "payment": resp}
+                #resp = base.filter(site__name__exact=request.user)[start:limit]
+                #count = base.filter(site__name__exact=request.user).count()
+                #return {"count": count, "payment": resp}
+                self.resources = NumberPlan.objects.filter(site__name__exact=request.user)
+                return super(PaymentsHandler, self).read(request)
         except:
             return rc.NOT_HERE
 
@@ -70,6 +76,7 @@ class PaymentsHandler(BaseHandler):
         #b = BalanceHistory.objects.create_linked(paymentargs, request.user, attrs.get('accountcode'), attrs.get('amount'))
         try:
             bal = Balance.objects.from_api_get(attrs.get('username'), request.user)
+            #
         except Balance.DoesNotExist:
             log.error("DoesNotExist username %s" % attrs.get('username'))
             resp = rc.rc.NOT_HERE
@@ -84,7 +91,11 @@ class PaymentsHandler(BaseHandler):
             code = "".join(attrs.get('username')).join(attrs.get('amount')).join(attrs.get('transaction_id')).join(attrs.get('details')).join(attrs.get('name')).join(str(request.user))
             mcode = md5.new()
             mcode.update(code.upper())
-            b = BalanceHistory.objects.create(name = attrs.get('name'), accountcode= bal, site = Site.objects.get(name=request.user),
+            if attrs.get('pay_date'):
+                pay_date = datetime.datetime.strptime(attrs.get('pay_date'), "%Y-%m-%d %H:%M:%S")
+            else:
+                pay_date = datetime.datetime.now()
+            b = BalanceHistory.objects.create(name = attrs.get('name'), accountcode= bal, site = Site.objects.get(name=request.user, pay_date=pay_date),
                 method = 'from api payments', amount = Decimal(attrs.get('amount')), transaction_id = attrs.get('transaction_id'),
                 details=attrs.get('details'), reason_code=mcode.hexdigest())
             b.save()

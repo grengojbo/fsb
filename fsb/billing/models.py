@@ -115,7 +115,7 @@ class BalanceHistory(PaymentBase):
     success = models.BooleanField(_('Success'), default=False)
     site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
-    pya_date = models.DateTimeField(_('Pay Date'), default=datetime.datetime.now())
+    pay_date = models.DateTimeField(_('Pay Date'), default=datetime.datetime.now())
     #comments = models.CharField(_(u'Comments'), max_length=254, blank=True)
     objects = BalanceHistoryManager()
 
