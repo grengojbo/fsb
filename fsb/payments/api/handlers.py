@@ -45,6 +45,13 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
         try:
             if transaction_id is not None:
                 return {"count": 1, "payment": BalanceHistory.objects.get(transaction_id=transaction_id, site__name__exact=request.user)}
+            elif account is not None and start_date is not None and end_date is not None:
+                log.debug("read accounts %s" % account)
+                bal = Balance.objects.from_api_get(account, request.user)
+                fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                self.resources = BalanceHistory.objects.filter(accountcode=bal, site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
+                return super(PaymentsHandler, self).read(request)
             elif account is not None:
                 log.debug("read accounts %s" % account)
                 bal = Balance.objects.from_api_get(account, request.user)
