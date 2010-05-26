@@ -48,8 +48,10 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
             elif account is not None and start_date is not None and end_date is not None:
                 log.debug("read accounts %s" % account)
                 bal = Balance.objects.from_api_get(account, request.user)
-                fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                #fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                #fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                fend_date = "{0} 23:59:59".format(end_date)
+                fstart_date = "{0} 00:00:00".format(start_date)
                 self.resources = BalanceHistory.objects.filter(accountcode=bal, site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
                 return super(PaymentsHandler, self).read(request)
             elif account is not None:
@@ -61,8 +63,10 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
                 self.resources = BalanceHistory.objects.filter(accountcode=bal, site__name__exact=request.user)
                 return super(PaymentsHandler, self).read(request)
             elif start_date is not None and end_date is not None:
-                fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                #fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                #fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                fend_date = "{0} 23:59:59".format(end_date)
+                fstart_date = "{0} 00:00:00".format(start_date)
                 self.resources = BalanceHistory.objects.filter(site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
                 return super(PaymentsHandler, self).read(request)
             else:
