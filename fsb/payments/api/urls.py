@@ -13,7 +13,7 @@ payment = Resource(handler=PaymentsHandler, authentication=auth)
 urlpatterns = patterns('',
     url(r'^$', payment, name='payment'),
     url(r'^list/(?P<transaction_id>.+)/$', payment),
-    url(r'^(?P<account>.+/query/(?P<start_date>.+)/(?P<end_date>.+)/$', payment),
+    url(r'^(?P<account>.+)/query/(?P<start_date>.+)/(?P<end_date>.+)/$', payment),
     url(r'^query/(?P<start_date>.+)/(?P<end_date>.+)/$', payment),
     url(r'^(?P<account>.+)/$', payment),
  )

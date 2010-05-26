@@ -50,7 +50,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
                 bal = Balance.objects.from_api_get(account, request.user)
                 fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-                self.resources = NumberPlan.objects.filter(accountcode=bal, site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
+                self.resources = BalanceHistory.objects.filter(accountcode=bal, site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
                 return super(PaymentsHandler, self).read(request)
             elif account is not None:
                 log.debug("read accounts %s" % account)
@@ -58,18 +58,18 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
                 #resp = base.filter(accountcode=bal, site__name__exact=request.user)[start:limit]
                 #count = base.filter(accountcode=bal, site__name__exact=request.user).count()
                 #return {"count": count, "payment": resp}
-                self.resources = NumberPlan.objects.filter(accountcode=bal, site__name__exact=request.user)
+                self.resources = BalanceHistory.objects.filter(accountcode=bal, site__name__exact=request.user)
                 return super(PaymentsHandler, self).read(request)
             elif start_date is not None and end_date is not None:
                 fstart_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 fend_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-                self.resources = NumberPlan.objects.filter(site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
+                self.resources = BalanceHistory.objects.filter(site__name__exact=request.user, time_stamp__range=(fstart_date, fend_date))
                 return super(PaymentsHandler, self).read(request)
             else:
                 #resp = base.filter(site__name__exact=request.user)[start:limit]
                 #count = base.filter(site__name__exact=request.user).count()
                 #return {"count": count, "payment": resp}
-                self.resources = NumberPlan.objects.filter(site__name__exact=request.user)
+                self.resources = BalanceHistory.objects.filter(site__name__exact=request.user)
                 return super(PaymentsHandler, self).read(request)
         except:
             return rc.NOT_HERE
