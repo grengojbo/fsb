@@ -111,12 +111,20 @@ class Command(BaseCommand):
                     for country in country_list:
                         n['country_code'] = country_code
                         n['price'] = str(trunc_decimal(n['price'], 2))
-                        digits = n['digits']
+                        #digits = n['digits']
                         price = Money(n['price'], n['currency'])
                         #price = Money(n['price'], 'USD')
                         #price = n['price']
-                        objects_in_fixture = Tariff.objects.add_tariff(tf, n, digits, price)
-                        object_count += objects_in_fixture
+                        if n['weeks'] is not None:
+                            if n['weeks'] == "all":
+                                n['week'] = 0;
+                                objects_in_fixture = Tariff.objects.add_tariff(tf, n, country, price)
+                                object_count += objects_in_fixture
+                            else:
+                                for i in eval(n['weeks']):
+                                    n['week'] = int(i);
+                                    objects_in_fixture = Tariff.objects.add_tariff(tf, n, country, price)
+                                    object_count += objects_in_fixture
                 except Exception, e:
                     log.error("line: %i => %s" % (cd.line_num, e))
                     pass

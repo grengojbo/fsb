@@ -42,8 +42,8 @@ class TariffManager(models.Manager):
             bl.time_start = n['time_start']
         if n['time_end']:
             bl.time_end = n['time_end']
-        if n['weeks']:
-            bl.weeks = n['weeks']
+        if n['week']:
+            bl.weeks = n['week']
         #bl.lead_strip = 0
         #bl.trail_strip = 0
         #bl.quality = 0
