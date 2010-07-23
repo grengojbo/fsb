@@ -52,6 +52,7 @@ class Balance(models.Model):
         #ordering = []
         db_table = 'balance'
         verbose_name, verbose_name_plural = _(u"Balance"), _(u"Balances")
+        permissions = (("api_view", "Can api view"),)
 
     def __unicode__(self):
         return self.accountcode.username
