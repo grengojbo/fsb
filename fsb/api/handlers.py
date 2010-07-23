@@ -28,7 +28,7 @@ class BillingHandler(BaseHandler):
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
     
-    @require_mime('json')
+    #@require_mime('json')
     def read(self, request, account=None):
         """
         Returns a blogpost, if `title` is given,
