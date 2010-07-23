@@ -37,7 +37,8 @@ class BillingHandler(BaseHandler):
         Parameters:
          - `phone_number`: The title of the post to retrieve.
         """
-        user = get_current_user()
+        user = request.user
+	log.debug(user)
         if user.has_perm("billing.api_view"):
             return {"rate": 1}
         else:
