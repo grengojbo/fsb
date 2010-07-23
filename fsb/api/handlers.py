@@ -41,7 +41,7 @@ class BillingHandler(BaseHandler):
         if user.has_perm("billing.api_view"):
             return {"rate": 1}
         else:
-            rc.FORBIDDEN
+            return rc.FORBIDDEN
         #s = Site.objects.get(name__iexact=request.user)
         #self.resource_name = 'bill'
         #try:
