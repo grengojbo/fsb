@@ -12,5 +12,5 @@ bill = Resource(handler=BillingHandler, authentication=auth)
 
 urlpatterns = patterns('',
     url(r'^$', bill, name='bill'),
-    url(r'^(?P<si>.+)/(?P<phone>.+)/$', bill),
+    url(r'^out/(?P<si>.+)/(?P<phone>.+)/$', bill),
 )
