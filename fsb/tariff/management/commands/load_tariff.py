@@ -100,6 +100,7 @@ class Command(BaseCommand):
         f = open(fixture_labels, "rt")
         try:
             tf = TariffPlan.objects.get(pk=tariff, enabled=True, site__pk=site)
+            s = Site.objects.get(pk=site)
             #d1="delimiter=';'time_format='%d.%m.%Y 00:00'name|country_code|special_digits|rate"
             csb = CsvBase.objects.get(pk=format_csv)
             cd = CsvData(csb.val)
@@ -108,13 +109,15 @@ class Command(BaseCommand):
             for row in reader:
                 try:
                     country_list, country_code, n = cd.parse(row)
+                    log.debug("country_code %s (%s)" % (country_code, country_list))
                     for country in country_list:
                         n['country_code'] = country_code
-                        n['price'] = str(trunc_decimal(n['price'], 2))
                         #digits = n['digits']
-                        price = Money(n['price'], n['currency'])
+                        digits = country
+                        #price = Money(n['price'], n['currency'])
                         #price = Money(n['price'], 'USD')
-                        #price = n['price']
+                        price = n['price']
+                        log.debug("digits %s" % country)
                         if n['weeks'] is not None:
                             if n['weeks'] == "all":
                                 n['week'] = 0;

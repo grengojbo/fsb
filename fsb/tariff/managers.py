@@ -51,6 +51,7 @@ class TariffManager(models.Manager):
         #bl.enabled = True
         bl.tariff_plan = tf
         bl.digits = digits
+        bl.price_currency = n['currency']
         bl.price = price
         bl.save()
         return 1
