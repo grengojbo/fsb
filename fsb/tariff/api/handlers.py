@@ -11,7 +11,6 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from django.db import transaction
 from fsb.tariff.models import Tariff, TariffPlan
-from fsa.core.utils import pars_phone
 
 class TariffHandler(BaseHandler):
     """
@@ -47,8 +46,7 @@ class TariffHandler(BaseHandler):
         try:
             if phone is not None:
                 log.info(phone)
-                query = "select * from tariff where tariff_plan_id=%i AND digits IN (%s) ORDER BY digits DESC, rand();" % (int(tariff), pars_phone(phone))
-                resp = base.raw(query)[0]
+                resp = Tariff.objects.phone_tariff(phone, tariff)
                 return {"rate": resp.rate }
             else:
                 resp = base.filter(tariff_plan__id=tariff, enabled=True, tariff_plan__site__name__exact=request.user)[start:limit]

@@ -14,16 +14,20 @@ from django.contrib.auth.models import User
 from django.utils.encoding import force_unicode
 from django.db.models import F, Q
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
+from fsa.core.utils import pars_phone
 
 l = logging.getLogger('fsb.tariff.managers')
 
 # Create your models here.
 class TariffManager(models.Manager):
-    def phone_tariff(self, phone, tariff_id, site):
+    def phone_tariff(self, phone, tariff, site=None):
         """
         Search rate from tariff
         """
-        return self.filter(digits=phone, enabled=True, tariff_plan__site__name__exact=site)
+        bl = self.model()
+        #return self.filter(digits=phone, enabled=True, tariff_plan__site__name__exact=site)
+        query = "select * from tariff where tariff_plan_id=%i AND digits IN (%s) ORDER BY digits DESC, rand();" % (int(tariff), pars_phone(phone))
+        return bl.raw(query)[0]
     
     def add_tariff(self, tf, n, digits, price):
         """
