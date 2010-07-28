@@ -45,8 +45,8 @@ class BillingHandler(BaseHandler):
             if phone is not None and si is not None and tariff is not None:
                 lcr_query = "SELECT l.id AS id, l.digits AS digits, cg.name AS gw, l.rate AS rate, cg.prefix AS gw_prefix, cg.suffix AS suffix, l.price AS price, l.price_currency AS currency, l.name AS name FROM lcr l LEFT JOIN carrier_gateway cg ON l.carrier_id_id=cg.id LEFT JOIN django_site s ON l.site_id=s.id WHERE cg.enabled = '1' AND l.enabled = '1' AND l.digits IN ({0}) AND CURTIME() BETWEEN l.time_start AND l.time_end AND (DAYOFWEEK(NOW()) = l.weeks OR l.weeks = 0) AND s.name='{1}' ORDER BY  digits DESC, reliability DESC, quality DESC;".format(pars_phone(phone), si)
                 log.debug(lcr_query)
-                resp = Lcr.objects.raw(lcr_query)[0]
-                #resp = Lcr.objects.phone_lcr(phone, si)
+                #resp = Lcr.objects.raw(lcr_query)[0]
+                resp = Lcr.objects.phone_lcr(phone, si)
                 #respt = Tariff.objects.phone_tariff(phone, tariff)
                 return {"lcr_rate": resp.rate, "suffix": resp.suffix, "lcr_digits": resp.digits, "lcr_carrier": resp.gw, "lcr_price": resp.price, "lcr_currency": resp.currency, "lcr_name": resp.name, "nibble_rate": "0.56" }
             else:
