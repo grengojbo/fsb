@@ -14,7 +14,7 @@ class PrepaidOptions(admin.ModelAdmin):
     list_display_links = ('num_prepaid',)
     search_fields = ['num_prepaid']
     search_fields_verbose = ['Number Card']
-    list_filter = ('enabled', 'nt', 'balance',)
+    list_filter = ('enabled', 'nt', 'start_balance',)
     ordering = ['date_added']
     #inlines = [PrepaidUsage_Inline]
 
