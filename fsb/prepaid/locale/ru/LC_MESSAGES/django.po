@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-07-29 16:50+0300\n"
-"PO-Revision-Date: 2010-07-29 17:47+0300\n"
+"PO-Revision-Date: 2010-07-29 18:02+0300\n"
 "Last-Translator: Oleg Dolya <oleg.dolya@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -159,7 +159,7 @@ msgstr "Активировать карточку предоплаты"
 
 #: templates/prepaid/activate.html:14
 msgid "Activates"
-msgstr "Активировано"
+msgstr "Активировать"
 
 #: templates/prepaid/balance.html:5
 #: templates/shop/checkout/confirm.html:9
