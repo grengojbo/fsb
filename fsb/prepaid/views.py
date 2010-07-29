@@ -22,7 +22,7 @@ import logging
 #from satchmo_store.shop.signals import satchmo_cart_changed, satchmo_cart_add_complete, satchmo_cart_details_query
 from decimal import Decimal
 
-log = logging.getLogger("prepaid.views")
+log = logging.getLogger("fsb.prepaid.views")
 
 gc = config_get_group('PAYMENT_PREPAID')
 
