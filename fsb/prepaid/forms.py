@@ -24,6 +24,7 @@ class PrepaidCodeForm(forms.Form):
         if res is None:
             raise forms.ValidationError(_("Incorrect number or the code of the card."))
         elif res.nt != 1:
+            
             raise forms.ValidationError(_("You cannot supplement calculation with this card"))
         else:
             res.activate_card(self.user)

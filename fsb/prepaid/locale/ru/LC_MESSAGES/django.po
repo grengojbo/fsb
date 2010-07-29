@@ -1,0 +1,267 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-07-29 16:50+0300\n"
+"PO-Revision-Date: 2010-07-29 17:47+0300\n"
+"Last-Translator: Oleg Dolya <oleg.dolya@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+#: forms.py:10
+#: models.py:176
+msgid "Number"
+msgstr "Номер"
+
+#: forms.py:11
+msgid "Code"
+msgstr "Код активации"
+
+#: forms.py:25
+msgid "Incorrect number or the code of the card."
+msgstr "Неправильный номер или код активации карты."
+
+#: forms.py:27
+msgid "You cannot supplement calculation with this card"
+msgstr "Вы не можете выполнять оплату этой картой"
+
+#: models.py:37
+msgid "Partner"
+msgstr "Партнеры"
+
+#: models.py:38
+msgid "Default"
+msgstr "По умолчанию"
+
+#: models.py:39
+msgid "Starting packet"
+msgstr "Стартовый пакет"
+
+#: models.py:40
+msgid "Other"
+msgstr "Другой"
+
+#: models.py:106
+msgid "The starting packet is activated"
+msgstr "Стартовый пакет активирован"
+
+#: models.py:110
+msgid "Error code or number"
+msgstr "Неправильный код актиывции или номер карточки"
+
+#: models.py:177
+msgid "Prepaid Code"
+msgstr "Карточка предоплаты"
+
+#: models.py:180
+msgid "Date added"
+msgstr "Дата добавления"
+
+#: models.py:181
+msgid "Date end"
+msgstr "Дата окончания"
+
+#: models.py:182
+msgid "Type"
+msgstr "Тип"
+
+#: models.py:183
+msgid "Enable"
+msgstr "включить"
+
+#: models.py:184
+msgid "Valid"
+msgstr "Допустимое значение"
+
+#: models.py:185
+msgid "Message"
+msgstr "Сообщение"
+
+#: models.py:186
+msgid "Starting Balance"
+msgstr "Стартовый баланс"
+
+#: models.py:196
+msgid "Prepaid card"
+msgstr "Карта предоплаты"
+
+#: models.py:197
+msgid "Prepaid cards"
+msgstr "Карточка предоплаты"
+
+#: processor.py:31
+#, fuzzy
+msgid "No balance to pay"
+msgstr "No balance to pay"
+
+#: processor.py:42
+#, fuzzy
+msgid "No such Gift Certificate"
+msgstr "No such Gift Certificate"
+
+#: processor.py:47
+#, fuzzy
+msgid "Bad Gift Certificate"
+msgstr "Bad Gift Certificate"
+
+#: processor.py:53
+msgid "Success"
+msgstr "Успешно"
+
+#: processor.py:57
+#, fuzzy, python-format
+msgid "%s balance remains after gift certificate was applied"
+msgstr "%s balance remains after gift certificate was applied"
+
+#: templates/prepaid/_order_summary.html:5
+msgid "Prepaid Card Codes"
+msgstr "Коды карточки"
+
+#: templates/prepaid/_order_summary.html:7
+#: templates/prepaid/balance.html:6
+#: templates/prepaid/balance.html.py:13
+#: templates/product/detail_prepaid.html:9
+msgid "Prepaid Card"
+msgstr "Карта предоплаты"
+
+#: templates/prepaid/_order_summary.html:10
+#, fuzzy, python-format
+msgid "To: %(recipient)s"
+msgstr "To: %(recipient)s"
+
+#: templates/prepaid/_order_summary.html:15
+#, python-format
+msgid "Starting Balance: %(start_balance)s"
+msgstr "Начальный балан: %(start_balance)s"
+
+#: templates/prepaid/_order_summary.html:19
+#, python-format
+msgid "Code: %(code)s"
+msgstr "Код активации: %(code)s"
+
+#: templates/prepaid/_order_summary.html:24
+#, python-format
+msgid "Message: %(message)s"
+msgstr "Сообщение: %(message)s"
+
+#: templates/prepaid/activate.html:4
+#: templates/prepaid/activate.html.py:7
+msgid "Activate Prepaid Card"
+msgstr "Активировать карточку предоплаты"
+
+#: templates/prepaid/activate.html:14
+msgid "Activates"
+msgstr "Активировано"
+
+#: templates/prepaid/balance.html:5
+#: templates/shop/checkout/confirm.html:9
+#: templates/shop/checkout/prepaid/confirm.html:9
+msgid "Home"
+msgstr "Начало"
+
+#: templates/prepaid/balance.html:15
+#, fuzzy
+msgid "Purchased on:"
+msgstr "Purchased on:"
+
+#: templates/prepaid/balance.html:21
+#, fuzzy
+msgid "Initial Balance:"
+msgstr "Баланс синего"
+
+#: templates/prepaid/balance.html:22
+msgid "Current Balance:"
+msgstr "Текущий Баланс"
+
+#: templates/prepaid/balance.html:25
+msgid "No such Prepaid Card found."
+msgstr "Нет такой карточки."
+
+#: templates/prepaid/balance.html:30
+#, fuzzy
+msgid "Look up balance"
+msgstr "Look up balance"
+
+#: templates/product/detail_prepaid.html:11
+msgid "Price"
+msgstr "Прайс-Лист"
+
+#: templates/product/detail_prepaid.html:21
+#, fuzzy
+msgid "Quantity (multiply the Prepaid Card by this amount)"
+msgstr "Quantity (multiply the Prepaid Card by this amount)"
+
+#: templates/product/detail_prepaid.html:24
+msgid "Recipient Email (optional):"
+msgstr "E-mail адрес для ответа (необязательно):"
+
+#: templates/product/detail_prepaid.html:25
+msgid "Message (optional):"
+msgstr "Cообщение (необязательно):"
+
+#: templates/product/detail_prepaid.html:30
+msgid "Add to cart"
+msgstr " Добавить в корзину"
+
+#: templates/shop/checkout/confirm.html:10
+#: templates/shop/checkout/fsb_pay_ship.html:6
+#: templates/shop/checkout/prepaid/confirm.html:10
+msgid "Checkout"
+msgstr "Проверка"
+
+#: templates/shop/checkout/confirm.html:14
+#: templates/shop/checkout/prepaid/confirm.html:14
+msgid "Payment"
+msgstr "Оплата"
+
+#: templates/shop/checkout/confirm.html:20
+#, python-format
+msgid "Order total: %(orderbalance)s"
+msgstr "Общий заказ: %(orderbalance)s"
+
+#: templates/shop/checkout/confirm.html:21
+#, python-format
+msgid "You are about to use Prepaid Card #%(prepaidcode)s which has %(certbalance)s total available to pay for your order."
+msgstr "You are about to use Prepaid Card #%(prepaidcode)s which has %(certbalance)s total available to pay for your order."
+
+#: templates/shop/checkout/confirm.html:22
+msgid "If there isn't enough remaining to pay for the whole order, you'll be able to select another form of payment for the balance after you use this gift certificate."
+msgstr "If there isn't enough remaining to pay for the whole order, you'll be able to select another form of payment for the balance after you use this gift certificate."
+
+#: templates/shop/checkout/fsb_pay_ship.html:8
+msgid "Please correct the following error:"
+msgid_plural "Please correct the following errors:"
+msgstr[0] "Пожалуйста, исправьте ошибку:"
+msgstr[1] "Пожалуйста, исправьте ошибки:"
+msgstr[2] "Пожалуйста, исправьте ошибки:"
+
+#: templates/shop/checkout/fsb_pay_ship.html:16
+#, fuzzy
+msgid "Confirm"
+msgstr " Подтвердить замену "
+
+#: templates/shop/checkout/prepaid/confirm.html:6
+msgid "Please Note:"
+msgstr "Заметки:"
+
+#: templates/shop/checkout/prepaid/confirm.html:19
+#, python-format
+msgid "About to use your Prepaid Card: %(prepaidcode)s, which has a balance of %(balance)s."
+msgstr "Информация о использовании карты предоплаты: %(prepaidcode)s, которая имеет балан  %(balance)s."
+
+#: templates/shop/checkout/prepaid/confirm.html:23
+msgid "About to use INVALID Prepaid Card"
+msgstr "Информация о неправильной карте предоплаты"
+
+#: templates/shop/checkout/prepaid/pay_ship.html:4
+msgid "Payment Information"
+msgstr "Информация о оплате"
+
