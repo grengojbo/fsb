@@ -200,11 +200,11 @@ class Prepaid(models.Model):
         """Activate Prepaid Card"""
         try:
 
-            comments = 'prepaid:::%i' % self.pk
-            up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + self.start_balance)
+            #comments = 'prepaid:::%i' % self.pk
+            #up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + self.start_balance)
             # Ваш баланс был пополнен на
-            name='Added prepaid card'
-            BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=self.start_balance, comments=comments)
+            #name='Added prepaid card'
+            #BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=self.start_balance, comments=comments)
             self.enabled = True
             self.save()
             return True

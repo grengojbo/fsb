@@ -12,10 +12,17 @@ from fsa.core.utils import CsvData
 #from product.models import Product
 #from satchmo_store.contact.models import AddressBook, Contact, ContactRole
 #from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail
-from fsb.billing.models import Balance
+from fsb.billing.models import Balance, BalanceHistory
 from fsa.directory.models import Endpoint
 ##from utils import generate_certificate_code, generate_code
-import datetime, logging
+from fsb.billing.models import BalanceHistory, Balance
+from django.db import transaction
+from django.db.models import F
+from decimal import Decimal
+import time, datetime
+import md5
+import logging
+import random
 import csv, sys, os
 
 l = logging.getLogger('fsb.prepaid.tests')
@@ -83,33 +90,65 @@ class TestCertCreate(test.TestCase):
         self.assertEqual(gc.count(),6)
         res = Prepaid.objects.is_valid('11018','222222222')
         self.assertEquals(res.num_prepaid, '11018')
-        r = res.activate_card(self.user)
-        self.assertEquals(r, True)
         
-        res = Prepaid.objects.is_valid('11018','222222222')
-        self.assertEquals(res, None)
-        bal = Balance.objects.get(accountcode=self.user)
-        self.assertEquals(bal.cash, Decimal("25"))
-        res = Prepaid.objects.is_valid('11019','222222222')
-        self.assertEquals(res, None)
-        res = Prepaid.objects.is_valid('11018','111111111')
-        self.assertEquals(res, None)
+        #bal = Balance.objects.get(accountcode=self.user)
+        #self.assertEquals(bal.cash, Decimal("25"))
+        #res = Prepaid.objects.is_valid('11019','222222222')
+        #self.assertEquals(res, None)
+        #res = Prepaid.objects.is_valid('11018','111111111')
+        #self.assertEquals(res, None)
         
         res = Prepaid.objects.is_valid('11019','111111111')
         self.assertEquals(res.code, '111111111')
-        if res is not None and res.nt == 1:
-            r = res.activate_card(self.user)
-        bal = Balance.objects.get(accountcode=self.user)
-        self.assertEquals(bal.cash, Decimal("75"))
+        self.assertEquals(res.nt, 1)
+        #if res is not None and res.nt == 1:
+            #r = res.activate_card(self.user)
+        #bal = Balance.objects.get(accountcode=self.user)
+        #self.assertEquals(bal.cash, Decimal("75"))
         
-        res = Prepaid.objects.is_valid('5003020','123456781')
-        if res is not None and res.nt == 2:
-            new_user = User.objects.create_user(res.num_prepaid, '', res.code)
-            new_endpoint = Endpoint.objects.create_endpoint(new_user, res.num_prepaid)
-            r = res.activate_card(self.user)
-        self.assertEquals(res.nt, 2)
-        bal = Balance.objects.get(accountcode=new_user)
-        self.assertEquals(bal.cash, Decimal("1"))
+        
+        
+        pay_date = datetime.datetime.now()
+        name = 'add:::lincom3000:::prepaid:::{0}'.format(res.pk)
+        comments ='Added prepaid card'
+        method = 'from site prepaid'
+        
+        code = "{0}{1}{2}".format(name, comments, method)
+        mcode = md5.new()
+        mcode.update(code.upper())
+        
+        temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
+        pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
+        
+        if res is not None and res.nt == 1:
+            bal = Balance.objects.get(accountcode__username__exact=self.user.username)
+            up_ball = Balance.objects.filter(accountcode=bal).update(cash=F('cash') + res.start_balance)
+            r = res.activate_card(bal)
+            b = BalanceHistory.objects.create(name = name, accountcode= bal, site = bal.site, pay_date=pay_date,
+                method = method, amount = Decimal(res.start_balance), transaction_id = pay_transaction_id,
+                details=comments, reason_code=mcode.hexdigest())
+            b.save()
+        self.assertEquals(r, True)
+        bres = BalanceHistory.objects.get(transaction_id__exact=pay_transaction_id)
+        self.assertEquals(bres.amount, Decimal("50"))
+        result = Balance.objects.get(accountcode__username__exact=self.user.username)
+        self.assertEquals(result.cash, Decimal("50"))
+        
+        
+        res = Prepaid.objects.is_valid('11019','111111111')
+        self.assertEquals(res, None)
+        
+        #up_ball = Balance.objects.filter(accountcode=bal).update(cash=F('cash') + res.start_balance)
+        #BalanceHistory.objects.create(name=name, accountcode__username__exact=self.user, cash=res.start_balance, comments=comments)
+        
+        #res = Prepaid.objects.is_valid('5003020','123456781')
+        #if res is not None and res.nt == 2:
+        #    new_user = User.objects.create_user(res.num_prepaid, '', res.code)
+        #    new_endpoint = Endpoint.objects.create_endpoint(new_user, res.num_prepaid)
+        #    r = res.activate_card(self.user)
+        #self.assertEquals(res.nt, 2)
+        #bal = Balance.objects.get(accountcode=new_user)
+        
         
 
 ##    def testUse(self):
