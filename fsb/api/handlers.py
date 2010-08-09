@@ -6,12 +6,15 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from fsa.lcr.models import Lcr
+from fsa.gateway.models import SofiaGateway
+from fsa.directory.models import Endpoint
 from fsb.tariff.models import Tariff
 from fsa.core.utils import pars_phone
 from threaded_multihost.threadlocals import get_current_user, set_current_user
 #from piston.doc import generate_doc
 #from fsb.tariff.models import TariffPlan
 from django.db import transaction
+import keyedcache
 
 import logging
 
@@ -53,6 +56,7 @@ class BillingHandler(BaseHandler):
                 return {"lcr_rate": resp.rate, "suffix": resp.suffix, "lcr_digits": resp.digits, "lcr_carrier": resp.gw, "lcr_price": resp.price, "lcr_currency": resp.currency, "lcr_name": resp.name, "nibble_rate": respt.rate }
             else:
                 return rc.NOT_HERE
+            
         else:
             return rc.FORBIDDEN
         #s = Site.objects.get(name__iexact=request.user)
@@ -69,3 +73,53 @@ class BillingHandler(BaseHandler):
                 #return super(AccountHandler, self).read(request)
         #except:
             #return rc.NOT_HERE
+
+class BillingInHandler(BaseHandler):
+    allowed_methods = ('GET')
+    #model = Endpoint
+    fields = ('uid', 'password', 'phone_alias', 'phone_redirect', 'username', 'phone_type',
+              ('site', ('name', 'domain')),'effective_caller_id_name','enable', 'is_registered',
+              'last_registered', 'sip_server', 'reg_server', 'cidr_ip', 'cidr_mask', 'mac_adress',
+              'max_calls', 'zrtp', 'srtp',
+              ('accountcode', ('pk', 'username', 'email', 'first_name', 'last_name')))
+    #, 'user_context', 'sip_profile'
+    
+    def read(self, request, phone=None, gw=None):
+        user = request.user
+        if user.has_perm("billing.api_view"):
+            if phone is not None and gw is not None:
+                key_caches_gw = "gatewayw::{0}".format(gw)
+                key_caches_endpoint = "endpoint::{0}".format(phone)
+                dialplan_caches_gw = "dialplan::gatewayw::{0}".format(gw)
+                dialplan_caches_endpoint = "dialplan::endpoint::{0}".format(phone)
+                try:
+                    gateway = keyedcache.cache_get(key_caches_gw)
+                    lcr_rate = lcr_price = gateway.price
+                    lcr_currency = gateway.price_currency
+                except:
+                    try:
+                        gateway = SofiaGateway.objects.get(name__exact=gw, enabled=True)
+                        keyedcache.cache_set(key_caches_gw, value=gateway)
+                        lcr_rate = lcr_price = gateway.price
+                        lcr_currency = gateway.price_currency
+                        keyedcache.cache_set(dialplan_caches_gw, value={"lcr_rate": lcr_rate, "lcr_price": lcr_rate, "lcr_currency": lcr_currency})
+                    except:
+                        log.error("Is not gateway: {0}".format(gw))
+                        lcr_rate = lcr_price = "0.18"
+                        lcr_currency = "UAH"
+                #endpoint = Endpoint.objects.get(uid__exact=phone, enable=True)
+                try:
+                    endpoint = keyedcache.cache_get(key_caches_endpoint)
+                except:
+                    try:
+                        endpoint = Endpoint.objects.get(uid__exact=phone, enable=True)
+                        keyedcache.cache_set(key_caches_endpoint, value=endpoint)
+                    except:
+                        endpoint = None
+                        keyedcache.cache_set(key_caches_endpoint, value=endpoint)
+                #return {"lcr_rate": resp.rate, "suffix": resp.suffix, "lcr_digits": resp.digits, "lcr_carrier": resp.gw, "lcr_price": resp.price, "lcr_currency": resp.currency, "lcr_name": resp.name, "nibble_rate": respt.rate }
+                return {"lcr_rate": lcr_rate, "lcr_price": lcr_rate, "lcr_currency": lcr_currency, "endpoint": endpoint}
+            else:
+                return rc.NOT_HERE
+        else:
+            return rc.FORBIDDEN
