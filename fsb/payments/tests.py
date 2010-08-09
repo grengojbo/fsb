@@ -26,6 +26,7 @@ from django.db import transaction
 from django.db.models import F
 from django.db import models
 import logging
+import time, datetime
 
 log = logging.getLogger('fsb.payments.tests')
 
@@ -37,9 +38,10 @@ class BaseTestCase(test.TestCase):
         #    role=ContactRole.objects.get(pk='Customer'), email='test@test.com', user=self.user)
         # Every test needs a client.
         self.client = Client()
+        self.pay_date = datetime.datetime.now()
         
     @transaction.commit_manually
-    def testBalance(self):
+    def test01Balance(self):
         """docstring for billing core"""
 
         new_balance = Balance.objects.create_balance(self.user)
@@ -50,26 +52,23 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(new_balance.cash, Decimal("0.0"))
 
         #accountcode = User.objects.get(username__iexact=self.user.username, balance__site__name__iexact='test1.example.com')
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         amount = '20.10'
-        try:
-            bal = Balance.objects.from_api_get(self.user.username, 'test1.example.com')
-            self.assertEquals(bal.accountcode.username, self.user.username)
-            paymentargs = {
+        bal = Balance.objects.from_api_get(self.user.username, 'test1.example.com')
+        self.assertEquals(bal.accountcode.username, self.user.username)
+        paymentargs = {
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
-            } 
-        except Balance.DoesNotExist:
-            log.error("DoesNotExist")
-        except Site.DoesNotExist:
-            log.error("DoesNotExist")
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details":'details ',
+            }
+        b = BalanceHistory.objects.create_linked(paymentargs, 'test1.example.com', self.user.username, amount)
+        self.assertEquals(b.amount, Decimal(amount))
         try:
-            b = BalanceHistory.objects.create_linked(paymentargs, 'test1.example.com', self.user.username, amount)
-            self.assertEquals(b.amount, Decimal(amount))
+            
             transaction.commit()
             bal.cash_add(b.amount)
             if bal.is_positiv:
@@ -91,7 +90,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(br.success, True)
         
     @transaction.commit_manually
-    def testBalanceFalse(self):
+    def test02BalanceFalse(self):
         """docstring for billing core"""
 
         new_balance = Balance.objects.create_balance(self.user)
@@ -102,7 +101,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(new_balance.cash, Decimal("0.0"))
 
         #accountcode = User.objects.get(username__iexact=self.user.username, balance__site__name__iexact='test1.example.com')
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         amount = '20.10'
         try:
             bal = Balance.objects.from_api_get(self.user.username, 'test1.example.com')
@@ -111,9 +110,10 @@ class BaseTestCase(test.TestCase):
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details": 'details ',
             } 
         except Balance.DoesNotExist:
             log.error("DoesNotExist")
@@ -144,7 +144,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(br.success, False)
 
     @transaction.commit_manually
-    def testBalanceDelete(self):
+    def test03BalanceDelete(self):
         """docstring for billing core"""
 
         new_balance = Balance.objects.create_balance(self.user)
@@ -155,7 +155,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(new_balance.cash, Decimal("0.0"))
 
         #accountcode = User.objects.get(username__iexact=self.user.username, balance__site__name__iexact='test1.example.com')
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         amount = '20.10'
         try:
             bal = Balance.objects.from_api_get(self.user.username, 'test1.example.com')
@@ -164,9 +164,10 @@ class BaseTestCase(test.TestCase):
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details": 'details ',
             } 
         except Balance.DoesNotExist:
             log.error("DoesNotExist")
@@ -188,14 +189,15 @@ class BaseTestCase(test.TestCase):
             transaction.rollback()
         else:
             transaction.commit()
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         paymentargs = {
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details": 'details ',
             }
         amount = '20.05'
         try:
@@ -222,7 +224,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(br.success, True)
 
     @transaction.commit_manually
-    def testBalanceDeleteFalse(self):
+    def test04BalanceDeleteFalse(self):
         """docstring for billing core"""
 
         new_balance = Balance.objects.create_balance(self.user)
@@ -233,7 +235,7 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(new_balance.cash, Decimal("0.0"))
 
         #accountcode = User.objects.get(username__iexact=self.user.username, balance__site__name__iexact='test1.example.com')
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         amount = '20.10'
         try:
             bal = Balance.objects.from_api_get(self.user.username, 'test1.example.com')
@@ -242,9 +244,10 @@ class BaseTestCase(test.TestCase):
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details": 'details ',
             } 
         except Balance.DoesNotExist:
             log.error("DoesNotExist")
@@ -266,14 +269,15 @@ class BaseTestCase(test.TestCase):
             transaction.rollback()
         else:
             transaction.commit()
-        tr = "test%03i" % random.randrange(1,100)
+        tr = "test{0}".format(random.randrange(1,100))
         paymentargs = {
                 "accountcode": bal,
                 "name": "add money",
                 "site": Site.objects.get(name='test1.example.com'),
-                "method" : 'from api payments',
-                "transaction_id" : tr,
-                "details" :'details ',
+                "method": 'from api payments',
+                "transaction_id": tr,
+                "pay_date": self.pay_date,
+                "details": 'details ',
             }
         amount = '-20.15'
         try:

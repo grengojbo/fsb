@@ -12,8 +12,8 @@ from django.db import transaction
 from django.db.models import F
 from decimal import Decimal
 import time, datetime
-import md5
-#import hashlib
+#import md5
+import hashlib
 
 import logging
 
@@ -101,7 +101,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
             return resp
         try:
             code = "".join(attrs.get('username')).join(attrs.get('amount')).join(attrs.get('transaction_id')).join(attrs.get('name')).join(str(request.user))
-            mcode = md5.new()
+            mcode = hashlib.md5()
             mcode.update(code.upper())
             if attrs.get('pay_date'):
                 pay_date = datetime.datetime.strptime(attrs.get('pay_date'), "%Y-%m-%d %H:%M:%S")

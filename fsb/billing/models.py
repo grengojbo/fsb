@@ -25,7 +25,7 @@ from currency.models import Currency
 from decimal import Decimal
 from bursar.models import PaymentBase
 # TODO  the md5 module is deprecated; use hashlib instead
-import md5
+import hashlib
 
 l = logging.getLogger('fsb.billing.models')
 
@@ -94,8 +94,8 @@ class BalanceHistoryManager(models.Manager):
     def create_linked(self, other, user, accountcode, amount):
         #code = accountcode.join(amount, other.transaction_id, other.details, other.name, user).strip().replace(" ", '').upper()
         code = "".join(accountcode).join(amount).join(other['transaction_id']).join(other['details']).join(other['name']).join(str(user)).upper()
-        mcode = md5.new()
-        mcode.update(code)
+        mcode = hashlib.md5()
+        mcode.update(code.upper())
         linked = BalanceHistory(
                 name = other['name'],
                 accountcode = other['accountcode'],
