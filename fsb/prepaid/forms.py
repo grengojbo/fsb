@@ -9,7 +9,7 @@ from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from django.db import transaction
 from decimal import Decimal
 import time, datetime
-import md5
+import hashlib
 import logging
 import random
 log = logging.getLogger("fsb.prepaid.forms")
@@ -44,7 +44,7 @@ class PrepaidCodeForm(forms.Form):
                 method = 'from site prepaid'
                 
                 code = "{0}{1}{2}".format(name, comments, method)
-                mcode = md5.new()
+                mcode = hashlib.md5()
                 mcode.update(code.upper())
         
                 temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
