@@ -1,1 +1,2 @@
--e git+http://github.com/grengojbo/django-registration.git#egg=django-registration
+-e git+git://github.com/bartTC/django-memcache-status.git#egg=django-memcache-status
+johnny-cache
