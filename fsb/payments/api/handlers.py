@@ -91,7 +91,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
         except Balance.DoesNotExist:
             log.error("DoesNotExist username {0}".format(attrs.get('username')))
             resp = rc.rc.NOT_HERE
-            resp.write(' - "DoesNotExist username {0}'.formatattrs.get('username')))
+            resp.write(' - "DoesNotExist username {0}'.formatattrs.get('username'))
             return resp
         except Site.DoesNotExist:
             log.error("DoesNotExist user")

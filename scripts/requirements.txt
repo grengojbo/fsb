@@ -1,2 +1,3 @@
 -e git+git://github.com/bartTC/django-memcache-status.git#egg=django-memcache-status
 johnny-cache
+-e svn+http://django-rosetta.googlecode.com/svn/trunk/#egg=rosetta
