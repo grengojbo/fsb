@@ -31,7 +31,7 @@ class TariffTestCase(test.TestCase):
     def setUp(self):
         # Every test needs a client.
         self.client = Client()
-        
+
     def testTariffLoad(self):
         """docstring for billing core"""
         from currency.money import Money
@@ -70,13 +70,18 @@ class TariffTestCase(test.TestCase):
                         #, n["name"], price )
                         # route
                         #writer.writerow((country_code, n["name"], country, 0, Decimal('0.0000'), Decimal('0.0000'), 1,   Decimal('0.0000'), price, n['brand']))
-                        
+
                 except Exception, e:
-                    l.error("line: %i => %s" % (cd.line_num, e)) 
+                    l.error("line: %i => %s" % (cd.line_num, e))
                     pass
         finally:
             f.close()
         self.assertEquals(save_cnt, 3)
+        key_caches_tariff = "tariff::{0}".format(tariff)
+        try:
+            res = keyedcache.cache_get(key_caches_tariff)
+        except:
+            pass
         res = Tariff.objects.get(digits="38039")
         self.assertEquals(res.country_code, 380)
         self.assertEquals(res.time_start, datetime.time(0, 10))

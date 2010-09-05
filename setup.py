@@ -1,4 +1,4 @@
-# -*- mode: python; coding: utf-8; -*- 
+# -*- mode: python; coding: utf-8; -*-
 from setuptools import setup, find_packages
 import os, os.path
 import sys
@@ -45,7 +45,7 @@ setup(name='fsb',
     classifiers = [
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GPL License',
-        'Operating System :: OS Independent', 
+        'Operating System :: OS Independent',
         'Topic :: Office/Business',
     ],
     scripts=['scripts/fsb'],

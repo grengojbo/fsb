@@ -33,14 +33,14 @@ class TariffPlan(models.Model):
     """
     Тарифный план
     Для загрузки тарифного плана из cvs файла необходимо установить его формат
-    Например 
+    Например
     tariff_format = ;|digits,name,tariff_rate,tariff,date_start=%d.%m.%Y 00:00,date_end
     ; - разделитель
     далее через запятую перечисляются поля для заполнения ВНИМАНИЕ все поля обязательны
     rate стоимость 1 минуты 0.338700
     date_start - Дата начала  01.12.08
     date_end - Дата окончания 31.12.99
-    
+
     если есть пустая колонка то вставте other
     если формат даты отличается то необходимо указать формат date_start=%d.%m.%Y 00:00
     """
@@ -71,8 +71,8 @@ class TariffPlan(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('Tarif', [self.id])
-    
-    
+
+
     def fee_view(self):
         """docstring for fee_view"""
         if self.fee_period != 0:
@@ -80,8 +80,8 @@ class TariffPlan(models.Model):
         else:
             return self.get_fee_period_display()
     fee_view.short_description = _(u'Абонплата')
-        
-    
+
+
     def cash_currency(self):
         """docstring for rate_currency"""
         return "%(rate)0.2f %(currency)s" % {'rate': self.cash_min, 'currency': self.currency}
@@ -90,22 +90,22 @@ class TariffPlan(models.Model):
     @property
     def currency(self):
         return u'у.е.'
-        
+
     @property
     def enabled_date(self):
         """docstring for enable_date"""
-        
+
         if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
             de = ""
         else:
             de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
         return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
-        
+
 class Tariff(models.Model):
     """
     digits - префикс передномером 4367890
     name - напрвление Austria-mobile Hutchison 3G
-    tariff_plan - номер к какому тарифному плану относится смотреть id TariffPlan 
+    tariff_plan - номер к какому тарифному плану относится смотреть id TariffPlan
     """
     digits = models.CharField(_(u'Digits'), max_length=45, blank=True, help_text=_(u'matching digits'))
     # TODO: напрвление
@@ -147,31 +147,34 @@ class Tariff(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('Tariff', [self.id])
-    
+
     @property
     def enabled_date(self):
         """docstring for enable_date"""
-        
+
         if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
             de = ""
         else:
             de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
         return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
-             
-    
+
+
     def rate_currency(self):
         """docstring for rate_currency"""
         return "%(rate)0.2f %(currency)s" % {'rate': self.rate, 'currency': self.currency}
     rate_currency.short_description = _(u'Цена 1 мин.')
-    
+
     @property
     def currency(self):
         return u'у.е.'
-    
-    
+
+
 # Monkey-patching http://www.alrond.com/ru/2008/may/03/monkey-patching-in-django/
 #from contact.models import Contact
 #Contact.add_to_class('tariff',models.ForeignKey('fsb.tariff.TariffPlan',limit_choices_to = {'enabled': True}))
-##Contact._meta.admin.fields += (('Additional', {'fields': ('tariff',)}),)                                             
-##Contact._meta.admin.list_display = Contact._meta.admin.list_display + ('tariff', )                                    
+##Contact._meta.admin.fields += (('Additional', {'fields': ('tariff',)}),)
+##Contact._meta.admin.list_display = Contact._meta.admin.list_display + ('tariff', )
 ##Contact._meta.admin.list_display += ('tariff', )
+
+import listeners
+listeners.start_listening()
