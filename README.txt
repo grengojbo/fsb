@@ -30,3 +30,5 @@ pref_digits - обрабатывает шаблоны
 
 ./manage.py load_prepaid --format_csv=1 ../../fsb/fsb/prepaid/fixtures/test.csv
 
+The system cannot create any sessions at this time.
+[RIT] switch_core_session.c:1499 The system cannot create any sessions at this time.
