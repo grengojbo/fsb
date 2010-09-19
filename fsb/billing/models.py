@@ -67,6 +67,11 @@ class Balance(models.Model):
     cash_currency.short_description = _(u'Баланс')
 
     @property
+    def username(self):
+        #return "<a href='/admin/auth/user/{2}/'>{0} {1}</a>".format(self.accountcode.first_name, self.accountcode.last_name, self.accountcode.pk)
+        return "{0} {1}".format(self.accountcode.first_name, self.accountcode.last_name)
+
+    @property
     def currency(self):
         return u'у.е.'
 
