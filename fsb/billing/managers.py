@@ -25,7 +25,7 @@ log = logging.getLogger('fsb.billing.managers')
 class BalanceManager(models.Manager):
     def from_api_get(self, accountcode, site):
         return self.get(accountcode__username__exact=accountcode, site__name__exact=site)
-    
+
     def create_balance(self, contact, cash=None):
         """
         Баланс для нового пользователя
@@ -51,5 +51,5 @@ class BalanceManager(models.Manager):
             #bl.tariff = TariffPlan.objects.get(enabled=True, primary=True)
             bl.save()
             return bl
-    
+
 # Create your models here.

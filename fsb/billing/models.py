@@ -147,7 +147,7 @@ class CreditBase(models.Model):
     """"""
     balance = models.ForeignKey(Balance)
     credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, help_text=_('Operator'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries

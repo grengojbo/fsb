@@ -40,3 +40,6 @@ class BaseTestCase(test.TestCase):
         self.assertEquals(new_balance.cash, Decimal("0.0"))
         new_balance = Balance.objects.create_balance(self.user, '1.33')
         self.assertEquals(new_balance.cash, Decimal("0.0"))
+
+    def testCredit(self):
+        pass

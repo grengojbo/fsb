@@ -26,7 +26,7 @@ class AccountHandler(PaginatedCollectionBaseHandler):
     #@staticmethod
     #def resource_uri():
     #    return ('api_numberplan_handler', ['phone_number'])
-    
+
     #@require_mime('json', 'yaml')
     def read(self, request, account=None):
         """
@@ -103,7 +103,7 @@ class AccountHandler(PaginatedCollectionBaseHandler):
             return rc.DELETED
         except:
             return rc.NOT_HERE
-    
+
     @transaction.commit_on_success
     def create(self, request):
         """

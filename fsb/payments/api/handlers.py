@@ -111,6 +111,7 @@ class PaymentsHandler(PaginatedCollectionBaseHandler):
                 details=attrs.get('details'), reason_code=mcode.hexdigest())
             b.save()
             transaction.commit()
+            #TODO: заменить на update
             if Decimal(b.amount) < Decimal('0'):
                 bal.cash_del(b.amount)
                 if bal.is_positiv:
