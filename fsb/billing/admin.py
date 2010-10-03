@@ -41,6 +41,7 @@ class CreditBaseAdmin(admin.ModelAdmin):
     list_display = ('balance', 'credit', 'enabled','user')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
+    #readonly_fields = ['user']
 
     save_as = True
     save_on_top = True
