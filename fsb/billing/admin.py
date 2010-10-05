@@ -31,7 +31,8 @@ class BillingBaseAdmin(admin.ModelAdmin):
 class BalanceAdmin(admin.ModelAdmin):
     list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
-    actions = ['delete_selected']
+    #actions = ['delete_selected']
+    readonly_fields = ['credit', 'cash']
 
     save_as = True
     save_on_top = True
