@@ -7,6 +7,8 @@ from fsb.billing.models import Balance, CreditBase, BalanceHistory
 import logging
 l = logging.getLogger('fsb.billing.admin')
 
+#admin.site.disable_action('delete_selected')
+
 class BillingBaseAdmin(admin.ModelAdmin):
     #date_hierarchy = ''
     list_display = ('name', 'server', 'enabled',)
@@ -20,6 +22,12 @@ class BillingBaseAdmin(admin.ModelAdmin):
     #inlines = []
     list_per_page = 50
 
+    def queryset(self, request):
+        qs = super(BillingBaseAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(site=request.user)
+
 ##class CurrencyAdmin(admin.ModelAdmin):
 ##    list_display = ('rate_currency', 'enabled_date', 'primary', 'enabled',)
 ##    actions = ['delete_selected']
@@ -32,6 +40,7 @@ class BalanceAdmin(admin.ModelAdmin):
     list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
+    actions = None
     readonly_fields = ['credit', 'cash']
 
     save_as = True
@@ -42,16 +51,22 @@ class CreditBaseAdmin(admin.ModelAdmin):
     list_display = ('balance', 'credit', 'enabled','user')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
-    #readonly_fields = ['user']
+    readonly_fields = ['user']
 
+    actions = None
     save_as = True
     save_on_top = True
     list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        obj.save()
 
 class BalanceHistoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'accountcode', 'amount', 'time_stamp','pay_date')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
+    actions = None
 
     save_as = False
     save_on_top = False
