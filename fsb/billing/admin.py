@@ -3,8 +3,20 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from fsb.billing.models import Balance, CreditBase, BalanceHistory
+from fsa.directory.models import Endpoint
 #from fsb.billing.models import NibbleBill
 import logging
+
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
+
+UserAdmin.list_filter = ['is_staff', 'is_superuser', 'date_joined', 'last_login', 'groups', 'user_permissions']
+admin.site.unregister(Group)
+admin.site.unregister(User)
+admin.site.register(Group, GroupAdmin)
+admin.site.register(User, UserAdmin)
+
+#from grappelli.admin import GrappelliModelAdmin, GrappelliStackedInline, GrappelliTabularInline
 l = logging.getLogger('fsb.billing.admin')
 
 #admin.site.disable_action('delete_selected')
@@ -36,16 +48,41 @@ class BillingBaseAdmin(admin.ModelAdmin):
 ##    save_on_top = True
 ##    list_per_page = 50
 
+class EndpointItemInline(admin.StackedInline):
+    model = Endpoint
+    classes = ('collapse open',)
+
+class UserAdmin(admin.ModelAdmin):
+    inlines= [EndpointItemInline]
+    list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
+    search_fields  = ['username', 'first_name',  'last_name', 'email']
+    date_hierarchy = 'date_joined'
+
 class BalanceAdmin(admin.ModelAdmin):
-    list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site',)
+    list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site', 'last_login', 'date_joined',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
     actions = None
-    readonly_fields = ['credit', 'cash']
+    readonly_fields = ['accountcode_name', 'credit', 'cash', 'last_login', 'date_joined']
+    #inlines= [EndpointItemInline]
+    fieldsets = (
+        #(None, {'fields': ('username', 'password')}),
+        (None, {'fields': (('accountcode_name', 'cash', 'credit'), 'enabled')}),
+        #(_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (None, {'fields': ('tariff', 'timelimit', 'site')}),
+        (_('Important dates'), {'classes': ('collapse closed',), 'fields': (('last_login', 'date_joined'),)}),
+        #(_('Groups'), {'fields': ('groups',)}),
+    )
+
+
 
     save_as = True
     save_on_top = True
     list_per_page = 50
+
+    class Media:
+        verbose_name = _(u'Аккаунт')
+        verbose_name_plural = _(u'Аккаунты')
 
 class CreditBaseAdmin(admin.ModelAdmin):
     list_display = ('balance', 'credit', 'enabled','user')

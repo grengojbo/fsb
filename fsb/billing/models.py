@@ -35,7 +35,7 @@ __revision__ = '$Revision$'
 # Create your models here.
 class Balance(models.Model):
     """(Balance description)"""
-    accountcode = models.OneToOneField(User, parent_link=True, primary_key=True)
+    accountcode = models.OneToOneField(User, verbose_name=_(u'username'), parent_link=True, primary_key=True)
     #accountcode = models.ForeignKey(Contact)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
@@ -66,10 +66,22 @@ class Balance(models.Model):
         return "%(rate)0.2f %(currency)s" % {'rate': self.cash, 'currency': self.currency}
     cash_currency.short_description = _(u'Баланс')
 
-    @property
     def username(self):
         #return "<a href='/admin/auth/user/{2}/'>{0} {1}</a>".format(self.accountcode.first_name, self.accountcode.last_name, self.accountcode.pk)
         return "{0} {1}".format(self.accountcode.first_name, self.accountcode.last_name)
+    username.short_description = _(u'Имя Фамилия')
+
+    def last_login(self):
+        return self.accountcode.last_login
+    last_login.short_description = _('last login')
+
+    def date_joined(self):
+        return self.accountcode.date_joined
+    date_joined.short_description = _('date joined')
+
+    def accountcode_name(self):
+        return self.accountcode.username
+    accountcode_name.short_description = _('username')
 
     @property
     def currency(self):
