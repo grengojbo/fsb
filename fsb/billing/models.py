@@ -7,24 +7,23 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from fsa.core.managers import GenericManager
 from fsb.billing.managers import BalanceManager
-from fsa.server.models import Server
+#from fsa.server.models import Server
 from fsb.tariff.models import TariffPlan
-from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
-from django.db.models.expressions import F
+#from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
+#from django.db.models.expressions import F
 import datetime
-from django.utils.dateformat import DateFormat
-from django.utils.encoding import force_unicode
+#from django.utils.dateformat import DateFormat
+#from django.utils.encoding import force_unicode
 import os.path, csv, logging
-from pytils.dt import ru_strftime
-from django.contrib.sites.models import RequestSite
+#from pytils.dt import ru_strftime
+#from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from bursar.fields import CurrencyField
 from currency.fields import *
-from currency.money import Money
-from currency.models import Currency
+#from currency.money import Money
+#from currency.models import Currency
 from decimal import Decimal
 from bursar.models import PaymentBase
-# TODO  the md5 module is deprecated; use hashlib instead
 import hashlib
 
 l = logging.getLogger('fsb.billing.models')
@@ -38,6 +37,7 @@ class Balance(models.Model):
     accountcode = models.OneToOneField(User, verbose_name=_(u'username'), parent_link=True, primary_key=True)
     #accountcode = models.ForeignKey(Contact)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
+    #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"))
     cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
     tariff = models.ForeignKey(TariffPlan, default=1, verbose_name=_('Tariff Plan'), related_name='tariffplangroup')
     enabled = models.BooleanField(_(u'Enable'), default=True)
@@ -63,7 +63,7 @@ class Balance(models.Model):
 
     def cash_currency(self):
         """docstring for rate_currency"""
-        return "%(rate)0.2f %(currency)s" % {'rate': self.cash, 'currency': self.currency}
+        return u"{rate:0.2f} {currency:>s}".format(**{'rate': self.cash, 'currency': self.currency})
     cash_currency.short_description = _(u'Баланс')
 
     def username(self):
@@ -157,9 +157,9 @@ class BalanceHistory(PaymentBase):
 
 class CreditBase(models.Model):
     """"""
-    balance = models.ForeignKey(Balance)
+    balance = models.ForeignKey(User, verbose_name=_(u'Account'), related_name='creditbase')
     credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
-    user = models.ForeignKey(User, help_text=_('Operator'))
+    user = models.ForeignKey(User, related_name='createcredituser', help_text=_('Operator'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries
@@ -171,6 +171,9 @@ class CreditBase(models.Model):
         db_table = 'balance_credit'
         verbose_name = _(u'Credit Balance')
         verbose_name_plural = _(u'Credits Balance')
+
+    def __unicode__(self):
+        return self.balance.username
 
     def is_valid(self):
         # TODO: Check expire

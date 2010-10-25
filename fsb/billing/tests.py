@@ -9,16 +9,12 @@ Replace these with more appropriate tests for your application.
 __author__ = '$Author$'
 __revision__ = '$Revision$'
 
-import unittest
 from django import test
 from django.test.client import Client
 from django.contrib.auth.models import User
 from fsb.billing.models import Balance, CreditBase
-from fsa.server.models import Server
 #from satchmo_store.contact.models import Contact, ContactRole
-from livesettings import ConfigurationSettings, config_value, config_choice_values
 from decimal import Decimal
-import csv, sys, os
 
 class BaseTestCase(test.TestCase):
     #fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan', 'l10n-data.yaml', 'test-config.yaml', 'test_contact.yaml', 'product_category', 'product']
@@ -46,7 +42,7 @@ class BaseTestCase(test.TestCase):
         bal = Balance.objects.create_balance(self.user)
         self.assertEquals(bal.cash, Decimal("0.0"))
         self.assertEquals(bal.credit, Decimal("0.0"))
-        cred = CreditBase(balance=bal, user=self.user2)
+        cred = CreditBase(balance=self.user, user=self.user2)
         cred.credit=Decimal('10.20')
         cred.enabled=True
         cred.save()

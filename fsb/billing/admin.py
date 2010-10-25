@@ -10,6 +10,8 @@ import logging
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 
+from grappelli.admin import GrappelliModelAdmin
+
 UserAdmin.list_filter = ['is_staff', 'is_superuser', 'date_joined', 'last_login', 'groups', 'user_permissions']
 admin.site.unregister(Group)
 admin.site.unregister(User)
@@ -84,11 +86,25 @@ class BalanceAdmin(admin.ModelAdmin):
         verbose_name = _(u'Аккаунт')
         verbose_name_plural = _(u'Аккаунты')
 
-class CreditBaseAdmin(admin.ModelAdmin):
-    list_display = ('balance', 'credit', 'enabled','user')
+class CreditBaseAdmin(GrappelliModelAdmin):
+    list_display = ('__unicode__', 'credit', 'enabled','user', 'expire_time')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
-    readonly_fields = ['user']
+    #readonly_fields = ['user']
+    #raw_id_fields = ('balance',)
+    autocomplete = {
+        'balance': {
+            'search_fields': ('username',),
+            #'id_format':  'id',           # optional
+            #'input_format':  'label',           # optional
+            #'list_format':   'item.label',  # optional
+            #'url': 'http://ws.geonames.org/searchJSON', # optional
+            #'json_root': 'geonames', # optional
+        }
+    }
+    fieldsets = (
+        (None,{'fields': ('balance', 'credit', 'expire_time')}),
+    )
 
     actions = None
     save_as = True
@@ -97,6 +113,7 @@ class CreditBaseAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
+        obj.enabled = True
         obj.save()
 
 class BalanceHistoryAdmin(admin.ModelAdmin):
