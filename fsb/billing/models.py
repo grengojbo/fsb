@@ -190,6 +190,7 @@ class CreditBase(models.Model):
         """
 
         """
+        # TODO: Добавить проверку если отключен то неснимать повторно кредит
         if self.enabled:
             l.debug("add credit")
             ball = Balance.objects.get(pk=self.balance.pk)

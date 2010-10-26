@@ -19,7 +19,7 @@ admin.site.register(Group, GroupAdmin)
 admin.site.register(User, UserAdmin)
 
 #from grappelli.admin import GrappelliModelAdmin, GrappelliStackedInline, GrappelliTabularInline
-l = logging.getLogger('fsb.billing.admin')
+log = logging.getLogger('fsb.billing.admin')
 
 #admin.site.disable_action('delete_selected')
 
@@ -89,8 +89,11 @@ class BalanceAdmin(admin.ModelAdmin):
 class CreditBaseAdmin(GrappelliModelAdmin):
     list_display = ('__unicode__', 'credit', 'enabled','user', 'expire_time')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
+    list_filter = ('enabled',)
+    search_fields = ['balance__username']
     #actions = ['delete_selected']
     #readonly_fields = ['user']
+    change_readonly_fields = ('balance', 'credit', 'expire_time')
     #raw_id_fields = ('balance',)
     autocomplete = {
         'balance': {
@@ -103,8 +106,23 @@ class CreditBaseAdmin(GrappelliModelAdmin):
         }
     }
     fieldsets = (
-        (None,{'fields': ('balance', 'credit', 'expire_time')}),
+        (None,{'fields': ('balance', 'enabled', 'credit', 'expire_time')}),
     )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('balance', 'credit', 'expire_time')}
+        ),
+    )
+    def get_readonly_fields(self, request, obj=None):
+        if not obj:
+            return super(CreditBaseAdmin, self).get_fieldsets(request, obj)
+        return self.change_readonly_fields
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        return super(CreditBaseAdmin, self).get_fieldsets(request, obj)
 
     actions = None
     save_as = True
@@ -113,7 +131,8 @@ class CreditBaseAdmin(GrappelliModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
-        obj.enabled = True
+        if not change:
+            obj.enabled = True
         obj.save()
 
 class BalanceHistoryAdmin(admin.ModelAdmin):
