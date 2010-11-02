@@ -38,7 +38,7 @@ class Balance(models.Model):
     #accountcode = models.ForeignKey(Contact)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"))
-    cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
+    cash = CurrencyField(_("Balance"), max_digits=18, decimal_places=6, default=Decimal("0.00"), display_decimal=2)
     tariff = models.ForeignKey(TariffPlan, default=1, verbose_name=_('Tariff Plan'), related_name='tariffplangroup')
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = BalanceManager() # default manager must be always on first place! It's used as default_manager
@@ -191,6 +191,7 @@ class CreditBase(models.Model):
 
         """
         # TODO: Добавить проверку если отключен то неснимать повторно кредит
+
         if self.enabled:
             l.debug("add credit")
             ball = Balance.objects.get(pk=self.balance.pk)

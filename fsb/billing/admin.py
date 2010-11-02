@@ -16,7 +16,7 @@ UserAdmin.list_filter = ['is_staff', 'is_superuser', 'date_joined', 'last_login'
 admin.site.unregister(Group)
 admin.site.unregister(User)
 admin.site.register(Group, GroupAdmin)
-admin.site.register(User, UserAdmin)
+
 
 #from grappelli.admin import GrappelliModelAdmin, GrappelliStackedInline, GrappelliTabularInline
 log = logging.getLogger('fsb.billing.admin')
@@ -56,25 +56,27 @@ class EndpointItemInline(admin.StackedInline):
 
 class UserAdmin(admin.ModelAdmin):
     inlines= [EndpointItemInline]
-    list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
+    #list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
+    list_display   = ('username', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
     search_fields  = ['username', 'first_name',  'last_name', 'email']
     date_hierarchy = 'date_joined'
 
 class BalanceAdmin(admin.ModelAdmin):
+    #list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
     list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site', 'last_login', 'date_joined',)
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
     actions = None
-    readonly_fields = ['accountcode_name', 'credit', 'cash', 'last_login', 'date_joined']
+    #readonly_fields = ['accountcode_name', 'credit', 'cash', 'last_login', 'date_joined']
     #inlines= [EndpointItemInline]
-    fieldsets = (
-        #(None, {'fields': ('username', 'password')}),
-        (None, {'fields': (('accountcode_name', 'cash', 'credit'), 'enabled')}),
-        #(_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        (None, {'fields': ('tariff', 'timelimit', 'site')}),
-        (_('Important dates'), {'classes': ('collapse closed',), 'fields': (('last_login', 'date_joined'),)}),
-        #(_('Groups'), {'fields': ('groups',)}),
-    )
+#    fieldsets = (
+#        #(None, {'fields': ('username', 'password')}),
+#        (None, {'fields': (('accountcode_name', 'cash', 'credit'), 'enabled')}),
+#        #(_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+#        (None, {'fields': ('tariff', 'timelimit', 'site')}),
+#        (_('Important dates'), {'classes': ('collapse closed',), 'fields': (('last_login', 'date_joined'),)}),
+#        #(_('Groups'), {'fields': ('groups',)}),
+#    )
 
 
 
@@ -146,6 +148,8 @@ class BalanceHistoryAdmin(admin.ModelAdmin):
     list_per_page = 50
 
 admin.site.register(Balance, BalanceAdmin)
+#admin.site.register(User, BalanceAdmin)
 admin.site.register(CreditBase, CreditBaseAdmin)
 admin.site.register(BalanceHistory, BalanceHistoryAdmin)
 #admin.site.register(NibbleBill, BillingBaseAdmin)
+admin.site.register(User, UserAdmin)
