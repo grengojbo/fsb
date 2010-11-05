@@ -12,3 +12,4 @@
 ##signals.satchmo_registration_verified.connect(handler_create_balance)
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^bursar\.fields\.CurrencyField"])
+add_introspection_rules([], ["^common\.fields\.AutoOneToOneField"])

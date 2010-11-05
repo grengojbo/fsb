@@ -5,7 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 from fsb.billing.models import Balance, CreditBase, BalanceHistory
 from fsa.directory.models import Endpoint
 #from fsb.billing.models import NibbleBill
+from decimal import Decimal
 import logging
+import settings
 
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
@@ -53,18 +55,66 @@ class BillingBaseAdmin(admin.ModelAdmin):
 class EndpointItemInline(admin.StackedInline):
     model = Endpoint
     classes = ('collapse open',)
+    extra = 1
 
 class UserAdmin(admin.ModelAdmin):
     inlines= [EndpointItemInline]
     #list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
-    list_display   = ('username', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
+    list_display   = ('username', 'email', 'balance_cash', 'balance_tariff', 'balance_site', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
     search_fields  = ['username', 'first_name',  'last_name', 'email']
     date_hierarchy = 'date_joined'
 
+    def balance_cash(self, obj):
+        if obj.balance.credit > Decimal('0'):
+            cash = obj.balance.cash + obj.balance.credit
+            return "<b>{0}</b>/{1}".format(cash, obj.balance.credit)
+        elif obj.balance.cash < Decimal('0'):
+            return '<span style="color: Red;"><b>{0}</b></span>'.format(obj.balance.cash)
+        else:
+            return "<b>{0}</b>".format(obj.balance.cash)
+    balance_cash.short_description = _(u'Баланс/Кредит')
+    balance_cash.allow_tags = True
+
+    def balance_tariff(self,obj):
+        return obj.balance.tariff
+    balance_tariff.short_description = _(u'Тариф')
+
+    def balance_site(self, obj):
+        return obj.balance.site
+    balance_site.short_description = _(u'Site')
+
+    def _prepare(self,request):
+        """
+        Подготовка нужных нам данных
+        """
+        # TODO: неработает
+        user = request.user
+        user.is_diller = bool(user.groups.filter(pk=1)) or user.is_superuser
+        user.is_manager = not request.user.is_editor
+        log.debug('Prepare User')
+
+    def __call__(self,request,url):
+        self._prepare(request)
+        return super(UserAdmin,self).__call__(request,url)
+
+    def queryset(self, request):
+        """
+        Формируем queryset  для list-view
+
+        Фильтруем пользователей по сайтам, только если мы не
+        супер юзер или редактор
+        """
+        qs = super(UserAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return qs
+        else:
+            #log.debug('user: {0}'.format(request.user))
+            return qs.filter(balance__site__name__exact = request.user)
+
 class BalanceAdmin(admin.ModelAdmin):
     #list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
-    list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site', 'last_login', 'date_joined',)
-    #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
+    #list_display = ('accountcode', 'username', 'cash_currency',  'tariff', 'timelimit', 'credit', 'enabled', 'site', 'last_login', 'date_joined',)
+    list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     #actions = ['delete_selected']
     actions = None
     #readonly_fields = ['accountcode_name', 'credit', 'cash', 'last_login', 'date_joined']

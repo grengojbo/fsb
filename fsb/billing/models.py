@@ -25,6 +25,7 @@ from currency.fields import *
 from decimal import Decimal
 from bursar.models import PaymentBase
 import hashlib
+from common.fields import AutoOneToOneField
 
 l = logging.getLogger('fsb.billing.models')
 
@@ -34,7 +35,9 @@ __revision__ = '$Revision$'
 # Create your models here.
 class Balance(models.Model):
     """(Balance description)"""
-    accountcode = models.OneToOneField(User, verbose_name=_(u'username'), parent_link=True, primary_key=True)
+    #accountcode = models.OneToOneField(User, verbose_name=_(u'username'), parent_link=True, primary_key=True)
+    #accountcode = models.OneToOneField(User, verbose_name=_(u'username'), blank=False, related_name="balances")
+    accountcode = AutoOneToOneField(User, verbose_name=_(u'username'), primary_key=True)
     #accountcode = models.ForeignKey(Contact)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2)
     #cash = models.DecimalField(_("Balance"), max_digits=18, decimal_places=2, default=Decimal("0.00"))
@@ -54,8 +57,8 @@ class Balance(models.Model):
         verbose_name, verbose_name_plural = _(u"Balance"), _(u"Balances")
         permissions = (("api_view", "Can api view"),)
 
-    def __unicode__(self):
-        return self.accountcode.username
+#    def __unicode__(self):
+#        return self.accountcode.username
 
     @models.permalink
     def get_absolute_url(self):
@@ -66,22 +69,22 @@ class Balance(models.Model):
         return u"{rate:0.2f} {currency:>s}".format(**{'rate': self.cash, 'currency': self.currency})
     cash_currency.short_description = _(u'Баланс')
 
-    def username(self):
-        #return "<a href='/admin/auth/user/{2}/'>{0} {1}</a>".format(self.accountcode.first_name, self.accountcode.last_name, self.accountcode.pk)
-        return "{0} {1}".format(self.accountcode.first_name, self.accountcode.last_name)
-    username.short_description = _(u'Имя Фамилия')
-
-    def last_login(self):
-        return self.accountcode.last_login
-    last_login.short_description = _('last login')
-
-    def date_joined(self):
-        return self.accountcode.date_joined
-    date_joined.short_description = _('date joined')
-
-    def accountcode_name(self):
-        return self.accountcode.username
-    accountcode_name.short_description = _('username')
+#    def username(self):
+#        #return "<a href='/admin/auth/user/{2}/'>{0} {1}</a>".format(self.accountcode.first_name, self.accountcode.last_name, self.accountcode.pk)
+#        return "{0} {1}".format(self.accountcode.first_name, self.accountcode.last_name)
+#    username.short_description = _(u'Имя Фамилия')
+#
+#    def last_login(self):
+#        return self.accountcode.last_login
+#    last_login.short_description = _('last login')
+#
+#    def date_joined(self):
+#        return self.accountcode.date_joined
+#    date_joined.short_description = _('date joined')
+#
+#    def accountcode_name(self):
+#        return self.accountcode.username
+#    accountcode_name.short_description = _('username')
 
     @property
     def currency(self):
