@@ -15,6 +15,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from l10n.utils import moneyfmt
 from livesettings import config_value
+from django.contrib.auth.models import User
 #from fsb.prepaid.utils import generate_certificate_code
 #from fsb.billing.models import CurrencyBase
 #from payment.utils import get_processor_by_key
@@ -174,7 +175,7 @@ class Prepaid(models.Model):
     #site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
     #order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
     num_prepaid = models.CharField(_(u'Number'), max_length=12, unique=True)
-    code = models.CharField(_('Prepaid Code'), max_length=14, unique=True)
+    code = models.CharField(_('Prepaid Code'), max_length=16, unique=True)
     #purchased_by =  models.ForeignKey(Contact, verbose_name=_('Purchased by'),
     #    blank=True, null=True, related_name='prepaids_purchased')
     date_added = models.DateField(_("Date added"), auto_now_add = True)
@@ -184,6 +185,7 @@ class Prepaid(models.Model):
     valid = models.BooleanField(_('Valid'), default=False)
     message = models.CharField(_('Message'), blank=True, null=True, max_length=254)
     start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2, max_digits=8)
+    diller = models.ForeignKey(User, verbose_name=_(u'Diller'), default=1)
     #currency = models.ForeignKey(CurrencyBase, default=1, related_name='currencys', verbose_name=_('Currency'))
     objects = PrepaidManager()
 
