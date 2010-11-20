@@ -17,7 +17,7 @@ from fsb.billing.models import Balance
 
 class AccountHandler(PaginatedCollectionBaseHandler):
     """
-    Authenticated entrypoint for blogposts.
+    Working with User Accounts
     """
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
     model = Balance
@@ -93,8 +93,9 @@ class AccountHandler(PaginatedCollectionBaseHandler):
     @transaction.commit_on_success
     def delete(self, request, account):
         """
-        Update number plan type.
+        Disable User Accounts
         """
+        # TODO: tests and disable endpoint
         attrs = self.flatten_dict(request.POST)
         try:
             np = Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)
@@ -107,7 +108,7 @@ class AccountHandler(PaginatedCollectionBaseHandler):
     @transaction.commit_on_success
     def create(self, request):
         """
-        Update number plan type.
+        Create new User Accounts
         """
         attrs = self.flatten_dict(request.POST)
         u = User.objects.get(username=request.user)

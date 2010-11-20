@@ -8,9 +8,26 @@ from fsa.directory.models import Endpoint
 from decimal import Decimal
 import logging
 import settings
-
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
+
+from django import template
+from django.db import transaction
+from django.conf import settings
+from django.contrib import admin
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminPasswordChangeForm
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.html import escape
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
+
+csrf_protect_m = method_decorator(csrf_protect)
+
+
 
 from grappelli.admin import GrappelliModelAdmin
 
@@ -59,19 +76,50 @@ class EndpointItemInline(admin.StackedInline):
 
 class UserAdmin(admin.ModelAdmin):
     inlines= [EndpointItemInline]
+
+    add_form_template = 'admin/auth/user/add_form.html'
+    change_user_password_template = None
+    diler_fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Groups'), {'fields': ('groups',)}),
+    )
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Groups'), {'fields': ('groups',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2')}
+        ),
+    )
+
+    form = UserChangeForm
+    add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
+    list_filter = ('is_staff', 'is_active')
+    #ordering = ('username',)
+    filter_horizontal = ('user_permissions',)
+
     #list_display   = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
-    list_display   = ('username', 'email', 'balance_cash', 'balance_tariff', 'balance_site', 'date_joined', 'last_login', 'is_staff', 'is_superuser')
+    list_display   = ('username', 'email', 'balance_cash', 'balance_tariff', 'balance_site', 'format_date_joined', 'format_last_login', 'is_staff', 'is_superuser')
     search_fields  = ['username', 'first_name',  'last_name', 'email']
     date_hierarchy = 'date_joined'
 
     def balance_cash(self, obj):
         if obj.balance.credit > Decimal('0'):
             cash = obj.balance.cash + obj.balance.credit
-            return "<b>{0}</b>/{1}".format(cash, obj.balance.credit)
+            return "<b>{0:0.2f}</b>/{1}".format(cash, obj.balance.credit)
         elif obj.balance.cash < Decimal('0'):
-            return '<span style="color: Red;"><b>{0}</b></span>'.format(obj.balance.cash)
+            return '<span style="color: Red;"><b>{0:0.2f}</b></span>'.format(obj.balance.cash)
         else:
-            return "<b>{0}</b>".format(obj.balance.cash)
+            return "<b>{0:0.2f}</b>".format(obj.balance.cash)
     balance_cash.short_description = _(u'Баланс/Кредит')
     balance_cash.allow_tags = True
 
@@ -83,6 +131,14 @@ class UserAdmin(admin.ModelAdmin):
         return obj.balance.site
     balance_site.short_description = _(u'Site')
 
+    def format_date_joined(self, obj):
+        return obj.date_joined.strftime('%d.%m.%Y')
+    format_date_joined.short_description = _('date joined')
+
+    def format_last_login(self, obj):
+        return obj.last_login.strftime('%d.%m.%Y %H:%M')
+    format_last_login.short_description = _('last login')
+
     def _prepare(self,request):
         """
         Подготовка нужных нам данных
@@ -93,9 +149,95 @@ class UserAdmin(admin.ModelAdmin):
         user.is_manager = not request.user.is_editor
         log.debug('Prepare User')
 
-    def __call__(self,request,url):
+    def __call__(self, request, url):
         self._prepare(request)
-        return super(UserAdmin,self).__call__(request,url)
+        if url is None:
+            return self.changelist_view(request)
+        if url.endswith('password'):
+            return self.user_change_password(request, url.split('/')[0])
+        return super(UserAdmin, self).__call__(request, url)
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        return super(UserAdmin, self).get_fieldsets(request, obj)
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Use special form during user creation
+        """
+        defaults = {}
+        if obj is None:
+            defaults.update({
+                'form': self.add_form,
+                'fields': admin.util.flatten_fieldsets(self.add_fieldsets),
+            })
+        defaults.update(kwargs)
+        return super(UserAdmin, self).get_form(request, obj, **defaults)
+
+    def get_urls(self):
+        from django.conf.urls.defaults import patterns
+        return patterns('',
+            (r'^(\d+)/password/$', self.admin_site.admin_view(self.user_change_password))
+        ) + super(UserAdmin, self).get_urls()
+
+    @csrf_protect_m
+    @transaction.commit_on_success
+    def add_view(self, request, form_url='', extra_context=None):
+        # It's an error for a user to have add permission but NOT change
+        # permission for users. If we allowed such users to add users, they
+        # could create superusers, which would mean they would essentially have
+        # the permission to change users. To avoid the problem entirely, we
+        # disallow users from adding users if they don't have change
+        # permission.
+        if not self.has_change_permission(request):
+            if self.has_add_permission(request) and settings.DEBUG:
+                # Raise Http404 in debug mode so that the user gets a helpful
+                # error message.
+                raise Http404('Your user does not have the "Change user" permission. In order to add users, Django requires that your user account have both the "Add user" and "Change user" permissions set.')
+            raise PermissionDenied
+        if extra_context is None:
+            extra_context = {}
+        defaults = {
+            'auto_populated_fields': (),
+            'username_help_text': self.model._meta.get_field('username').help_text,
+        }
+        extra_context.update(defaults)
+        return super(UserAdmin, self).add_view(request, form_url, extra_context)
+
+    def user_change_password(self, request, id):
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        user = get_object_or_404(self.model, pk=id)
+        if request.method == 'POST':
+            form = self.change_password_form(user, request.POST)
+            if form.is_valid():
+                new_user = form.save()
+                msg = _('Password changed successfully.')
+                messages.success(request, msg)
+                return HttpResponseRedirect('..')
+        else:
+            form = self.change_password_form(user)
+
+        fieldsets = [(None, {'fields': form.base_fields.keys()})]
+        adminForm = admin.helpers.AdminForm(form, fieldsets, {})
+
+        return render_to_response(self.change_user_password_template or 'admin/auth/user/change_password.html', {
+            'title': _('Change password: %s') % escape(user.username),
+            'adminForm': adminForm,
+            'form': form,
+            'is_popup': '_popup' in request.REQUEST,
+            'add': True,
+            'change': False,
+            'has_delete_permission': False,
+            'has_change_permission': True,
+            'has_absolute_url': False,
+            'opts': self.model._meta,
+            'original': user,
+            'save_as': False,
+            'show_save': True,
+            'root_path': self.admin_site.root_path,
+        }, context_instance=RequestContext(request))
 
     def queryset(self, request):
         """
@@ -108,7 +250,7 @@ class UserAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         else:
-            #log.debug('user: {0}'.format(request.user))
+            log.debug('user: {0}'.format(request.user))
             return qs.filter(balance__site__name__exact = request.user)
 
 class BalanceAdmin(admin.ModelAdmin):

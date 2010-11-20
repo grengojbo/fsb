@@ -26,3 +26,7 @@ python setup.py build
 python setup.py install
 
 http://www.random.org/
+
+
+The system cannot create any sessions at this time.
+[RIT] switch_core_session.c:1499 The system cannot create any sessions at this time.

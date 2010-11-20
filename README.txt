@@ -26,9 +26,9 @@ pref_digits - обрабатывает шаблоны
 Сначала добавляем основные параметры тарифного плана в таблицу *Начало › Tariff › Тарифные планы*
 ОБЯЗАТЕЛЬНО для каждого сайта должен быть 1 тарифный план по умолчанию
 
-
+### Работа с FreeSWITCH Admin API
+1. Добавляем сайт диллера например diller.example.com
+2. Добавляем пользователя с именем сайта diller.example.com
+2. Добавляем пользователя в группу Диллер и устанавливаем Статус персонала для возможности входить в административную часть сайта.
 
 ./manage.py load_prepaid --format_csv=1 ../../fsb/fsb/prepaid/fixtures/test.csv
-
-The system cannot create any sessions at this time.
-[RIT] switch_core_session.c:1499 The system cannot create any sessions at this time.
