@@ -23,7 +23,7 @@ from decimal import Decimal
 from decimal import *
 from fsa.core.utils import CsvData
 import logging
-l = logging.getLogger('fsb.tariff.tests')
+log = logging.getLogger('fsb.tariff.tests')
 
 class TariffTestCase(test.TestCase):
     #fixtures = ['testsite', 'alias', 'context', 'extension', 'server', 'acl', 'gateway', 'fsgroup', 'sipprofile', 'testnp', 'testendpoint', 'testcdr', 'currency_base', 'currency', 'tariffplan']
@@ -38,53 +38,58 @@ class TariffTestCase(test.TestCase):
         from currency.models import Currency
         from django.contrib.sites.models import RequestSite
         from django.contrib.sites.models import Site
+
+        f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'tariff_test.csv'), "rt")
         #tf = TariffPlan.objects.get(enabled=True, primary=True)
         save_cnt = 0
         tariff=1
         site = 1
         format_csv = 1
+        fixture_count = 0
+        object_count = 0
 
-        #f = open(os.path.join(os.path.dirname(__file__), 'fixtures', '15.csv'), "rt")
-        #tf.tariff_format = "delimiter=';'time_format='%d.%m.%Y 00:00'lcr|country_code|special_digits|zeros|name|rate"
         try:
-            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'country_code|name|digits|price|rate|currency|weeks|time_start|time_end")
-            f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'tariff_test.csv'), "rt")
+            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'country_code|name|pref_digits|operator_type|price|rate|currency|weeks|time_start|time_end|date_start|quality")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             tf = TariffPlan.objects.get(pk=tariff, enabled=True, site__pk=site)
+            s = Site.objects.get(pk=site)
             for row in reader:
                 try:
-                    #l.debug(row)
+                    #log.debug(u'row: {0}'.format(row))
                     country_list, country_code, n = cd.parse(row)
-                    l.debug(country_code)
+                    log.debug("country_code {0} ({1})".format(country_code, country_list))
                     for country in country_list:
                         n['country_code'] = country_code
-                        n['price'] = str(trunc_decimal(n['price'], 2))
-                        digits = n['digits']
-                        #price = Money(n['price'], n['currency'])
-                        price = Money(n['price'], 'USD')
-                        #price = n['price']
-                        objects_in_fixture = Tariff.objects.add_tariff(tf, n, digits, price)
-                        save_cnt += objects_in_fixture
-                        #l.debug(price)
-                        #l.debug(n["time_start"])
-                        #, n["name"], price )
-                        # route
-                        #writer.writerow((country_code, n["name"], country, 0, Decimal('0.0000'), Decimal('0.0000'), 1,   Decimal('0.0000'), price, n['brand']))
-
+                        digits = country
+                        price = n['price']
+                        log.debug("digits {0}".format(country))
+                        if n['weeks'] is not None:
+                            if n['weeks'] == "all":
+                                n['week'] = 0
+                                objects_in_fixture = Tariff.objects.add_tariff(tf, n, country, price)
+                                object_count += objects_in_fixture
+                            else:
+                                for i in eval(n['weeks']):
+                                    n['week'] = int(i)
+                                    objects_in_fixture = Tariff.objects.add_tariff(tf, n, country, price)
+                                    object_count += objects_in_fixture
                 except Exception, e:
-                    l.error("line: %i => %s" % (cd.line_num, e))
+                    log.error("line: {0} => {1}".format(cd.line_num, e))
                     pass
+            label_found = True
+        except Exception, e:
+            log.error(e)
         finally:
             f.close()
-        self.assertEquals(save_cnt, 3)
+        self.assertEquals(object_count, 6)
         key_caches_tariff = "tariff::{0}".format(tariff)
         try:
             res = keyedcache.cache_get(key_caches_tariff)
         except:
             pass
-        res = Tariff.objects.get(digits="38039")
+        res = Tariff.objects.get(digits="38094")
         self.assertEquals(res.country_code, 380)
         self.assertEquals(res.time_start, datetime.time(0, 10))
         self.assertEquals(res.time_end, datetime.time(23, 54))
-        self.assertEquals(res.rate, Decimal("0.90"))
-        self.assertEquals(res.price, Decimal("0.77"))
+        self.assertEquals(res.rate, Decimal("0.96"))
+        self.assertEquals(res.price, Decimal("0.80"))

@@ -127,7 +127,7 @@ class Command(BaseCommand):
                                     objects_in_fixture = Tariff.objects.add_tariff(tf, n, country, price)
                                     object_count += objects_in_fixture
                 except Exception, e:
-                    log.error("line: {0:i} => {1}".format(cd.line_num, e))
+                    log.error("line: {0} => {1}".format(cd.line_num, e))
                     pass
             label_found = True
         except Exception, e:
