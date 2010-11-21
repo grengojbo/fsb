@@ -27,6 +27,7 @@ __author__ = '$Author:$'
 __revision__ = '$Revision:$'
 
 FEE_TARIFF_CHOICES = ((0, _(u'нет')), (1, _(u'ежедневно')), (2, _(u'ежемесячно')), (3, _(u'ежеквартально')), (4, _(u'каждые полгода')), (5, _(u'ежегодно')),)
+OPERATOR_TYPE_CHOICES = (('F', _(u'Fixed')), ('M', _(u'Mobile')), ('N', _(u'Uncown')), ('S', _(u'Satelite')),)
 
 # Create your models here.
 class TariffPlan(models.Model):
@@ -45,12 +46,13 @@ class TariffPlan(models.Model):
     если формат даты отличается то необходимо указать формат date_start=%d.%m.%Y 00:00
     """
     name = models.CharField(_(u'Name'), max_length=80)
-    cash_min = CurrencyField(_("Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
-    fee = CurrencyField(_("Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4)
+    cash_min = CurrencyField(_("Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
+    fee = CurrencyField(_("Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
     fee_period = models.SmallIntegerField(_(u'Период'), choices=FEE_TARIFF_CHOICES, default=0, help_text=_(u'период за который снимается абонентская плата'))
     activation = CurrencyField(_("Активация"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4, help_text=_(u'стоимость активации тарифного плана'))
     date_start = models.DateTimeField(_(u'Date Start'), default=datetime.datetime.now())
     date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
+    pay_round = models.SmallIntegerField(_(u'Округление'), default=1, help_text=_(u'Округляем стоимость разговора если 1 то до копейки для цен не поумолчанию'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     primary = models.BooleanField(_(u'По умолчанию'), default=False)
     site = models.ForeignKey(Site, default=1, verbose_name=_('Site'))
@@ -112,9 +114,9 @@ class Tariff(models.Model):
     name = models.CharField(_(u'Направление'), max_length=200, blank=True)
     country_code = models.IntegerField(_(u'Country Code'), default=0)
     name_lcr = models.CharField(_(u'Направление по базе LCR'), max_length=200, blank=True)
-    rate = CurrencyField(_("Стоимость"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=4)
+    rate = CurrencyField(_(u"Стоимость"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=4)
     #price = MoneyField(max_digits=18, decimal_places=2, default=Money(0, Currency.objects.get_default()))
-    price =  models.DecimalField('Price', default=Decimal("0"), max_digits=18, decimal_places=4)
+    price =  models.DecimalField(_(u'Price'), default=Decimal("0"), max_digits=18, decimal_places=4)
     price_currency = models.CharField(_(u'Currency name'), max_length=3, default="USD")
     tariff_plan = models.ForeignKey('TariffPlan', related_name='tpg')
     #tariff = models.ForeignKey(TariffPlan)
@@ -132,6 +134,10 @@ class Tariff(models.Model):
     #week7 = models.BooleanField(_(u'Sunday'), default=True)
     time_start = models.TimeField(_(u'Time Start'), default=datetime.datetime.strptime("00:00", "%H:%M"))
     time_end = models.TimeField(_(u'Time End'), default=datetime.datetime.strptime("23:59", "%H:%M"))
+    cash_min = CurrencyField(_(u"Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=2)
+    time_round = models.SmallIntegerField(_(u'Округление'), default=1, help_text=_(u'Округляем время если 1 то до секунды, 60 до минуты, 30 то полминуты'))
+    operator_type = models.CharField(_(u'Тип'), choices=OPERATOR_TYPE_CHOICES, max_length=1, default='N')
+    #SmallIntegerField(_(u'Тип'), choices=, default=0, help_text=_(u'период за который снимается абонентская плата'))
     objects =TariffManager()
     active_objects = GenericManager( enabled = True ) # only active entries
     inactive_objects = GenericManager( enabled = False ) # only inactive entries
@@ -155,8 +161,8 @@ class Tariff(models.Model):
         if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
             de = ""
         else:
-            de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
-        return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
+            de = u" по {0}".format(ru_strftime(format=u"%d.%m.%Y", date=self.date_end))
+        return u"c {0}{1}".format(ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
 
 
     def rate_currency(self):
