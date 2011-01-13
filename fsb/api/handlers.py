@@ -74,6 +74,7 @@ class BillingHandler(BaseHandler):
         #try:
             #if account is not None:
                 #log.debug("read accounts %s" % account)
+
                 #return {"count": 1, "accounts": Balance.objects.get(accountcode__username__exact=account, site__name__exact=request.user)}
             #else:
                 ##resp = base.filter(site__name__iexact=request.user)[start:limit]
@@ -96,25 +97,38 @@ class BillingInHandler(BaseHandler):
 
     def read(self, request, phone=None, gw=None):
         user = request.user
+        log.debug('BillingInHandler: {0} {1} {2}'.format(user, phone, gw))
         if user.has_perm("billing.api_view"):
             if phone is not None and gw is not None:
                 key_caches_gw = "gatewayw::{0}".format(gw)
                 key_caches_endpoint = "endpoint::{0}".format(phone)
-                dialplan_caches_gw = "dialplan::gatewayw::{0}".format(gw)
+                dialplan_caches_gw = "dialplan::gatewayw::{0}::endpoint::{1}".format(gw, phone)
                 dialplan_caches_endpoint = "dialplan::endpoint::{0}".format(phone)
                 try:
                     gateway = keyedcache.cache_get(key_caches_gw)
-                    lcr_rate = lcr_price = gateway.price
-                    lcr_currency = gateway.price_currency
+                except:
+                    gateway = SofiaGateway.objects.get(name__exact=gw, enabled=True)
+                    keyedcache.cache_set(key_caches_gw, value=gateway)
+                    log.error("Is not gateway: {0}".format(gw))
+                #log.debug(gateway.id)
+                #lcr_query = "SELECT l.id AS id, l.digits AS digits, l.rate AS rate, l.price AS price, l.price_currency AS currency, l.name AS name FROM lcr l WHERE l.carrier_id_id= '{1}' AND l.enabled = '1' AND l.digits IN ({0}) AND CURTIME() BETWEEN l.time_start AND l.time_end AND (DAYOFWEEK(NOW()) = l.weeks OR l.weeks = 0) ORDER BY  digits DESC, reliability DESC, quality DESC;".format(pars_phone(phone), gateway.id)
+                lcr_query = "SELECT l.id AS id, l.digits AS digits, l.rate AS rate, l.price AS price, l.price_currency AS currency, l.name AS name FROM lcr l WHERE l.carrier_id_id= '{1}' AND l.enabled = '1' AND l.digits IN ({0}) ORDER BY  digits DESC, reliability DESC, quality DESC;".format(pars_phone(phone), gateway.id)
+                #log.debug(lcr_query)
+                #resp = Lcr.objects.raw(lcr_query)[0]
+                try:
+                    lcr = keyedcache.cache_get(dialplan_caches_gw)
+                    lcr_rate = lcr.lcr_rate
+                    lcr_price = lcr.lcr_price
+                    lcr_currency = lcr.lcr_currency
                 except:
                     try:
-                        gateway = SofiaGateway.objects.get(name__exact=gw, enabled=True)
-                        keyedcache.cache_set(key_caches_gw, value=gateway)
-                        lcr_rate = lcr_price = gateway.price
-                        lcr_currency = gateway.price_currency
-                        keyedcache.cache_set(dialplan_caches_gw, value={"lcr_rate": lcr_rate, "lcr_price": lcr_rate, "lcr_currency": lcr_currency})
+                        resp = Lcr.objects.raw(lcr_query)[0]
+                        lcr_price = resp.price
+                        lcr_rate = resp.rate
+                        lcr_currency = resp.currency
+                        keyedcache.cache_set(dialplan_caches_gw, value={"lcr_rate": lcr_rate, "lcr_price": lcr_price, "lcr_currency": lcr_currency})
                     except:
-                        log.error("Is not gateway: {0}".format(gw))
+                        log.error("Is not lcr gateway: {0}".format(gw))
                         lcr_rate = lcr_price = "0.18"
                         lcr_currency = "UAH"
                 #endpoint = Endpoint.objects.get(uid__exact=phone, enable=True)
