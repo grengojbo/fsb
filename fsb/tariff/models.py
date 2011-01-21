@@ -1,25 +1,13 @@
 # -*- mode: python; coding: utf-8; -*-
 from django.db import models
-from lib.composition import ForeignCountField, CompositionField
-from django.conf import settings
-from django.db.models import signals
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from fsa.core.managers import GenericManager
 from fsb.tariff.managers import TariffManager
-from fsa.server.models import Server
-from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 import datetime
-from django.utils.dateformat import DateFormat
-from django.utils.encoding import force_unicode
-import os.path, csv, logging
+import   logging
 from pytils.dt import ru_strftime
-from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from bursar.fields import CurrencyField
-from currency.fields import *
-from currency.money import Money
-from currency.models import Currency
 from decimal import Decimal
 l = logging.getLogger('fsb.tariff.models')
 
@@ -110,13 +98,14 @@ class Tariff(models.Model):
     tariff_plan - номер к какому тарифному плану относится смотреть id TariffPlan
     """
     digits = models.CharField(_(u'Digits'), max_length=45, blank=True, help_text=_(u'matching digits'))
+    code = models.PositiveIntegerField(_(u'Code'), default=0)
     # TODO: напрвление
     name = models.CharField(_(u'Направление'), max_length=200, blank=True)
     country_code = models.IntegerField(_(u'Country Code'), default=0)
     name_lcr = models.CharField(_(u'Направление по базе LCR'), max_length=200, blank=True)
-    rate = CurrencyField(_(u"Стоимость"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=4)
+    rate = CurrencyField(_(u"Стоимость"), max_digits=18, decimal_places=6, default=Decimal("0.0"), display_decimal=6)
     #price = MoneyField(max_digits=18, decimal_places=2, default=Money(0, Currency.objects.get_default()))
-    price =  models.DecimalField(_(u'Price'), default=Decimal("0"), max_digits=18, decimal_places=4)
+    price =  models.DecimalField(_(u'Price'), default=Decimal("0"), max_digits=18, decimal_places=6)
     price_currency = models.CharField(_(u'Currency name'), max_length=3, default="USD")
     tariff_plan = models.ForeignKey('TariffPlan', related_name='tpg')
     #tariff = models.ForeignKey(TariffPlan)
@@ -124,14 +113,7 @@ class Tariff(models.Model):
     date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
     enabled = models.BooleanField(_(u'Enable'), default=True)
     weeks = models.SmallIntegerField(_(u'Week'), default=0)
-    #weeks = models.CharField(_(u'Week'), max_length=13, default='1,2,3,4,5,6,7')
-    #week1 = models.BooleanField(_(u'Monday'), default=True)
-    #week2 = models.BooleanField(_(u'Tuesday'), default=True)
-    #week3 = models.BooleanField(_(u'Wednesday'), default=True)
-    #week4 = models.BooleanField(_(u'Thursday'), default=True)
-    #week5 = models.BooleanField(_(u'Friday'), default=True)
-    #week6 = models.BooleanField(_(u'Saturday'), default=True)
-    #week7 = models.BooleanField(_(u'Sunday'), default=True)
+
     time_start = models.TimeField(_(u'Time Start'), default=datetime.datetime.strptime("00:00", "%H:%M"))
     time_end = models.TimeField(_(u'Time End'), default=datetime.datetime.strptime("23:59", "%H:%M"))
     cash_min = CurrencyField(_(u"Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.0"), display_decimal=2)
