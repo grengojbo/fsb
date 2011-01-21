@@ -34,10 +34,12 @@ class TariffPlan(models.Model):
     если формат даты отличается то необходимо указать формат date_start=%d.%m.%Y 00:00
     """
     name = models.CharField(_(u'Name'), max_length=80)
-    cash_min = CurrencyField(_("Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
-    fee = CurrencyField(_("Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
+    cash_min = CurrencyField(_(u"Плата за соединение"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
+    fee = CurrencyField(_(u"Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
     fee_period = models.SmallIntegerField(_(u'Период'), choices=FEE_TARIFF_CHOICES, default=0, help_text=_(u'период за который снимается абонентская плата'))
-    activation = CurrencyField(_("Активация"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4, help_text=_(u'стоимость активации тарифного плана'))
+    activation = CurrencyField(_(u"Активация"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4, help_text=_(u'стоимость активации тарифного плана'))
+    limit_day = models.IntegerField(_(u'Лимит в День'), default=0, help_text=_(u'Лимит безплатных минут в день 0 - без ограничений'))
+    limit_month = models.IntegerField(_(u'Лимит в Месяц'), default=0, help_text=_(u'Лимит безплатных минут в месяц 0 - без ограничений'))
     date_start = models.DateField(_(u'Date Start'), default=datetime.date.today())
     date_end = models.DateField(_(u'Date End'), default=datetime.date.max)
     pay_round = models.SmallIntegerField(_(u'Округление'), default=1, help_text=_(u'Округляем стоимость разговора если 1 то до копейки для цен не поумолчанию'))

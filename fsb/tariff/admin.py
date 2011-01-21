@@ -8,14 +8,25 @@ l = logging.getLogger('fsb.tariff.admin')
 
 class TariffPlanAdmin(admin.ModelAdmin):
     #date_hierarchy = ''
-    list_display = ('id', 'name', 'cash_currency', 'fee_view', 'enabled_date', 'primary', 'enabled', 'site')
+    list_display = ('id', 'name', 'cash_currency', 'fee_view', 'limit_view', 'enabled_date', 'primary', 'enabled', 'site')
     list_filter = ('enabled',)
     #search_fields = []
 
     #fieldsets = ()
+    def limit_view(self, obj):
+        if obj.limit_day > 0 and obj.limit_month > 0:
+            return "{0}/{1} мин.".format(obj.limit_day, obj.limit_month)
+        elif obj.limit_day > 0:
+            return "{0} мин. день".format(obj.limit_day)
+        elif obj.limit_month > 0:
+            return "{0} мин. мес.".format(obj.limit_month)
+        else:
+            return _(u'нет')
+    limit_view.short_description = _(u'Лимит')
     
     save_as = True
     save_on_top = True
+    list_per_page = 50
     #inlines = []
 
 class TariffAdmin(admin.ModelAdmin):
