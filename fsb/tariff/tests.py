@@ -49,13 +49,12 @@ class TariffTestCase(test.TestCase):
         object_count = 0
 
         try:
-            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'country_code|name|pref_digits|operator_type|price|rate|currency|weeks|time_start|time_end|date_start|quality")
+            cd = CsvData("delimiter=';'time_format='%d.%m.%Y'country_code|operator_type|name|pref_digits|price|rate|currency|weeks|time_start|time_end|date_start|time_round|code")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             tf = TariffPlan.objects.get(pk=tariff, enabled=True, site__pk=site)
             s = Site.objects.get(pk=site)
             for row in reader:
                 try:
-                    #log.debug(u'row: {0}'.format(row))
                     country_list, country_code, n = cd.parse(row)
                     log.debug("country_code {0} ({1})".format(country_code, country_list))
                     for country in country_list:
@@ -81,7 +80,7 @@ class TariffTestCase(test.TestCase):
             log.error(e)
         finally:
             f.close()
-        self.assertEquals(object_count, 6)
+        self.assertEquals(object_count, 16)
         key_caches_tariff = "tariff::{0}".format(tariff)
         try:
             res = keyedcache.cache_get(key_caches_tariff)

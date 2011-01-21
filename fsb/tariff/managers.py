@@ -42,11 +42,11 @@ class TariffManager(models.Manager):
         bl.rate = n['rate']
         bl.date_start = n['date_start']
         bl.date_end = n['date_end']
-        if n['time_start']:
+        if n.get('time_start'):
             bl.time_start = n['time_start']
-        if n['time_end']:
+        if n.get('time_end'):
             bl.time_end = n['time_end']
-        if n['week']:
+        if n.get('week'):
             bl.weeks = n['week']
         #bl.lead_strip = 0
         #bl.trail_strip = 0
