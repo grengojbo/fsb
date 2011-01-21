@@ -38,8 +38,8 @@ class TariffPlan(models.Model):
     fee = CurrencyField(_("Абонплата"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=2)
     fee_period = models.SmallIntegerField(_(u'Период'), choices=FEE_TARIFF_CHOICES, default=0, help_text=_(u'период за который снимается абонентская плата'))
     activation = CurrencyField(_("Активация"), max_digits=18, decimal_places=2, default=Decimal("0.00"), display_decimal=4, help_text=_(u'стоимость активации тарифного плана'))
-    date_start = models.DateTimeField(_(u'Date Start'), default=datetime.datetime.now())
-    date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
+    date_start = models.DateField(_(u'Date Start'), default=datetime.date.today())
+    date_end = models.DateField(_(u'Date End'), default=datetime.date.max)
     pay_round = models.SmallIntegerField(_(u'Округление'), default=1, help_text=_(u'Округляем стоимость разговора если 1 то до копейки для цен не поумолчанию'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     primary = models.BooleanField(_(u'По умолчанию'), default=False)
@@ -84,12 +84,10 @@ class TariffPlan(models.Model):
     @property
     def enabled_date(self):
         """docstring for enable_date"""
-
-        if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
-            de = ""
-        else:
+        de = ''
+        if ru_strftime(format=u"%Y", date=self.date_end) != "9999":
             de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
-        return u"c %s%s" % (ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
+        return u"c {0}{1}".format(ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
 
 class Tariff(models.Model):
     """
@@ -109,8 +107,8 @@ class Tariff(models.Model):
     price_currency = models.CharField(_(u'Currency name'), max_length=3, default="USD")
     tariff_plan = models.ForeignKey('TariffPlan', related_name='tpg')
     #tariff = models.ForeignKey(TariffPlan)
-    date_start = models.DateTimeField(_(u'Date Start'), default=datetime.datetime.now())
-    date_end = models.DateTimeField(_(u'Date End'), default=datetime.datetime.max)
+    date_start = models.DateField(_(u'Date Start'), default=datetime.date.today())
+    date_end = models.DateField(_(u'Date End'), default=datetime.date.max)
     enabled = models.BooleanField(_(u'Enable'), default=True)
     weeks = models.SmallIntegerField(_(u'Week'), default=0)
 
@@ -140,10 +138,9 @@ class Tariff(models.Model):
     def enabled_date(self):
         """docstring for enable_date"""
 
-        if ru_strftime(format=u"%Y", date=self.date_end) == "2099":
-            de = ""
-        else:
-            de = u" по {0}".format(ru_strftime(format=u"%d.%m.%Y", date=self.date_end))
+        de = ''
+        if ru_strftime(format=u"%Y", date=self.date_end) != "9999":
+            de = u" по %s" % ru_strftime(format=u"%d.%m.%Y", date=self.date_end)
         return u"c {0}{1}".format(ru_strftime(format=u"%d.%m.%Y", date=self.date_start), de)
 
 
