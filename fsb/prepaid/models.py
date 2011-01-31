@@ -16,30 +16,31 @@ from django.utils.translation import ugettext_lazy as _
 from l10n.utils import moneyfmt
 from livesettings import config_value
 from django.contrib.auth.models import User
-#from fsb.prepaid.utils import generate_certificate_code
-#from fsb.billing.models import CurrencyBase
-#from payment.utils import get_processor_by_key
-#from product.models import Product, ProductManager
-#from satchmo_store.contact.models import Contact
-#from satchmo_store.shop.models import OrderPayment, Order
+
 import logging
-#import csv, sys, os
-#from fsa.core.utils import CsvData
 from django.db.models import F, Q
 from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from fsb.billing.models import Balance, BalanceHistory
 from fsa.directory.models import Endpoint
 
 
-
 PREPAIDCODE_KEY = 'PREPAIDCODE'
 log = logging.getLogger('prepaid.models')
 
 N_TYPES = ((0, _(u'Partner')),
-           (1,_(u'Default')),
-           (2,_(u'Starting packet')),
-           (3,_(u'Other')),
-        )
+           (1, _(u'Default')),
+           (2, _(u'Starting packet')),
+           (3, _(u'Other')),
+)
+ST_TYPES = ((0, _(u'Нет такой карты')),
+            (1, _(u'Карта невыдана')),
+            (2, _(u'Неправильный ПИН код')),
+            (3, _(u'Карта уже активирована')),
+            (4, _(u'Ошибка ')),
+            (5, _(u'Нормально')),
+            (6, _(u'Неверный тип кары')),
+)
+
 class PrepaidManager(models.Manager):
 
 ##    def from_order(self, order):
@@ -50,9 +51,9 @@ class PrepaidManager(models.Manager):
 ##            return Prepaid.objects.get(code__exact=code.value, valid__exact=True, site=site)
 ##        raise Prepaid.DoesNotExist()
     #----------------------------------------------------------------------
-    def is_valid(self, num,code):
+    def is_card(self, num, code):
         """
-        Validate Prepaid Card
+        Validate PIN code Prepaid Card
 
         Keyword arguments:
         num -- Number Card (SIP ID)
@@ -62,53 +63,33 @@ class PrepaidManager(models.Manager):
         (Prepaid or None)
         """
         try:
-            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), enabled = False)
-            #comments = 'prepaid:::%i' % card.pk
-            #up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
-            # Ваш баланс был пополнен на
-            #name='Added prepaid card'
-            #BalanceHistory.objects.create(name=name, accountcode=accountcode, cash=card.start_balance, comments=comments)
-            #card.enabled =True
-            #card.save()
+            # TODO: сделать проверку по хешу
+            card = self.get(num_prepaid__iexact=num, code__iexact=code, date_end__gte=datetime.now())
             return card
-            #return (True, _("Your balance was replenished"))
-##                # этой картой вы неможете пополнить баланс
-##                return (False, _("You cannot supplement the balance with this card"))
-##                # эта карта уже активирована
-##                #return (False, _("This card is already activated"))
-        except Exception, e:
-            # Ваш баланс не пополнен
-            log.error(e)
-            #return (False, _("Your balance is not replenished. Error code or number"))
-            return None
+        except self.model.DoesNotExist:
+            return False
 
-    def is_starting(self, num, code):
-        """
-        The checking Prepaid Card
+    def create_starting(self):
 
-        Keyword arguments:
-        num -- Number Card (SIP ID)
-        code -- activate code
-
-        Return:
-        (True/False, Message, Create User)
-        """
         try:
-            card = self.get(num_prepaid = num, code = code, date_end__gte = datetime.now(), nt = 2, enabled = False)
-            new_user = User.objects.create_user(num, '', code)
-            new_endpoint = Endpoint.objects.create_endpoint(new_user)
-            comments = 'prepaid:::%i' % card.pk
-            if card.start_balance > 0:
-                BalanceHistory.objects.create(name='the starting packet is activated', accountcode=new_user, cash=card.start_balance, comments=comments)
-                up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
+            card = self.model()
+#            new_user = User.objects.create_user(num, '', code)
+#            new_endpoint = Endpoint.objects.create_endpoint(new_user)
+#            comments = 'prepaid:::%i' % card.pk
+#            if card.start_balance > 0:
+#                BalanceHistory.objects.create(name='the starting packet is activated', accountcode=new_user,
+#                                              cash=card.start_balance, comments=comments)
+#                up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + card.start_balance)
             card.enabled = True
-            card.save()
-            # Ваш баланс был пополнен на
-            return (True, _("The starting packet is activated"), new_user)
+            card.save(using=self._db)
+#            # Ваш баланс был пополнен на
+#            return (True, _("The starting packet is activated"), new_user)
+            return card
         except Exception, e:
             # Ваш баланс не пополнен
             log.error(e)
-            return (False, _("Error code or number"), None)
+#            return (False, _("Error code or number"), None)
+            return false
 
     def add_prepaid(self, n):
         """
@@ -159,26 +140,22 @@ class PrepaidManager(models.Manager):
                             elif c == 'date_end' and len(row[index].strip()) > 1:
                                 n['date_end'] = cd.set_time(row[index].strip())
                             elif row[index].strip() != '':
-                                n[c]=row[index].strip()
+                                n[c] = row[index].strip()
                     except:
                         pass
                 if save_flag:
                     save_cnt += self.add_prepaid(currency, site, n)
-                    log.debug('Card number: %s' % n["num_prepaid"])
+                    log.debug('Card number: {0}'.format(n["num_prepaid"]))
                 n.clear()
         except csv.Error, e:
-            log.error('line %d: %s' % (reader.line_num, e))
+            log.error('line {0}: {1}'.format(reader.line_num, e))
         return save_cnt
 
 class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
-    #site = models.ForeignKey(Site, null=True, blank=True, verbose_name=_('Site'))
-    #order = models.ForeignKey(Order, null=True, blank=True, related_name="prepaids", verbose_name=_('Order'))
     num_prepaid = models.CharField(_(u'Number'), max_length=12, unique=True)
     code = models.CharField(_('Prepaid Code'), max_length=16, unique=True)
-    #purchased_by =  models.ForeignKey(Contact, verbose_name=_('Purchased by'),
-    #    blank=True, null=True, related_name='prepaids_purchased')
-    date_added = models.DateField(_("Date added"), auto_now_add = True)
+    date_added = models.DateField(_("Date added"), auto_now_add=True)
     date_end = models.DateField(_("Date end"), null=True, blank=True)
     nt = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=N_TYPES, default=1, blank=False)
     enabled = models.BooleanField(_(u'Enable'), default=False)
@@ -191,9 +168,16 @@ class Prepaid(models.Model):
 
     def __unicode__(self):
         sb = moneyfmt(self.start_balance)
-        return u"Prepaid Card: %s %s" % (self.num_prepaid, sb)
+        return u"Prepaid Card: {0} {1}".format(self.num_prepaid, sb)
+
+    @property
+    def is_valid(self):
+        if self.valid:
+            return False
+        return True
 
     class Meta:
+        db_table = 'prepaid_prepaid'
         unique_together = ("num_prepaid", "code")
         verbose_name = _("Prepaid card")
         verbose_name_plural = _("Prepaid cards")
@@ -201,7 +185,6 @@ class Prepaid(models.Model):
     def activate_card(self, accountcode):
         """Activate Prepaid Card"""
         try:
-
             #comments = 'prepaid:::%i' % self.pk
             #up_ball = Balance.objects.filter(accountcode=accountcode).update(cash=F('cash') + self.start_balance)
             # Ваш баланс был пополнен на
@@ -219,101 +202,38 @@ class Prepaid(models.Model):
     @property
     def balance(self):
         return moneyfmt(self.start_balance)
-##
-##        return b
-##
-##    def apply_to_order(self, order):
-##        """Apply up to the full amount of the balance of this cert to the order.
-##
-##        Returns new balance.
-##        """
-##        amount = min(order.balance, self.balance)
-##        log.info('applying %s from giftcert #%i [%s] to order #%i [%s]',
-##            moneyfmt(amount),
-##            self.id,
-##            moneyfmt(self.balance),
-##            order.id,
-##            moneyfmt(order.balance))
-##
-##        processor = get_processor_by_key('PAYMENT_PREPAID')
-##        orderpayment = processor.record_payment(order=order, amount=amount)
-##        self.orderpayment = orderpayment
-##        return self.use(amount, orderpayment=orderpayment)
-##
-##    def use(self, amount, notes="", orderpayment=None):
-##        """Use some amount of the gift cert, returning the current balance."""
-##        u = PrepaidUsage(notes=notes, balance_used = amount,
-##            orderpayment=orderpayment, prepaid=self)
-##        u.save()
-##        return self.balance
-##
-##    def save(self, force_insert=False, force_update=False):
-##        if not self.pk:
-##            self.date_added = datetime.now()
-##        if not self.code:
-##            self.code = generate_certificate_code()
-##        if not self.site:
-##            self.site = Site.objects.get_current()
-##        super(Prepaid, self).save(force_insert=force_insert, force_update=force_update)
 
+class PrepaidLogManager(models.Manager):
+    def create_history(self, ipconnect, num_prepaid, code=None, username='AnonymousUser', st=0, nt=3):
+        history = self.model(num_prepaid=num_prepaid, code=code, ipconnect=ipconnect, username=username, st=st, nt=nt)
+        history.save(using=self._db)
+        return history
 
-##class PrepaidUsage(models.Model):
-##    """Any usage of a Gift Cert is logged with one of these objects."""
-##    usage_date = models.DateField(_("Date of usage"), null=True, blank=True)
-##    notes = models.TextField(_('Notes'), blank=True, null=True)
-##    balance_used = models.DecimalField(_("Amount Used"), decimal_places=2,
-##        max_digits=8, )
-##    orderpayment = models.ForeignKey(OrderPayment, null=True, verbose_name=_('Order Payment'))
-##    used_by = models.ForeignKey(Contact, verbose_name=_('Used by'),
-##        blank=True, null=True, related_name='prepaids_used')
-##    prepaid = models.ForeignKey(Prepaid, related_name='usages')
-##
-##    def __unicode__(self):
-##        return u"PrepaidUsage: %s" % self.balance_used
-##
-##    def save(self, force_insert=False, force_update=False):
-##        if not self.pk:
-##            self.usage_date = datetime.now()
-##        super(PrepaidUsage, self).save(force_insert=force_insert, force_update=force_update)
-##
-##
-##class PrepaidProduct(Product):
-##    """
-##    The product model for a Gift Certificate
-##    """
-##    objects = ProductManager()
-##    #product = models.OneToOneField(Product, verbose_name=_('Product'), primary_key=True)
-##    is_shippable = False
-##    discountable = False
-##
-##    #unit_price
-##
-##    def __unicode__(self):
-##        return u"PrepaidProduct: %s" % self.name
-##
-##    def _get_subtype(self):
-##        return 'PrepaidProduct'
-##
-##    def order_success(self, order, order_item):
-##        log.debug("Order success called, creating prepaid card on order: %s", order)
-##        for detl in order_item.orderitemdetail_set.all():
-##            if detl.name == "message":
-##                message = detl.value
-##
-##        price=order_item.line_item_price
-##        log.debug("Creating gc for %s", price)
-##        gc = Prepaid(
-##            order = order,
-##            start_balance= price,
-##            purchased_by = order.contact,
-##            valid=False,
-##            message=message
-##            )
-##        gc.save()
-##
-##    class Meta:
-##        verbose_name = _("Prepaid card product")
-##        verbose_name_plural = _("Prepaid card products")
+    def is_valid(self, username=None, ipconnect=None):
+        """
+        Проверяем может ли пользователь с данного ip активировать кару
+        """
+        # TODO: добавить проверку по ip и username
+        return True
+
+class PrepaidLog(models.Model):
+    num_prepaid = models.CharField(_(u'Number'), max_length=12, blank=True, null=True)
+    code = models.CharField(_('Prepaid Code'), max_length=16, blank=True, null=True)
+    nt = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=N_TYPES, blank=True, null=True)
+    username = models.CharField(_('username'), max_length=30, blank=True, null=True)
+    ipconnect = models.CharField(_(u'IP address'), max_length=39, blank=True, null=True)
+    st = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=ST_TYPES, default=0)
+    blocked = models.BooleanField(_(u'Blocked'), default=False)
+    date_proces = models.DateTimeField(_(u'Date'), auto_now_add=True)
+    objects = PrepaidLogManager()
+
+    class Meta:
+        db_table = 'prepaid_log'
+        verbose_name = _("Log Activate")
+        verbose_name_plural = _("Logs Activate")
+
+    def __unicode__(self):
+        return self.num_prepaid
 
 #import config
 #import listeners

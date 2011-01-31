@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 #from forms import PrepaidCodeForm, PrepaidPayShipForm
 from models import Prepaid, PREPAIDCODE_KEY
-from forms import PrepaidCodeForm
+from forms import PrepaidCodeForm, PrepaidStartForm
 from livesettings import config_get_group, config_value
 from django.shortcuts import redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -21,6 +21,8 @@ import logging
 #from satchmo_store.shop.models import Order, OrderItem, OrderItemDetail, Cart, CartItem, NullCart, NullCartItem
 #from satchmo_store.shop.signals import satchmo_cart_changed, satchmo_cart_add_complete, satchmo_cart_details_query
 from decimal import Decimal
+from django.views.decorators.csrf import csrf_exempt
+from models import PrepaidLog
 
 log = logging.getLogger("fsb.prepaid.views")
 
@@ -33,7 +35,7 @@ def prepaid_form(request, template_name='prepaid/activate.html',
         form = PrepaidCodeForm(request, data=request.POST, files=request.FILES)
         if form.is_valid():
             data = form.cleaned_data
-            log.debug('form valid %s' % data)
+            log.debug('form valid {0}'.format(data))
             return redirect(success_url)
     else:
         form = PrepaidCodeForm(request)
@@ -43,5 +45,28 @@ def prepaid_form(request, template_name='prepaid/activate.html',
     for key, value in extra_context.items():
         context[key] = callable(value) and value() or value
     
-    return render_to_response(template_name, { 'form': form }, context_instance=context)
+    return render_to_response(template_name, {'form': form}, context_instance=context)
+
+@csrf_exempt
+def prepaid_start_form(request, template_name='prepaid/activate.html',
+             success_url='profile_overview', extra_context=None, **kwargs):
+    if extra_context is None:
+        extra_context = {}
+    context = RequestContext(request)
+    for key, value in extra_context.items():
+        context[key] = callable(value) and value() or value
+
+    if PrepaidLog.objects.is_valid(ipconnect=request.META['REMOTE_ADDR']):
+        if request.method == "POST":
+            form = PrepaidStartForm(request, data=request.POST, files=request.FILES)
+            if form.is_valid():
+                data = form.cleaned_data
+                log.debug('form valid {0}'.format(data))
+                return redirect(success_url)
+        else:
+            form = PrepaidStartForm(request)
+
+        return render_to_response(template_name, {'form':form}, context_instance=context)
+    else:
+        return render_to_response('prepaid/block.html', {'ip':request.META['REMOTE_ADDR']}, context_instance=context)
 

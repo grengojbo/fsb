@@ -1,0 +1,8 @@
+{% extends "registration/base_registration.html" %}
+{% load i18n %}
+{% block title %}{% trans "Activate Prepaid Card" %}{% endblock %}
+{% block body_class %}{{ block.super }} activate_form{% endblock %}
+{% block content %}
+<h2>{% trans 'Activate Prepaid Card' %}</h2>
+<p>{% trans "You have exceeded the number of times of activation, IP address is blocked. Please try again in 15 minutes or contact the site administration." %}</p>
+{% endblock %}

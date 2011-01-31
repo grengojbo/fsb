@@ -2,7 +2,9 @@
 ./manage.py startmigration base --initial
 ./manage.py convert_to_south profile
 
-./manage.py dumpdata --format=xml --indent=1 prepaid.prepaid > test_prepaid.xml
+./manage.py dumpdata --format=json --indent=1 prepaid.prepaid > ~/src/repo-git/fsb/fsb/prepaid/fixtures/prepaid.json
+
+
 ./manage.py dumpdata --format=xml --indent=1 prepaid.prepaidproduct > initial_data.xml
 
 ./manage.py dumpdata --format=json --indent=1 tariff.TariffPlan > ../../fsb/fsb/tariff/fixtures/tariffplan.json
