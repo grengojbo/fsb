@@ -17,12 +17,23 @@ class PrepaidAdmin(admin.ModelAdmin):
     list_filter = ('enabled', 'nt', 'start_balance',)
     ordering = ['date_added']
     list_per_page = 50
+    actions = ['make_disable']
 
     fieldsets = (
-        (None, {'fields': ('num_prepaid', 'diller', 'nt', 'enabled', 'valid', 'start_balance', 'date_end',)}),
+        (None, {'fields': ('num_prepaid', 'code', 'diller', 'nt', 'enabled', 'valid', 'start_balance', 'date_end', 'message',)}),
     )
 
-    change_readonly_fields = ('num_prepaid', 'nt', 'enabled', 'valid', 'start_balance', 'date_end',)
+    change_readonly_fields = ('num_prepaid', 'nt', 'enabled', 'start_balance', 'date_end', 'valid',)
+
+    def make_disable(self, request, queryset):
+        rows_updated = queryset.update(valid=True)
+        if rows_updated == 1:
+            message_bit = _(u"1 story was")
+        else:
+            message_bit = u"{0} stories were".format(rows_updated)
+        self.message_user(request, u"{0} successfully marked as Issued.".format(message_bit))
+
+    make_disable.short_description = _(u"Mark selected stories as Issued")
 
     def get_readonly_fields(self, request, obj=None):
         if not obj:

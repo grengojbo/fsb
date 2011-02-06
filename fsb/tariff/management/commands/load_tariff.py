@@ -108,7 +108,7 @@ class Command(BaseCommand):
             reader = csv.reader(f, delimiter=';', dialect='excel')
             for row in reader:
                 try:
-                    #log.debug(u'row: {0}'.format(row))
+                    #log.debug('row: {0}'.format(row))
                     country_list, country_code, n = cd.parse(row)
                     log.debug("country_code {0} ({1})".format(country_code, country_list))
                     for country in country_list:

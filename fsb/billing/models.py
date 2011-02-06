@@ -66,7 +66,7 @@ class Balance(models.Model):
 
     def cash_currency(self):
         """docstring for rate_currency"""
-        return u"{rate:0.2f} {currency:>s}".format(**{'rate': self.cash, 'currency': self.currency})
+        return u"{rate:0.2f} {currency:>s}".format({'rate': self.cash, 'currency': self.currency})
     cash_currency.short_description = _(u'Баланс')
 
 #    def username(self):
@@ -148,7 +148,7 @@ class BalanceHistory(PaymentBase):
 
     def __unicode__(self):
         if self.id is not None:
-            return u"Payment #%i: amount=%s" % (self.id, self.amount)
+            return u"Payment #{0}: amount={1}".format(self.id, self.amount)
 
     @models.permalink
     def get_absolute_url(self):
@@ -162,7 +162,7 @@ class CreditBase(models.Model):
     """"""
     balance = models.ForeignKey(User, verbose_name=_(u'Account'), related_name='creditbase')
     credit = models.DecimalField(_(u'Credit'), max_digits=18, decimal_places=2, default=Decimal('0.0'), help_text=_(u'Total sum for which credit is extended for calls'))
-    user = models.ForeignKey(User, related_name='createcredituser', help_text=_('Operator'))
+    user = models.ForeignKey(User, related_name='createcredituser', help_text=_(u'Operator'))
     enabled = models.BooleanField(_(u'Enable'), default=True)
     objects = models.Manager() # default manager must be always on first place! It's used as default_manager
     active_objects = GenericManager( enabled = True ) # only active entries

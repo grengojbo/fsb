@@ -7,6 +7,7 @@ from django.db.models import F, Q
 #from django.db.models import Max, Min, Avg, Sum, Count, StdDev, Variance
 from fsa.directory.signals import endpoint_create
 from fsa.directory.models import Endpoint
+from django.contrib.auth.models import Group
 from django.db import transaction
 from decimal import Decimal
 import time, datetime
@@ -15,13 +16,14 @@ import logging
 import random
 from django.contrib.auth.models import User
 from uni_form.helpers import FormHelper, Submit, Reset
+from uni_form.helpers import Layout, Fieldset, Row, HTML
 
 log = logging.getLogger("fsb.prepaid.forms")
 attrs_dict = {'class': 'required'}
 
 class PrepaidCodeForm(forms.Form):
-    prnumber = forms.CharField(label=_('Number'), required=True)
-    prcode = forms.CharField(label=_('Code'), required=True)
+    prnumber = forms.CharField(label=_(u'Number'), required=True)
+    prcode = forms.CharField(label=_(u'Code'), required=True)
 
     #log.debug(request)
     def __init__(self, request, *args, **kwargs):
@@ -34,14 +36,14 @@ class PrepaidCodeForm(forms.Form):
         """
         Verify 
         """
-        log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+        #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
         res = Prepaid.objects.is_valid(self.data.get("prnumber"), self.data.get("prcode"))
         if res is None:
-            raise forms.ValidationError(_("Incorrect number or the code of the card."))
+            raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
         elif res.nt != 1:
-            raise forms.ValidationError(_("You cannot supplement calculation with this card"))
+            raise forms.ValidationError(_(u"You cannot supplement calculation with this card"))
         else:
-            transaction.commit()
+
             try:
                 bal = Balance.objects.get(accountcode__username__exact=self.user)
                 pay_date = datetime.datetime.now()
@@ -55,6 +57,7 @@ class PrepaidCodeForm(forms.Form):
 
                 temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
                 pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
+                transaction.commit()
                 up_ball = Balance.objects.filter(accountcode__username__exact=self.user).update(
                         cash=F('cash') + res.start_balance)
                 res.enabled = True
@@ -68,33 +71,64 @@ class PrepaidCodeForm(forms.Form):
                 b.save()
             except:
                 transaction.rollback()
-                raise forms.ValidationError(_("System error no activate prepaid card!"))
+                raise forms.ValidationError(_(u"System error no activate prepaid card!"))
             else:
                 transaction.commit()
         return self.cleaned_data
 
 class PrepaidForm(forms.Form):
-    prnumber = forms.RegexField(label=_('Number'), required=True, regex=r'^\d+$',  max_length=12,
-                        error_messages={'invalid': _("This value must contain only letters, numbers and underscores.")})
-    prcode = forms.RegexField(label=_('Code'), required=True, regex=r'^\d+$',  max_length=16,
-                        error_messages={'invalid': _("This value must contain only letters, numbers and underscores.")})
-
-    helper = FormHelper()
-    submit = Submit('passreset', _('Reset my password'))
-    helper.add_input(submit)
+    prnumber = forms.RegexField(label=_(u'Number'), required=True, regex=r'^\d+$',  max_length=12,
+                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
+    prcode = forms.RegexField(label=_(u'PIN Code'), required=True, regex=r'^\d+$',  max_length=16,
+                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
 
 class PrepaidStartForm(PrepaidForm):
+    helper = FormHelper()
+    submit = Submit('activate', _(u'Activate'))
+    helper.add_input(submit)
 
     username = forms.RegexField(regex=r'^\w+$',
                                 max_length=30,
                                 widget=forms.TextInput(attrs=attrs_dict),
-                                label=_("Username"),
-                                error_messages={'invalid': _("This value must contain only letters, numbers and underscores.")})
-    email = forms.EmailField(label=_("Email address"), required=False)
+                                label=_(u"Username"),
+                                error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
+    email = forms.EmailField(label=_(u"Email address"), required=False)
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
-                                label=_("Password"))
+                                label=_(u"Password"))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
-                                label=_("Password (again)"))
+                                label=_(u"Password (again)"))
+    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs=attrs_dict),
+                             label=_(u'I have read and agree to the Terms of Service'),
+                             error_messages={ 'required': _(u"You must agree to the terms to register") })
+    first_name = forms.CharField(label=_(u"first name"), max_length=30, required=False, widget=forms.TextInput())
+    last_name = forms.CharField(label=_(u"last name"), max_length=30, required=False, widget=forms.TextInput())
+
+    detail_help = _(u'Note. An optional field to fill.')
+    email_help = _(u'Note. Your email address will not show anyone else. If you do not fill in this field, and forget your password you can not recover it.')
+    password_help = _(u'From 6 to 20 characters, only letters and numbers. Note. Your password will not be shown to anyone else.')
+    layout = Layout(
+                    Fieldset(u'',
+                             'prnumber',
+                             'prcode',
+                             ),
+
+                    Fieldset(u'', 'username',
+                             Row('password1','password2'),
+                             HTML(password_help),
+                             ),
+
+                    # second fieldset shows the contact info
+                    Fieldset(_(u'Additional Information'),
+                            HTML(detail_help),
+                            'email',
+                            HTML(email_help),
+                            'first_name',
+                            'last_name',
+                             ),
+                    Fieldset(u'', 'tos',)
+                    )
+
+    helper.add_layout(layout)
 
     def __init__(self, request, *args, **kwargs):
         super(PrepaidStartForm, self).__init__(*args, **kwargs)
@@ -113,15 +147,57 @@ class PrepaidStartForm(PrepaidForm):
         except User.DoesNotExist:
             return self.cleaned_data['username']
         self.user_exits = False
-        raise forms.ValidationError(_("A user with that username already exists."))
+        raise forms.ValidationError(_(u"A user with that username already exists."))
 
-    transaction.commit_manually
+    @transaction.commit_on_success
+    def save_prepaid(self, card):
+        try:
+            #log.debug('email({0})'.format(self.data.get('email')))
+            new_user = User.objects.create_user(self.data.get('username'), '', self.data.get('password1'))
+            new_user.is_active = True
+            user_group = Group.objects.get(name="user")
+            new_user.groups.add(user_group)
+            new_user.save()
+            new_endpoint = Endpoint.objects.create_endpoint(new_user, self.data.get('prnumber'))
+            #
+
+            bal = Balance.objects.get(accountcode__username__exact=self.data.get('username'))
+            pay_date = datetime.datetime.now()
+            name = 'add:::lincom3000:::prepaid:::{0}'.format(card.pk)
+            comments = 'Added Start Paskage'
+            method = 'from site prepaid'
+
+            code = "{0}{1}{2}".format(name, comments, method)
+            mcode = hashlib.md5()
+            mcode.update(code.upper())
+
+            temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
+            pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
+            up_ball = Balance.objects.filter(accountcode__username__exact=self.data.get('username')).update(cash=F('cash') + card.start_balance)
+            #log.debug("Prepaid enabled {0}".format(card.enabled))
+            b = BalanceHistory.objects.create(name=name, accountcode=bal, site=bal.site, pay_date=pay_date,
+                                              method=method, amount=Decimal(card.start_balance),
+                                              transaction_id=pay_transaction_id, details=comments,
+                                              reason_code=mcode.hexdigest())
+            b.success = True
+            b.save()
+            card.enabled = True
+            card.save()
+            return new_endpoint
+        except:
+            #log.error(e)
+            #transaction.rollback()
+            history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=4, nt=2)
+            return False
+
+
     def clean(self):
         fl_error = False
         nt = 3
-        log.debug("len username: {0} user_exits:{1}".format(self.data.get('username'), self.user_exits))
+        st = 4
+        log.debug("len username: {0} user_exits:{1} tos:{2}".format(self.data.get('username'), self.user_exits, self.data.get('tos')))
 
-        if self.user_exits and self.data.get('username') is not None and len(self.data.get('username')) > 0:
+        if self.user_exits and self.data.get('username') is not None and len(self.data.get('username')) > 0 and self.data.get('tos') is not None:
             if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
                 if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                     raise forms.ValidationError(_(u"The two password fields didn't match."))
@@ -129,7 +205,7 @@ class PrepaidStartForm(PrepaidForm):
                 #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
                 prc = Prepaid.objects.get(num_prepaid__iexact=self.data.get("prnumber"))
             except Prepaid.DoesNotExist:
-                log.error("prnumber: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+                #log.error("prnumber: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
                 history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"))
                 raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
             try:
@@ -144,44 +220,14 @@ class PrepaidStartForm(PrepaidForm):
                         nt = card.nt
                         fl_error = True
                     elif card.nt == 2:
-                        nt = card.nt
-                        st = 5
-                        transaction.commit()
-                        try:
-                            new_user = User.objects.create_user(self.data.get('username'), self.data.get('email'), self.data.get('password1'))
-                            new_user.is_active = True
-                            new_user.save()
-                            new_endpoint = Endpoint.objects.create_endpoint(new_user, self.data.get('prnumber'))
-                            endpoint_create.send(sender=self.__class__, endpoint=new_endpoint)
 
-                            bal = Balance.objects.get(accountcode__username__exact=self.data.get('username'))
-                            pay_date = datetime.datetime.now()
-                            name = 'add:::lincom3000:::prepaid:::{0}'.format(card.pk)
-                            comments = 'Added Start Paskage'
-                            method = 'from site prepaid'
-
-                            code = "{0}{1}{2}".format(name, comments, method)
-                            mcode = hashlib.md5()
-                            mcode.update(code.upper())
-
-                            temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
-                            pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
-                            up_ball = Balance.objects.filter(accountcode__username__exact=self.data.get('username')).update(cash=F('cash') + card.start_balance)
-                            card.enabled = True
-                            card.save()
-                            log.debug("Prepaid enabled {0}".format(card.enabled))
-                            b = BalanceHistory.objects.create(name=name, accountcode=bal, site=bal.site, pay_date=pay_date,
-                                                  method=method, amount=Decimal(card.start_balance),
-                                                  transaction_id=pay_transaction_id, details=comments,
-                                                  reason_code=mcode.hexdigest())
-                            b.success = True
-                            b.save()
-                        except:
-                            transaction.rollback()
-                            history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=4, nt=2)
-                            raise forms.ValidationError(_("System error no activate prepaid card!"))
+                        log.debug("RUN save_prepaid")
+                        new_endpoint = self.save_prepaid(card)
+                        if new_endpoint:
+                            nt = card.nt
+                            st = 5
                         else:
-                            transaction.commit()
+                            raise forms.ValidationError(_(u"System error no activate prepaid card!"))
                     else:
                         st = 6
                         nt = card.nt
@@ -189,9 +235,8 @@ class PrepaidStartForm(PrepaidForm):
                 else:
                     st = 2
                     fl_error = True
-            except Exception, e:
-                log.error(e)
-                log.error("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+            except:
+                #log.error("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
                 #raise forms.ValidationError(_("System error no activate prepaid card!"))
                 raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
             history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=st, nt=nt)

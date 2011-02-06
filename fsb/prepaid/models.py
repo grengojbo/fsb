@@ -85,9 +85,9 @@ class PrepaidManager(models.Manager):
 #            # Ваш баланс был пополнен на
 #            return (True, _("The starting packet is activated"), new_user)
             return card
-        except Exception, e:
+        except:
             # Ваш баланс не пополнен
-            log.error(e)
+            #log.error(e)
 #            return (False, _("Error code or number"), None)
             return false
 
@@ -105,8 +105,8 @@ class PrepaidManager(models.Manager):
             #bl.currency = currency
             bl.save()
             return 1
-        except Exception, e:
-            log.error(e)
+        except:
+            log.error('add_prepaid')
             return 0
 
     def load_prepaid(self, currency, site, base_file):
@@ -154,14 +154,14 @@ class PrepaidManager(models.Manager):
 class Prepaid(models.Model):
     """A Prepaid Card which holds value."""
     num_prepaid = models.CharField(_(u'Number'), max_length=12, unique=True)
-    code = models.CharField(_('Prepaid Code'), max_length=16, unique=True)
-    date_added = models.DateField(_("Date added"), auto_now_add=True)
-    date_end = models.DateField(_("Date end"), null=True, blank=True)
+    code = models.CharField(_(u'Prepaid Code'), max_length=16, unique=True)
+    date_added = models.DateField(_(u"Date added"), auto_now_add=True)
+    date_end = models.DateField(_(u"Date end"), null=True, blank=True)
     nt = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=N_TYPES, default=1, blank=False)
     enabled = models.BooleanField(_(u'Enable'), default=False)
-    valid = models.BooleanField(_('Valid'), default=False)
-    message = models.CharField(_('Message'), blank=True, null=True, max_length=254)
-    start_balance = models.DecimalField(_("Starting Balance"), decimal_places=2, max_digits=8)
+    valid = models.BooleanField(_(u'Issued'), default=False, help_text=_(u"only issued to the dealer's cards can be activated"))
+    message = models.CharField(_(u'Message'), blank=True, null=True, max_length=254)
+    start_balance = models.DecimalField(_(u"Starting Balance"), decimal_places=2, max_digits=8)
     diller = models.ForeignKey(User, verbose_name=_(u'Diller'), default=1)
     #currency = models.ForeignKey(CurrencyBase, default=1, related_name='currencys', verbose_name=_('Currency'))
     objects = PrepaidManager()
@@ -179,8 +179,8 @@ class Prepaid(models.Model):
     class Meta:
         db_table = 'prepaid_prepaid'
         unique_together = ("num_prepaid", "code")
-        verbose_name = _("Prepaid card")
-        verbose_name_plural = _("Prepaid cards")
+        verbose_name = _(u"Prepaid card")
+        verbose_name_plural = _(u"Prepaid cards")
 
     def activate_card(self, accountcode):
         """Activate Prepaid Card"""
@@ -195,7 +195,7 @@ class Prepaid(models.Model):
             return True
         except Exception, e:
             # Ваш баланс не пополнен
-            log.error(e)
+            #log.error(e)
             return None
 
 
@@ -218,9 +218,9 @@ class PrepaidLogManager(models.Manager):
 
 class PrepaidLog(models.Model):
     num_prepaid = models.CharField(_(u'Number'), max_length=12, blank=True, null=True)
-    code = models.CharField(_('Prepaid Code'), max_length=16, blank=True, null=True)
+    code = models.CharField(_(u'Prepaid Code'), max_length=16, blank=True, null=True)
     nt = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=N_TYPES, blank=True, null=True)
-    username = models.CharField(_('username'), max_length=30, blank=True, null=True)
+    username = models.CharField(_(u'username'), max_length=30, blank=True, null=True)
     ipconnect = models.CharField(_(u'IP address'), max_length=39, blank=True, null=True)
     st = models.PositiveSmallIntegerField(_(u'Type'), max_length=1, choices=ST_TYPES, default=0)
     blocked = models.BooleanField(_(u'Blocked'), default=False)
@@ -229,8 +229,8 @@ class PrepaidLog(models.Model):
 
     class Meta:
         db_table = 'prepaid_log'
-        verbose_name = _("Log Activate")
-        verbose_name_plural = _("Logs Activate")
+        verbose_name = _(u"Log Activate")
+        verbose_name_plural = _(u"Logs Activate")
 
     def __unicode__(self):
         return self.num_prepaid

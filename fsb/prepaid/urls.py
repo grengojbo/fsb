@@ -16,6 +16,6 @@ urlpatterns = patterns('',
          name='registration_register_prepaid'),
      url(r'^new/$',
          prepaid_start_form,
-         {'template_name':'prepaid/activate.html', 'success_url': 'profile_overview'},
+         {'template_name':'prepaid/start.html', 'success_url': 'profile_overview'},
          name='register_prepaid'),
 )

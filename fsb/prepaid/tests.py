@@ -10,6 +10,7 @@ import forms
 from django.core import mail
 from django.core.urlresolvers import reverse
 from fsb.billing.models import Balance, BalanceHistory
+from django.contrib.auth.models import Group
 
 l = logging.getLogger('fsb.prepaid.tests')
 
@@ -35,7 +36,7 @@ class TestPrepaid(test.TestCase):
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
                 except Exception, e:
-                    l.error("line: %i => %s" % (cd.line_num, e)) 
+                    l.error("line: %i => %s" % (cd.line_num, e))
             #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
             label_found = True
         except Exception, e:
@@ -82,7 +83,7 @@ class TestPrepaid(test.TestCase):
         response = self.client.get(reverse('register_prepaid'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response,
-                                'prepaid/activate.html')
+                                'prepaid/start.html')
         self.failUnless(isinstance(response.context['form'],
                                    forms.PrepaidStartForm))
 
@@ -93,7 +94,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'alice',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -106,7 +108,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'alice',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -122,7 +125,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'alice',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -154,7 +158,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'alice',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -169,7 +174,8 @@ class TestPrepaid(test.TestCase):
                                           'username': '',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -183,7 +189,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'test',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                          'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())
@@ -197,7 +204,8 @@ class TestPrepaid(test.TestCase):
                                         'username': 'tsfdsfs',
                                         'email': 'alice@example.com',
                                         'password1': 'swordfish',
-                                        'password2': 'swor'})
+                                        'password2': 'swor',
+                                        'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         self.failIf(response.context['form'].is_valid())
         self.assertFormError(response, 'form', field=None, errors=u"The two password fields didn't match.")
@@ -205,17 +213,36 @@ class TestPrepaid(test.TestCase):
         self.assertEqual(PrepaidLog.objects.count(), 4)
         self.assertEqual(Prepaid.objects.filter(valid=True, enabled=True).count(), 0)
 
+        Group.objects.create(name='user')
         response = self.client.post(reverse('register_prepaid'),
                                     data={'prnumber': '1002',
                                           'prcode': '2001',
                                           'username': 'alice',
                                           'email': 'alice@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish'
+                                           })
+        #log.debug("----------> {0}".format(response.context['form']))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(PrepaidLog.objects.count(), 4)
+        self.assertEqual(Prepaid.objects.filter(valid=True, enabled=True).count(), 0)
+        self.assertEqual(PrepaidLog.objects.filter(st=5).count(), 0)
+
+
+        response = self.client.post(reverse('register_prepaid'),
+                                    data={'prnumber': '1002',
+                                          'prcode': '2001',
+                                          'username': 'alice',
+                                          'email': 'alice@example.com',
+                                          'password1': 'swordfish',
+                                          'password2': 'swordfish',
+                                          'tos': 'on'})
         #log.debug("----------> {0}".format(response.context['form']))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(PrepaidLog.objects.filter(st=5).count(), 1)
+        self.assertEqual(PrepaidLog.objects.count(), 5)
         self.assertEqual(Prepaid.objects.filter(valid=True, enabled=True).count(), 1)
 
 
@@ -225,10 +252,12 @@ class TestPrepaid(test.TestCase):
                     'username': 'alice',
                     'email': 'alice@example.com',
                     'password1': 'swordfish',
-                    'password2': 'swordfish'}
+                    'password2': 'swordfish',
+                    'tos': 'on'}
 
         new_user = User.objects.get(username__iexact=data_start.get('username'))
         self.assertEqual(new_user.is_active, True)
+        self.assertEqual(new_user.email, 'alice@example.com')
 
         endpoint = Endpoint.objects.get(uid__exact=data_start.get('prnumber'))
         self.assertEqual(endpoint.enable, True)
@@ -245,7 +274,8 @@ class TestPrepaid(test.TestCase):
                                           'username': 'alice2',
                                           'email': 'alice2@example.com',
                                           'password1': 'swordfish',
-                                          'password2': 'swordfish'})
+                                          'password2': 'swordfish',
+                                           'tos': 'on'})
         self.assertEqual(response.status_code, 200)
         #log.debug("----------> {0}".format(response.context['form']))
         self.failIf(response.context['form'].is_valid())

@@ -1,0 +1,19 @@
+{% extends "registration/base_registration.html" %}
+{% load i18n uni_form_tags %}
+{% block title %}{% trans "Activation of the starter pack" %}{% endblock %}
+{% block body_class %}{{ block.super }} activate_form{% endblock %}
+{% block content %}
+<h2>{% trans 'Activation of the starter pack' %}</h2>
+  {% if form.helper %}
+    {% with form.helper as helper %}
+        {% uni_form form helper %}
+    {% endwith %}
+{% else %}
+    {% uni_form form helper %}
+ {% endif %}
+	{% comment %}
+	<script type="text/javascript">
+		document.getElementById('id_prnumber').focus()
+	</script>
+	{% endcomment %}
+{% endblock %}
