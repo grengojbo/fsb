@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-29 16:50+0300\n"
-"PO-Revision-Date: 2010-07-29 18:02+0300\n"
+"POT-Creation-Date: 2011-02-06 23:24+0200\n"
+"PO-Revision-Date: 2011-02-06 23:35+0300\n"
 "Last-Translator: Oleg Dolya <oleg.dolya@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -16,110 +16,250 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: forms.py:10
-#: models.py:176
+#: admin.py:31
+msgid "1 story was"
+msgstr "Произошла ошибка:"
+
+#: admin.py:36
+msgid "Mark selected stories as Issued"
+msgstr "Отмеченные записи опубликованы"
+
+#: forms.py:25
+#: forms.py:80
+#: models.py:114
+#: models.py:178
 msgid "Number"
 msgstr "Номер"
 
-#: forms.py:11
+#: forms.py:26
 msgid "Code"
 msgstr "Код активации"
 
-#: forms.py:25
+#: forms.py:42
+#: forms.py:212
+#: forms.py:245
+#: forms.py:248
 msgid "Incorrect number or the code of the card."
 msgstr "Неправильный номер или код активации карты."
 
-#: forms.py:27
+#: forms.py:44
 msgid "You cannot supplement calculation with this card"
 msgstr "Вы не можете выполнять оплату этой картой"
 
-#: models.py:37
+#: forms.py:74
+#: forms.py:234
+msgid "System error no activate prepaid card!"
+msgstr "Системная ошибка карточка предоплаты не активирована"
+
+#: forms.py:81
+#: forms.py:83
+#: forms.py:94
+msgid "This value must contain only letters, numbers and underscores."
+msgstr "Это поле может содержать только буквы, цифры и подчеркивания"
+
+#: forms.py:82
+msgid "PIN Code"
+msgstr "PIN-код:"
+
+#: forms.py:87
+msgid "Activate"
+msgstr "Активировать"
+
+#: forms.py:93
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: forms.py:95
+msgid "Email address"
+msgstr "Адрес электронной почты"
+
+#: forms.py:97
+msgid "Password"
+msgstr "Пароль"
+
+#: forms.py:99
+msgid "Password (again)"
+msgstr "Пароль (снова)"
+
+#: forms.py:101
+msgid "I have read and agree to the Terms of Service"
+msgstr "Я прочитал Правила Использования и согласен с ними"
+
+#: forms.py:102
+msgid "You must agree to the terms to register"
+msgstr "Для регистрации Вы должны согласиться с правилами"
+
+#: forms.py:103
+msgid "first name"
+msgstr "имя"
+
+#: forms.py:104
+msgid "last name"
+msgstr "фамилия"
+
+#: forms.py:106
+msgid "Note. An optional field to fill."
+msgstr "Примечание. Необязательное поле для заполнения."
+
+#: forms.py:107
+msgid "Note. Your email address will not show anyone else. If you do not fill in this field, and forget your password you can not recover it."
+msgstr "Примечание. Ваш адрес электронной почты не будет показывать никому. Если вы не заполните это поле, и забудите свой пароль, вы не сможете восстановить его."
+
+#: forms.py:108
+msgid "From 6 to 20 characters, only letters and numbers. Note. Your password will not be shown to anyone else."
+msgstr "От 6 до 20 символов, только буквы и цифры. Примечание. Ваш пароль не будет показываться кому-либо еще."
+
+#: forms.py:121
+msgid "Additional Information"
+msgstr "Дополнительная информация"
+
+#: forms.py:150
+msgid "A user with that username already exists."
+msgstr "Пользователь с таким именем уже существует."
+
+#: forms.py:203
+msgid "The two password fields didn't match."
+msgstr "Введенные пароли не совпадают."
+
+#: models.py:30
 msgid "Partner"
 msgstr "Партнеры"
 
-#: models.py:38
+#: models.py:31
 msgid "Default"
 msgstr "По умолчанию"
 
-#: models.py:39
+#: models.py:32
 msgid "Starting packet"
 msgstr "Стартовый пакет"
 
-#: models.py:40
+#: models.py:33
 msgid "Other"
 msgstr "Другой"
 
-#: models.py:106
-msgid "The starting packet is activated"
-msgstr "Стартовый пакет активирован"
+#: models.py:35
+msgid "No such card"
+msgstr "Нет такой карты"
 
-#: models.py:110
-msgid "Error code or number"
-msgstr "Неправильный код актиывции или номер карточки"
+#: models.py:36
+msgid "The card is not issued"
+msgstr "Карта не выдана"
 
-#: models.py:177
+#: models.py:37
+msgid "Wrong PIN"
+msgstr "Неправильный ПИН код "
+
+#: models.py:38
+msgid "Card is already activated"
+msgstr "Карта уже активирована"
+
+#: models.py:39
+msgid "Error"
+msgstr "Ошибка"
+
+#: models.py:40
+msgid "Normal"
+msgstr "Нормально"
+
+#: models.py:41
+msgid "Wrong type of punishment"
+msgstr "Неверный тип кары"
+
+#: models.py:115
+#: models.py:179
 msgid "Prepaid Code"
 msgstr "Карточка предоплаты"
 
-#: models.py:180
+#: models.py:116
 msgid "Date added"
 msgstr "Дата добавления"
 
-#: models.py:181
+#: models.py:117
 msgid "Date end"
 msgstr "Дата окончания"
 
-#: models.py:182
+#: models.py:118
+#: models.py:180
+#: models.py:183
 msgid "Type"
 msgstr "Тип"
 
-#: models.py:183
+#: models.py:119
 msgid "Enable"
 msgstr "включить"
 
-#: models.py:184
-msgid "Valid"
-msgstr "Допустимое значение"
+#: models.py:120
+msgid "Issued"
+msgstr "Выдана"
 
-#: models.py:185
+#: models.py:120
+msgid "only issued to the dealer's cards can be activated"
+msgstr "только выданная карта дилеру может быть активирована"
+
+#: models.py:121
 msgid "Message"
 msgstr "Сообщение"
 
-#: models.py:186
+#: models.py:122
 msgid "Starting Balance"
 msgstr "Стартовый баланс"
 
-#: models.py:196
+#: models.py:123
+msgid "Diller"
+msgstr "Диллер"
+
+#: models.py:140
 msgid "Prepaid card"
 msgstr "Карта предоплаты"
 
-#: models.py:197
+#: models.py:141
 msgid "Prepaid cards"
 msgstr "Карточка предоплаты"
 
+#: models.py:181
+msgid "username"
+msgstr "имя пользователя"
+
+#: models.py:182
+msgid "IP address"
+msgstr "IP-адрес"
+
+#: models.py:184
+msgid "Blocked"
+msgstr "заблокировано"
+
+#: models.py:185
+msgid "Date"
+msgstr "Дата"
+
+#: models.py:190
+msgid "Log Activate"
+msgstr "Лог Активации"
+
+#: models.py:191
+msgid "Logs Activate"
+msgstr "Логи Активации"
+
 #: processor.py:31
-#, fuzzy
 msgid "No balance to pay"
-msgstr "No balance to pay"
+msgstr "На вашем счету нет денег."
 
 #: processor.py:42
-#, fuzzy
 msgid "No such Gift Certificate"
-msgstr "No such Gift Certificate"
+msgstr "Нет такого сертификата"
 
 #: processor.py:47
-#, fuzzy
 msgid "Bad Gift Certificate"
-msgstr "Bad Gift Certificate"
+msgstr "Неправильный сертификат"
 
 #: processor.py:53
 msgid "Success"
 msgstr "Успешно"
 
 #: processor.py:57
-#, fuzzy, python-format
+#, python-format
 msgid "%s balance remains after gift certificate was applied"
-msgstr "%s balance remains after gift certificate was applied"
+msgstr "%s баланс после применения подарочного сертификата"
 
 #: templates/prepaid/_order_summary.html:5
 msgid "Prepaid Card Codes"
@@ -133,9 +273,9 @@ msgid "Prepaid Card"
 msgstr "Карта предоплаты"
 
 #: templates/prepaid/_order_summary.html:10
-#, fuzzy, python-format
+#, python-format
 msgid "To: %(recipient)s"
-msgstr "To: %(recipient)s"
+msgstr "Чтобы: %(recipient)s"
 
 #: templates/prepaid/_order_summary.html:15
 #, python-format
@@ -152,14 +292,12 @@ msgstr "Код активации: %(code)s"
 msgid "Message: %(message)s"
 msgstr "Сообщение: %(message)s"
 
-#: templates/prepaid/activate.html:4
-#: templates/prepaid/activate.html.py:7
+#: templates/prepaid/activate.html:3
+#: templates/prepaid/activate.html.py:6
+#: templates/prepaid/block.html:3
+#: templates/prepaid/block.html.py:6
 msgid "Activate Prepaid Card"
 msgstr "Активировать карточку предоплаты"
-
-#: templates/prepaid/activate.html:14
-msgid "Activates"
-msgstr "Активировать"
 
 #: templates/prepaid/balance.html:5
 #: templates/shop/checkout/confirm.html:9
@@ -168,14 +306,12 @@ msgid "Home"
 msgstr "Начало"
 
 #: templates/prepaid/balance.html:15
-#, fuzzy
 msgid "Purchased on:"
-msgstr "Purchased on:"
+msgstr "Приобретенные на:"
 
 #: templates/prepaid/balance.html:21
-#, fuzzy
 msgid "Initial Balance:"
-msgstr "Баланс синего"
+msgstr "Стартовый Баланс:"
 
 #: templates/prepaid/balance.html:22
 msgid "Current Balance:"
@@ -186,18 +322,25 @@ msgid "No such Prepaid Card found."
 msgstr "Нет такой карточки."
 
 #: templates/prepaid/balance.html:30
-#, fuzzy
 msgid "Look up balance"
-msgstr "Look up balance"
+msgstr "Посмотрите баланс"
+
+#: templates/prepaid/block.html:7
+msgid "You have exceeded the number of times of activation, IP address is blocked. Please try again in 15 minutes or contact the site administration."
+msgstr "Вы превысили количество попыток для активации, IP-адрес заблокированы. Пожалуйста, попробуйте еще раз через 15 минут или свяжитесь с администрацией сайта."
+
+#: templates/prepaid/start.html:3
+#: templates/prepaid/start.html.py:6
+msgid "Activation of the starter pack"
+msgstr "Активация стартового пакета"
 
 #: templates/product/detail_prepaid.html:11
 msgid "Price"
 msgstr "Прайс-Лист"
 
 #: templates/product/detail_prepaid.html:21
-#, fuzzy
 msgid "Quantity (multiply the Prepaid Card by this amount)"
-msgstr "Quantity (multiply the Prepaid Card by this amount)"
+msgstr "Количество (умножить предоплаченной карты на эту сумму)"
 
 #: templates/product/detail_prepaid.html:24
 msgid "Recipient Email (optional):"
@@ -244,9 +387,8 @@ msgstr[1] "Пожалуйста, исправьте ошибки:"
 msgstr[2] "Пожалуйста, исправьте ошибки:"
 
 #: templates/shop/checkout/fsb_pay_ship.html:16
-#, fuzzy
 msgid "Confirm"
-msgstr " Подтвердить замену "
+msgstr " Подтвердить"
 
 #: templates/shop/checkout/prepaid/confirm.html:6
 msgid "Please Note:"
@@ -264,4 +406,13 @@ msgstr "Информация о неправильной карте предоп
 #: templates/shop/checkout/prepaid/pay_ship.html:4
 msgid "Payment Information"
 msgstr "Информация о оплате"
+
+#~ msgid "Нет такой карты"
+#~ msgstr "Нет такой карты"
+#~ msgid "The starting packet is activated"
+#~ msgstr "Стартовый пакет активирован"
+#~ msgid "Error code or number"
+#~ msgstr "Неправильный код актиывции или номер карточки"
+#~ msgid "Valid"
+#~ msgstr "Допустимое значение"
 

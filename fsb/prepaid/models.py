@@ -32,13 +32,13 @@ N_TYPES = ((0, _(u'Partner')),
            (2, _(u'Starting packet')),
            (3, _(u'Other')),
 )
-ST_TYPES = ((0, _(u'Нет такой карты')),
-            (1, _(u'Карта невыдана')),
-            (2, _(u'Неправильный ПИН код')),
-            (3, _(u'Карта уже активирована')),
-            (4, _(u'Ошибка ')),
-            (5, _(u'Нормально')),
-            (6, _(u'Неверный тип кары')),
+ST_TYPES = ((0, _(u'No such card')),
+            (1, _(u'The card is not issued')),
+            (2, _(u'Wrong PIN')),
+            (3, _(u'Card is already activated')),
+            (4, _(u'Error')),
+            (5, _(u'Normal')),
+            (6, _(u'Wrong type of punishment')),
 )
 
 class PrepaidManager(models.Manager):
