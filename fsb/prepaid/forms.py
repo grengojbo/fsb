@@ -201,46 +201,49 @@ class PrepaidStartForm(PrepaidForm):
             if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
                 if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                     raise forms.ValidationError(_(u"The two password fields didn't match."))
-            try:
-                #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
-                prc = Prepaid.objects.get(num_prepaid__iexact=self.data.get("prnumber"))
-            except Prepaid.DoesNotExist:
-                #log.error("prnumber: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
-                history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"))
-                raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
-            try:
-                card = Prepaid.objects.is_card(self.data.get("prnumber"), self.data.get("prcode"))
-                if card:
-                    if card.enabled:
-                        st = 3
-                        nt = card.nt
-                        fl_error = True
-                    elif card.is_valid:
-                        st = 1
-                        nt = card.nt
-                        fl_error = True
-                    elif card.nt == 2:
-
-                        log.debug("RUN save_prepaid")
-                        new_endpoint = self.save_prepaid(card)
-                        if new_endpoint:
-                            nt = card.nt
-                            st = 5
-                        else:
-                            raise forms.ValidationError(_(u"System error no activate prepaid card!"))
-                    else:
-                        st = 6
-                        nt = card.nt
-                        fl_error = True
                 else:
-                    st = 2
-                    fl_error = True
-            except:
-                #log.error("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
-                #raise forms.ValidationError(_("System error no activate prepaid card!"))
-                raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
-            history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=st, nt=nt)
-            if fl_error:
-                raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
+                    try:
+                        #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+                        prc = Prepaid.objects.get(num_prepaid__iexact=self.data.get("prnumber"))
+                    except Prepaid.DoesNotExist:
+                        #log.error("prnumber: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+                        history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"))
+                        #log.error(history.st)
+                        raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
+                    try:
+                        #log.debug("number: {0} code:{3} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip, self.data.get("prcode")))
+                        card = Prepaid.objects.is_card(self.data.get("prnumber"), self.data.get("prcode"))
+                        #log.debug("card: {0}".format(card))
+                        if card:
+                            if card.enabled:
+                                st = 3
+                                nt = card.nt
+                                fl_error = True
+                            elif card.is_valid:
+                                st = 1
+                                nt = card.nt
+                                fl_error = True
+                            elif card.nt == 2:
 
-        return self.cleaned_data
+                                log.debug("RUN save_prepaid")
+                                new_endpoint = self.save_prepaid(card)
+                                if new_endpoint:
+                                    nt = card.nt
+                                    st = 5
+                                else:
+                                    raise forms.ValidationError(_(u"System error no activate prepaid card!"))
+                            else:
+                                st = 6
+                                nt = card.nt
+                                fl_error = True
+                        else:
+                            st = 2
+                            fl_error = True
+                    except:
+                        #log.error("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+                        #raise forms.ValidationError(_("System error no activate prepaid card!"))
+                        raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
+                    history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=st, nt=nt)
+                    if fl_error:
+                        raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
+            return self.cleaned_data

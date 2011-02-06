@@ -101,9 +101,9 @@ class Command(BaseCommand):
                 try:
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
-                    log.debug("line: %i => %s" % (cd.line_num, row))
+                    log.debug("line: {0} => {1}".format(cd.line_num, row))
                 except Exception, e:
-                    log.error("line: %i => %s" % (cd.line_num, e))
+                    log.error("line: {0} => {1}".format(cd.line_num, e))
                     pass
             label_found = True
         except Exception, e:
@@ -127,7 +127,7 @@ class Command(BaseCommand):
                 print "No fixtures found."
         else:
             if verbosity > 0:
-                print "Installed %d object(s) from %d fixture(s)" % (object_count, fixture_count)
+                print "Installed {0} object(s) from {1} fixture(s)".format(object_count, fixture_count)
 
         # Close the DB connection. This is required as a workaround for an
         # edge case in MySQL: if the same connection is used to

@@ -8,7 +8,7 @@
 __version__ = "$Revision$"
 # $Source$
 
-from datetime import datetime
+import datetime
 from decimal import Decimal
 from django.contrib.sites.models import Site
 from django.db import models
@@ -64,7 +64,7 @@ class PrepaidManager(models.Manager):
         """
         try:
             # TODO: сделать проверку по хешу
-            card = self.get(num_prepaid__iexact=num, code__iexact=code, date_end__gte=datetime.now())
+            card = self.get(num_prepaid__iexact=num, code__iexact=code, date_end__gte=datetime.date.today())
             return card
         except self.model.DoesNotExist:
             return False
@@ -93,14 +93,14 @@ class PrepaidManager(models.Manager):
 
     def add_prepaid(self, n):
         """
-
+        Загрузка данных из csv файла
         """
         try:
             bl = self.model()
-            bl.num_prepaid = n['num_prepaid']
-            bl.code = n['code']
+            bl.num_prepaid = n['num_prepaid'].strip()
+            bl.code = n['code'].strip()
             bl.start_balance = n['rate']
-            bl.nt = n['nt']
+            bl.nt = n['nt'].strip()
             bl.date_end = n['date_end']
             #bl.currency = currency
             bl.save()
@@ -108,48 +108,6 @@ class PrepaidManager(models.Manager):
         except:
             log.error('add_prepaid')
             return 0
-
-    def load_prepaid(self, currency, site, base_file):
-        """
-        Загрузка данных из csv файла
-        """
-        save_cnt = 0
-        try:
-            cd = CsvData(config_value('PAYMENT_PREPAID', 'FORMAT'))
-            reader = csv.reader(base_file, delimiter=';', dialect='excel')
-            no_base = []
-            for row in reader:
-                save_flag = False
-                n = {}
-                row_save = []
-                n['date_end'] = datetime.max
-                n['date_added'] = datetime.now()
-                for index, c in enumerate(cd.data_col):
-                    try:
-                        #log.debug("%s=%s" % (c,row[index].strip()))
-                        if c != 'zeros' and len(row[index].strip()) > 0:
-                            if c == 'num_prepaid':
-                                n["num_prepaid"] = row[index].strip()
-                            elif c == 'code':
-                                n["code"] = row[index].strip()
-                                save_flag = True
-                            elif c == 'start_balance':
-                                n['start_balance'] = Decimal(cd.set_num(row[index].strip()))
-                            elif c == 'date_added' and len(row[index].strip()) > 1:
-                                n['date_added'] = cd.set_time(row[index].strip())
-                            elif c == 'date_end' and len(row[index].strip()) > 1:
-                                n['date_end'] = cd.set_time(row[index].strip())
-                            elif row[index].strip() != '':
-                                n[c] = row[index].strip()
-                    except:
-                        pass
-                if save_flag:
-                    save_cnt += self.add_prepaid(currency, site, n)
-                    log.debug('Card number: {0}'.format(n["num_prepaid"]))
-                n.clear()
-        except csv.Error, e:
-            log.error('line {0}: {1}'.format(reader.line_num, e))
-        return save_cnt
 
 class Prepaid(models.Model):
     """A Prepaid Card which holds value."""

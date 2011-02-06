@@ -2,6 +2,8 @@
 from django import test
 from django.test.client import Client
 from keyedcache import cache_delete
+import datetime
+from decimal import *
 from models import *
 from fsa.core.utils import CsvData
 import logging
@@ -29,14 +31,14 @@ class TestPrepaid(test.TestCase):
             #f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test_all.csv'), "rt")
             f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'test_prepaid.csv'), "rt")
             save_cnt = 0
-            cd = CsvData("delimiter=';'time_format='%d.%m.%Y 00:00'num_prepaid|code|rate|nt|zeros|date_end")
+            cd = CsvData("delimiter=';'time_format='%d.%m.%Y'num_prepaid|code|rate|nt|zeros|date_end")
             reader = csv.reader(f, delimiter=';', dialect='excel')
             for row in reader:
                 try:
                     n = cd.parse(row)
                     objects_in_fixture = Prepaid.objects.add_prepaid(n)
                 except Exception, e:
-                    l.error("line: %i => %s" % (cd.line_num, e))
+                    l.error("line: {0} => {1}".format(cd.line_num, e))
             #objects_in_fixture = Prepaid.objects.load_prepaid(c, site, f)
             label_found = True
         except Exception, e:
@@ -50,6 +52,9 @@ class TestPrepaid(test.TestCase):
     def testPrepaidLoad(self):
         gc = Prepaid.objects.all()
         self.assertEqual(gc.count(),15)
+        res= Prepaid.objects.get(num_prepaid__iexact=102)
+        self.assertEqual(res.start_balance, Decimal('25'))
+        self.assertEqual(res.date_end, datetime.date(2014, 12, 30))
 
     def testPrepaidForm(self):
         invalid_data_dicts = [
