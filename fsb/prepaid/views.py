@@ -22,21 +22,25 @@ gc = config_get_group('PAYMENT_PREPAID')
 @login_required
 def prepaid_form(request, template_name='prepaid/activate.html',
              success_url='profile_overview', extra_context=None, **kwargs):
-    if request.method == "POST":
-        form = PrepaidCodeForm(request, data=request.POST, files=request.FILES)
-        if form.is_valid():
-            data = form.cleaned_data
-            log.debug('form valid {0}'.format(data))
-            return redirect(success_url)
-    else:
-        form = PrepaidCodeForm(request)
     if extra_context is None:
         extra_context = {}
     context = RequestContext(request)
     for key, value in extra_context.items():
         context[key] = callable(value) and value() or value
-    
-    return render_to_response(template_name, {'form': form}, context_instance=context)
+
+    if PrepaidLog.objects.is_valid(ipconnect=request.META['REMOTE_ADDR'], username=request.user):
+        if request.method == "POST":
+            form = PrepaidCodeForm(request, data=request.POST, files=request.FILES)
+            if form.is_valid():
+                data = form.cleaned_data
+                log.debug('form valid {0}'.format(data))
+                return redirect(success_url)
+        else:
+            form = PrepaidCodeForm(request)
+
+        return render_to_response(template_name, {'form': form}, context_instance=context)
+    else:
+        return render_to_response('prepaid/block.html', {'ip':request.META['REMOTE_ADDR']}, context_instance=context)
 
 @csrf_exempt
 def prepaid_start_form(request, template_name='prepaid/start.html',

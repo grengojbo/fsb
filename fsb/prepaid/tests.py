@@ -1,4 +1,5 @@
 # -*- mode: python; coding: utf-8; -*-
+import base64
 from django import test
 from django.test.client import Client
 from keyedcache import cache_delete
@@ -6,6 +7,7 @@ import datetime
 from decimal import *
 from models import *
 from fsa.core.utils import CsvData
+import base64
 import logging
 import csv, os
 import forms
@@ -25,6 +27,8 @@ class TestPrepaid(test.TestCase):
     def setUp(self):
         # Every test needs a client.
         self.client = Client()
+        self.auth_string = 'Basic {0:>s}'.format(base64.encodestring('alice:swordfish').rstrip())
+        self.auth_string_error = 'Basic {0:>s}'.format(base64.encodestring('alice:alice').rstrip())
         self.site = Site.objects.get_current()
         self.user = User.objects.create_user('test', 'test@test.com', 'test')
         try:
@@ -289,71 +293,79 @@ class TestPrepaid(test.TestCase):
         self.assertEqual(PrepaidLog.objects.filter(st=3).count(), 1)
         self.assertEqual(PrepaidLog.objects.count(), 6)
 
+        #TEST activate prepaid card
+        #, HTTP_AUTHORIZATION=self.auth_string
+        #response = self.client.post('/api/directory/', {"hostname": self.hostname, "section": "directory", "tag_name": "domain", "key_name": "name", "key_value": self.domainname, "action": "sip_auth", "sip_profile": "internal", "ip": self.hostip, "key": "id", "user": phone, "domain": self.domainname})
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '1002',
+                                          'prcode': '2001'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.failIf(response.context['form'].is_valid())
+        self.assertFormError(response, 'form', field=None, errors=u"Incorrect number or the code of the card.")
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(PrepaidLog.objects.filter(st=3).count(), 2)
+        self.assertEqual(PrepaidLog.objects.count(), 7)
 
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '102',
+                                          'prcode': '1112'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.failIf(response.context['form'].is_valid())
+        self.assertFormError(response, 'form', field=None, errors=u"Incorrect number or the code of the card.")
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(PrepaidLog.objects.filter(st=1).count(), 2)
+        self.assertEqual(PrepaidLog.objects.count(), 8)
+        self.assertEqual(PrepaidLog.objects.filter(st=0).count(), 1)
 
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '11102',
+                                          'prcode': '1112111'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.failIf(response.context['form'].is_valid())
+        self.assertFormError(response, 'form', field=None, errors=u"Incorrect number or the code of the card.")
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(PrepaidLog.objects.filter(st=0).count(), 2)
+        self.assertEqual(PrepaidLog.objects.count(), 9)
 
-    def testDelete(self):
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '101',
+                                          'prcode': '1112111'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.failIf(response.context['form'].is_valid())
+        self.assertFormError(response, 'form', field=None, errors=u"Incorrect number or the code of the card.")
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(PrepaidLog.objects.filter(st=2).count(), 2)
+        self.assertEqual(PrepaidLog.objects.count(), 10)
 
-        """
-        res = Prepaid.objects.is_valid('11018','222222222')
-        self.assertEquals(res.num_prepaid, '11018')
-        
-        #bal = Balance.objects.get(accountcode=self.user)
-        #self.assertEquals(bal.cash, Decimal("25"))
-        #res = Prepaid.objects.is_valid('11019','222222222')
-        #self.assertEquals(res, None)
-        #res = Prepaid.objects.is_valid('11018','111111111')
-        #self.assertEquals(res, None)
-        
-        res = Prepaid.objects.is_valid('11019','111111111')
-        self.assertEquals(res.code, '111111111')
-        self.assertEquals(res.nt, 1)
-        #if res is not None and res.nt == 1:
-            #r = res.activate_card(self.user)
-        #bal = Balance.objects.get(accountcode=self.user)
-        #self.assertEquals(bal.cash, Decimal("75"))
-        
-        
-        
-        pay_date = datetime.datetime.now()
-        name = 'add:::lincom3000:::prepaid:::{0}'.format(res.pk)
-        comments ='Added prepaid card'
-        method = 'from site prepaid'
-        
-        code = "{0}{1}{2}".format(name, comments, method)
-        mcode = md5.new()
-        mcode.update(code.upper())
-        
-        temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
-        pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
-        
-        if res is not None and res.nt == 1:
-            bal = Balance.objects.get(accountcode__username__exact=self.user.username)
-            up_ball = Balance.objects.filter(accountcode=bal).update(cash=F('cash') + res.start_balance)
-            r = res.activate_card(bal)
-            b = BalanceHistory.objects.create(name = name, accountcode= bal, site = bal.site, pay_date=pay_date,
-                method = method, amount = Decimal(res.start_balance), transaction_id = pay_transaction_id,
-                details=comments, reason_code=mcode.hexdigest())
-            b.save()
-        self.assertEquals(r, True)
-        bres = BalanceHistory.objects.get(transaction_id__exact=pay_transaction_id)
-        self.assertEquals(bres.amount, Decimal("50"))
-        result = Balance.objects.get(accountcode__username__exact=self.user.username)
-        self.assertEquals(result.cash, Decimal("50"))
-        
-        
-        res = Prepaid.objects.is_valid('11019','111111111')
-        self.assertEquals(res, None)
-        
-        #up_ball = Balance.objects.filter(accountcode=bal).update(cash=F('cash') + res.start_balance)
-        #BalanceHistory.objects.create(name=name, accountcode__username__exact=self.user, cash=res.start_balance, comments=comments)
-        
-        #res = Prepaid.objects.is_valid('5003020','123456781')
-        #if res is not None and res.nt == 2:
-        #    new_user = User.objects.create_user(res.num_prepaid, '', res.code)
-        #    new_endpoint = Endpoint.objects.create_endpoint(new_user, res.num_prepaid)
-        #    r = res.activate_card(self.user)
-        #self.assertEquals(res.nt, 2)
-        #bal = Balance.objects.get(accountcode=new_user)
-          """
-        pass
+        bal = Balance.objects.get(accountcode__username__exact='alice')
+        self.assertEquals(bal.cash, Decimal("30"))
+
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '101',
+                                          'prcode': '1111'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(PrepaidLog.objects.filter(st=5).count(), 2)
+        self.assertEqual(PrepaidLog.objects.count(), 11)
+        self.assertEqual(Prepaid.objects.filter(valid=True, enabled=True).count(), 2)
+
+        bal = Balance.objects.get(accountcode__username__exact='alice')
+        self.assertEquals(bal.cash, Decimal("55"))
+
+        self.assertEqual(PrepaidLog.objects.filter(st=3).count(), 2)
+        response = self.client.post(reverse('prepaid_activate'),
+                                    data={'prnumber': '101',
+                                          'prcode': '1111'},
+                                    HTTP_AUTHORIZATION=self.auth_string)
+        #log.debug("----------> {0}".format(response))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(PrepaidLog.objects.filter(st=3).count(), 3)
+        self.assertEqual(PrepaidLog.objects.count(), 12)
+        self.assertEqual(Prepaid.objects.filter(valid=True, enabled=True).count(), 2)

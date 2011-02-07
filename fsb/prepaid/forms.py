@@ -21,9 +21,16 @@ from uni_form.helpers import Layout, Fieldset, Row, HTML
 log = logging.getLogger("fsb.prepaid.forms")
 attrs_dict = {'class': 'required'}
 
-class PrepaidCodeForm(forms.Form):
-    prnumber = forms.CharField(label=_(u'Number'), required=True)
-    prcode = forms.CharField(label=_(u'Code'), required=True)
+class PrepaidForm(forms.Form):
+    prnumber = forms.RegexField(label=_(u'Number'), required=True, regex=r'^\d+$',  max_length=12,
+                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
+    prcode = forms.RegexField(label=_(u'PIN Code'), required=True, regex=r'^\d+$',  max_length=16,
+                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
+
+class PrepaidCodeForm(PrepaidForm):
+    helper = FormHelper()
+    submit = Submit('activate', _(u'Activate'))
+    helper.add_input(submit)
 
     #log.debug(request)
     def __init__(self, request, *args, **kwargs):
@@ -31,56 +38,95 @@ class PrepaidCodeForm(forms.Form):
         self.user = request.user
         self.ip = request.META['REMOTE_ADDR']
 
-    @transaction.commit_manually
+    @transaction.commit_on_success
+    def save_prepaid(self, res):
+        try:
+            bal = Balance.objects.get(accountcode__username__exact=self.user)
+            pay_date = datetime.datetime.now()
+            name = 'add:::lincom3000:::prepaid:::{0}'.format(res.pk)
+            comments = 'Added prepaid card'
+            method = 'from site prepaid'
+
+            code = "{0}{1}{2}".format(name, comments, method)
+            mcode = hashlib.md5()
+            mcode.update(code.upper())
+
+            temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
+            pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
+            transaction.commit()
+            up_ball = Balance.objects.filter(accountcode__username__exact=self.user).update(
+                    cash=F('cash') + res.start_balance)
+            res.enabled = True
+            res.save()
+            log.debug("Prepaid enabled {0}".format(res.enabled))
+            b = BalanceHistory.objects.create(name=name, accountcode=bal, site=bal.site, pay_date=pay_date,
+                                              method=method, amount=Decimal(res.start_balance),
+                                              transaction_id=pay_transaction_id, details=comments,
+                                              reason_code=mcode.hexdigest())
+            b.success = True
+            b.save()
+            return b
+        except:
+            #transaction.rollback()
+            history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"), st=4, nt=1)
+            return False
+        #else:
+        #    transaction.commit()
+
     def clean(self):
         """
         Verify 
         """
-        #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
-        res = Prepaid.objects.is_valid(self.data.get("prnumber"), self.data.get("prcode"))
-        if res is None:
+        fl_error = False
+        nt = 3
+        st = 4
+        try:
+            #log.debug("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+            prc = Prepaid.objects.get(num_prepaid__iexact=self.data.get("prnumber"))
+        except Prepaid.DoesNotExist:
+            #log.error("prnumber: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+            history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), username=self.user)
+            #log.error(history.st)
             raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
-        elif res.nt != 1:
-            raise forms.ValidationError(_(u"You cannot supplement calculation with this card"))
-        else:
-
-            try:
-                bal = Balance.objects.get(accountcode__username__exact=self.user)
-                pay_date = datetime.datetime.now()
-                name = 'add:::lincom3000:::prepaid:::{0}'.format(res.pk)
-                comments = 'Added prepaid card'
-                method = 'from site prepaid'
-
-                code = "{0}{1}{2}".format(name, comments, method)
-                mcode = hashlib.md5()
-                mcode.update(code.upper())
-
-                temp_txt = "".join([str(random.randint(0, 9)) for i in range(20)])
-                pay_transaction_id = "{0}X{1}".format(int(time.time()), temp_txt)
-                transaction.commit()
-                up_ball = Balance.objects.filter(accountcode__username__exact=self.user).update(
-                        cash=F('cash') + res.start_balance)
-                res.enabled = True
-                res.save()
-                log.debug("Prepaid enabled {0}".format(res.enabled))
-                b = BalanceHistory.objects.create(name=name, accountcode=bal, site=bal.site, pay_date=pay_date,
-                                                  method=method, amount=Decimal(res.start_balance),
-                                                  transaction_id=pay_transaction_id, details=comments,
-                                                  reason_code=mcode.hexdigest())
-                b.success = True
-                b.save()
-            except:
-                transaction.rollback()
-                raise forms.ValidationError(_(u"System error no activate prepaid card!"))
+        try:
+            log.debug("number: {0} code:{3} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip, self.data.get("prcode")))
+            card = Prepaid.objects.is_card(self.data.get("prnumber"), self.data.get("prcode"))
+            #log.debug("card: {0}".format(card))
+            if card:
+                if card.enabled:
+                    st = 3
+                    nt = card.nt
+                    fl_error = True
+                elif card.is_valid:
+                    st = 1
+                    nt = card.nt
+                    fl_error = True
+                elif card.nt == 1:
+                    log.debug("RUN save_prepaid")
+                    new_endpoint = self.save_prepaid(card)
+                    if new_endpoint:
+                        nt = card.nt
+                        st = 5
+                    else:
+                        raise forms.ValidationError(_(u"System error no activate prepaid card!"))
+                else:
+                    st = 6
+                    nt = card.nt
+                    fl_error = True
             else:
-                transaction.commit()
+                st = 2
+                fl_error = True
+        except:
+            #log.error("number: {0} (user:{1}) ip: {2}".format(self.data.get("prnumber"), self.user, self.ip))
+            #raise forms.ValidationError(_("System error no activate prepaid card!"))
+            raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
+        #log.debug("st={0}".format(st))
+        history = PrepaidLog.objects.create_history(self.ip, self.data.get("prnumber"), code=self.data.get("prcode"),
+                                                    st=st, nt=nt, username=self.user)
+        if fl_error:
+            raise forms.ValidationError(_(u"Incorrect number or the code of the card."))
         return self.cleaned_data
 
-class PrepaidForm(forms.Form):
-    prnumber = forms.RegexField(label=_(u'Number'), required=True, regex=r'^\d+$',  max_length=12,
-                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
-    prcode = forms.RegexField(label=_(u'PIN Code'), required=True, regex=r'^\d+$',  max_length=16,
-                        error_messages={'invalid': _(u"This value must contain only letters, numbers and underscores.")})
 
 class PrepaidStartForm(PrepaidForm):
     helper = FormHelper()

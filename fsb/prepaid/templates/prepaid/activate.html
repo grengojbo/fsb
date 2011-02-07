@@ -1,7 +1,9 @@
-{% extends "registration/base_registration.html" %}
+{% extends "base.html" %}
 {% load i18n uni_form_tags %}
 {% block title %}{% trans "Activate Prepaid Card" %}{% endblock %}
 {% block body_class %}{{ block.super }} activate_form{% endblock %}
+{% block bodyid %}account{% endblock %}
+{% block extrabanner %}{% endblock %}
 {% block content %}
 <h2>{% trans 'Activate Prepaid Card' %}</h2>
   {% if form.helper %}
@@ -13,7 +15,7 @@
  {% endif %}
 	{% comment %}
 	<script type="text/javascript">
-		document.getElementById('id_username').focus()
+		document.getElementById('id_prnumber').focus()
 	</script>
 	{% endcomment %}
 {% endblock %}
