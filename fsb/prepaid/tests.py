@@ -1,10 +1,7 @@
 # -*- mode: python; coding: utf-8; -*-
-import base64
 from django import test
 from django.test.client import Client
 from keyedcache import cache_delete
-import datetime
-from decimal import *
 from models import *
 from fsa.core.utils import CsvData
 import base64
