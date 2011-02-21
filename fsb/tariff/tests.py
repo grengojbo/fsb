@@ -35,8 +35,8 @@ class TariffTestCase(test.TestCase):
     def testTariffLoad(self):
         """docstring for billing core"""
         from currency.money import Money
-        from currency.models import Currency
-        from django.contrib.sites.models import RequestSite
+        #from currency.models import Currency
+        #from django.contrib.sites.models import RequestSite
         from django.contrib.sites.models import Site
 
         f = open(os.path.join(os.path.dirname(__file__), 'fixtures', 'tariff_test.csv'), "rt")

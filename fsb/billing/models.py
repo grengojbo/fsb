@@ -19,7 +19,7 @@ import os.path, csv, logging
 #from django.contrib.sites.models import RequestSite
 from django.contrib.sites.models import Site
 from bursar.fields import CurrencyField
-from currency.fields import *
+#from currency.fields import *
 #from currency.money import Money
 #from currency.models import Currency
 from decimal import Decimal

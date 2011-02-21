@@ -42,8 +42,6 @@ class Command(BaseCommand):
         from django.db import connection, transaction
         from django.conf import settings
         from fsb.tariff.models import TariffPlan, Tariff
-        from currency.money import Money
-        from currency.models import Currency
         from django.contrib.sites.models import RequestSite
         from django.contrib.sites.models import Site
 
