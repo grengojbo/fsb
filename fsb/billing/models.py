@@ -66,7 +66,7 @@ class Balance(models.Model):
 
     def cash_currency(self):
         """docstring for rate_currency"""
-        return u"{rate:0.2f} {currency:>s}".format({'rate': self.cash, 'currency': self.currency})
+        return u"{0:0.2f} {1}".format(self.cash, self.currency)
     cash_currency.short_description = _(u'Баланс')
 
 #    def username(self):
