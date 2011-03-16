@@ -38,7 +38,7 @@ def prepaid_form(request, template_name='prepaid/activate.html',
         else:
             form = PrepaidCodeForm(request)
 
-        return render_to_response(template_name, {'form': form}, context_instance=context)
+        return render_to_response(template_name, {'form': form, 'subsection': 'money', 'section': 'profile'}, context_instance=context)
     else:
         return render_to_response('prepaid/block.html', {'ip':request.META['REMOTE_ADDR']}, context_instance=context)
 
