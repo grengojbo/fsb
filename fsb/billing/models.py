@@ -64,6 +64,21 @@ class Balance(models.Model):
     def get_absolute_url(self):
         return ('Balance', [self.id])
 
+    @property
+    def vcash(self):
+        if self.credit > Decimal('0'):
+            cash = self.cash + self.credit
+            return "{0:0.2f}".format(cash)
+        else:
+            return "{0:0.2f}".format(self.cash)
+
+    @property
+    def vcredit(self):
+        if self.credit > Decimal('0'):
+            return "{0:0f}".format(self.credit)
+        else:
+            return None
+
     def cash_currency(self):
         """docstring for rate_currency"""
         return u"{0:0.2f} {1}".format(self.cash, self.currency)
@@ -96,6 +111,14 @@ class Balance(models.Model):
             return True
         else:
             return False
+
+    @property
+    def is_tariff(self):
+        tcash = "{0:0.2f}{1}".format(self.cash + self.credit, self.credit)
+        if len(tcash) > 9:
+            return False
+        else:
+            return True
 
     def cash_add(self, amount):
         if Decimal(amount) > 0:
