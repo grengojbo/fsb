@@ -281,7 +281,7 @@ class BalanceAdmin(admin.ModelAdmin):
         verbose_name_plural = _(u'Аккаунты')
 
 class CreditBaseAdmin(GrappelliModelAdmin):
-    list_display = ('__unicode__', 'credit', 'enabled','user', 'expire_time')
+    list_display = ('__unicode__', 'credit', 'enabled', 'user', 'expire_time')
     #list_display = ('accountcode', 'cash_currency', 'timelimit', 'credit', 'tariff',)
     list_filter = ('enabled',)
     search_fields = ['balance__username']
@@ -289,6 +289,9 @@ class CreditBaseAdmin(GrappelliModelAdmin):
     #readonly_fields = ['user']
     change_readonly_fields = ('balance', 'credit', 'expire_time')
     #raw_id_fields = ('balance',)
+#    related_lookup_fields = {
+#        'fk': ['balance'],
+#    }
     autocomplete = {
         'balance': {
             'search_fields': ('username',),
